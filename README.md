@@ -14,3 +14,22 @@ Variables:
 Branches:
             git checkout -b [branch]
             git checkout [branch]
+			
+Tasks:
+
+			background
+			player:
+				reflection jump
+				climb
+				idle
+				simple jumprun
+				attack
+			enemy:
+				idle
+				run
+				attack
+			buildings:
+				windows
+				doors
+				snow
+				base
