@@ -194,9 +194,14 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 1216511458178348, guid: c37be9460b9d55743a3620605deec52f, type: 2}
+    - target: {fileID: 1827907977065806, guid: c37be9460b9d55743a3620605deec52f, type: 2}
       propertyPath: m_Layer
-      value: 11
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 61238785357877620, guid: c37be9460b9d55743a3620605deec52f,
+        type: 2}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c37be9460b9d55743a3620605deec52f, type: 2}
@@ -242,47 +247,13 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 114282132819033870, guid: 32ad8cbb2debb6345a1cdf8201a11561,
         type: 2}
-      propertyPath: Facing
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114282132819033870, guid: 32ad8cbb2debb6345a1cdf8201a11561,
-        type: 2}
-      propertyPath: WhatIsGround.m_Bits
+      propertyPath: Ground.m_Bits
       value: 256
       objectReference: {fileID: 0}
-    - target: {fileID: 50170926940052808, guid: 32ad8cbb2debb6345a1cdf8201a11561,
-        type: 2}
-      propertyPath: m_BodyType
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 114282132819033870, guid: 32ad8cbb2debb6345a1cdf8201a11561,
         type: 2}
-      propertyPath: JumpForce
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 50170926940052808, guid: 32ad8cbb2debb6345a1cdf8201a11561,
-        type: 2}
-      propertyPath: m_Mass
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 50170926940052808, guid: 32ad8cbb2debb6345a1cdf8201a11561,
-        type: 2}
-      propertyPath: m_GravityScale
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 4843774372630154, guid: 32ad8cbb2debb6345a1cdf8201a11561, type: 2}
-      propertyPath: m_LocalScale.y
-      value: 1.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 114282132819033870, guid: 32ad8cbb2debb6345a1cdf8201a11561,
-        type: 2}
-      propertyPath: Grounded
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114282132819033870, guid: 32ad8cbb2debb6345a1cdf8201a11561,
-        type: 2}
-      propertyPath: WallReflectionForce
-      value: 10
+      propertyPath: Stopper.m_Bits
+      value: 4096
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 32ad8cbb2debb6345a1cdf8201a11561, type: 2}

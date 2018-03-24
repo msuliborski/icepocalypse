@@ -69,7 +69,7 @@ Transform:
   m_GameObject: {fileID: 1910452992870528}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 5.9, y: 14.9, z: 0}
-  m_LocalScale: {x: 0.8, y: 1.8, z: 1}
+  m_LocalScale: {x: 0.95, y: 1.9, z: 1}
   m_Children:
   - {fileID: 4405318206569360}
   m_Father: {fileID: 0}
@@ -216,12 +216,25 @@ MonoBehaviour:
   JumpForce: 25
   WallReflectionForce: 10
   MoveSpeed: 10
+  _wallTimer: 0
   FacingRight: 1
   Grounded: 1
   Walled: 0
+  Tubed: 0
+  Stopped: 0
+  Obstacled: 0
   Ground:
     serializedVersion: 2
     m_Bits: 256
   Wall:
     serializedVersion: 2
     m_Bits: 512
+  Tube:
+    serializedVersion: 2
+    m_Bits: 1024
+  Obstacle:
+    serializedVersion: 2
+    m_Bits: 2048
+  Stopper:
+    serializedVersion: 2
+    m_Bits: 4096
