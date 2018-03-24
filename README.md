@@ -24,6 +24,7 @@ Tasks:
 				idle
 				simple jumprun
 				attack
+				crouch
 			enemy:
 				idle
 				run
