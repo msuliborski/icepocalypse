@@ -32,4 +32,3 @@ Tasks:
 				windows
 				doors
 				snow
-				base
