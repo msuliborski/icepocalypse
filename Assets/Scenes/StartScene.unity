@@ -810,6 +810,16 @@ Prefab:
       propertyPath: m_LocalScale.y
       value: 1.8
       objectReference: {fileID: 0}
+    - target: {fileID: 114282132819033870, guid: 32ad8cbb2debb6345a1cdf8201a11561,
+        type: 2}
+      propertyPath: Grounded
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114282132819033870, guid: 32ad8cbb2debb6345a1cdf8201a11561,
+        type: 2}
+      propertyPath: WallReflectionForce
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 32ad8cbb2debb6345a1cdf8201a11561, type: 2}
   m_IsPrefabParent: 0
