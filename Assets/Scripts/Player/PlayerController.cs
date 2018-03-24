@@ -4,11 +4,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 
 
-
-
-
-
-
 public class PlayerController : MonoBehaviour
 {
 
@@ -17,7 +12,7 @@ public class PlayerController : MonoBehaviour
     public float MoveSpeed;
 
     public bool FacingRight = true;
-    float _moveDirection = 1;
+    float _moveDirection = 0;
     
     public bool Grounded = false;
     public bool Walled = false;
