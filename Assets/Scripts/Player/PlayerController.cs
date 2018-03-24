@@ -10,15 +10,18 @@ public class PlayerController : MonoBehaviour
     public float JumpForce;
     public float WallReflectionForce;
     public float MoveSpeed;
-
+    public float _wallTimer = 0; 
     public bool FacingRight = true;
     float _moveDirection = 0;
     
     public bool Grounded = false;
     public bool Walled = false;
+    public bool Tubed = false;
+    private bool _wallImpact = false; 
 
     public LayerMask Ground;
     public LayerMask Wall;
+    public LayerMask Tube;
     
     private Rigidbody2D _rigidbody;
     private Collider2D _collider;
@@ -49,6 +52,8 @@ public class PlayerController : MonoBehaviour
         
          if (Grounded)
         {
+           
+
             _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);   
 
             if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
@@ -60,17 +65,40 @@ public class PlayerController : MonoBehaviour
 
         if (Walled)
         {
+            _wallTimer += Time.deltaTime;
+
+            if(!_wallImpact)
+            {
+                
+                _wallImpact = true;
+                _rigidbody.velocity = new Vector2(0, 0);
+                _rigidbody.gravityScale = 0;
+                
+            }
+
+            if (_wallTimer >= 0.15)
+            {
+                _rigidbody.gravityScale = 3;
+                if (_rigidbody.velocity.y >= 3) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, 3);
+            }
+
             if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
             {
                 
                 _rigidbody.velocity = new Vector2(_rigidbody.velocity.x - _moveDirection*WallReflectionForce, JumpForce);
-                    
+               
                 if (FacingRight) 
                     setFacingRight(false);
                 else 
                     setFacingRight(true);          
                
             }
+        }
+        else
+        {
+            _wallTimer = 0;
+            _rigidbody.gravityScale = 10;
+            _wallImpact = false;
         }
 
     }
