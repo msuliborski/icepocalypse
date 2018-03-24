@@ -214,9 +214,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   JumpForce: 10
+  WallReflectionForce: 0
   MoveSpeed: 10
-  Facing: 0
+  FacingRight: 1
   Grounded: 0
-  WhatIsGround:
+  Walled: 0
+  Ground:
     serializedVersion: 2
     m_Bits: 256
+  Wall:
+    serializedVersion: 2
+    m_Bits: 512
