@@ -6,7 +6,8 @@ public class TubeStopperDestroyer : MonoBehaviour
 {
     public void TubeStopperDestroying()
     {
-        Destroy(gameObject);
+        //Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 	
 }

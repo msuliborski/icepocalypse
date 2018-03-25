@@ -155,6 +155,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                     TubeStopperDestroy.Invoke();
                     Debug.Log("Chuj");
                     //_stoppedReleased = true;
+                    
                 }
 
 
