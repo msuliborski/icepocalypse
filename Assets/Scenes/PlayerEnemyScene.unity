@@ -733,11 +733,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3aa34d67371a22f42ac9b614cda6ed0e, type: 2}
   m_IsPrefabParent: 0
---- !u!1 &991912763 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1284832168442988, guid: cb94cf4dfdf604224a2643074a9db2e6,
-    type: 2}
-  m_PrefabInternal: {fileID: 1215301561}
 --- !u!1001 &1030858367
 Prefab:
   m_ObjectHideFlags: 0
@@ -870,40 +865,6 @@ Prefab:
       propertyPath: Player
       value: 
       objectReference: {fileID: 1524686394}
-    - target: {fileID: 224656536992903482, guid: cb94cf4dfdf604224a2643074a9db2e6,
-        type: 2}
-      propertyPath: m_AnchoredPosition.x
-      value: -0.6645508
-      objectReference: {fileID: 0}
-    - target: {fileID: 224656536992903482, guid: cb94cf4dfdf604224a2643074a9db2e6,
-        type: 2}
-      propertyPath: m_AnchorMax.x
-      value: 0.33089626
-      objectReference: {fileID: 0}
-    - target: {fileID: 224656536992903482, guid: cb94cf4dfdf604224a2643074a9db2e6,
-        type: 2}
-      propertyPath: m_SizeDelta.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224656536992903482, guid: cb94cf4dfdf604224a2643074a9db2e6,
-        type: 2}
-      propertyPath: m_AnchorMin.x
-      value: 0.22280134
-      objectReference: {fileID: 0}
-    - target: {fileID: 114816726878932662, guid: cb94cf4dfdf604224a2643074a9db2e6,
-        type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnStopButtonClicked
-      objectReference: {fileID: 0}
-    - target: {fileID: 114682865456437880, guid: cb94cf4dfdf604224a2643074a9db2e6,
-        type: 2}
-      propertyPath: StopButton
-      value: 
-      objectReference: {fileID: 991912763}
-    - target: {fileID: 1284832168442988, guid: cb94cf4dfdf604224a2643074a9db2e6, type: 2}
-      propertyPath: m_Name
-      value: StopButton
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: cb94cf4dfdf604224a2643074a9db2e6, type: 2}
   m_IsPrefabParent: 0
