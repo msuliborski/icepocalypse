@@ -31,6 +31,7 @@ public class UIController : MonoBehaviour
 		
 		var stopButton = StopButton.GetComponent<Button>();
 		stopButton.interactable = true;
+		
 
 	}
 
@@ -76,12 +77,13 @@ public class UIController : MonoBehaviour
 			var pce = Player.GetComponent<PlayerControllerExperimental>();
 			pce.Jump();
 		}
-		else
+		else if(distance < -SwipeDetectDistance)
 		{
+			var pce = Player.GetComponent<PlayerControllerExperimental>();
+			pce.OnKeyDown();
 			Debug.Log("swipe down");
 		}
 		
-		Debug.Log(distance);
 	}
 
 
