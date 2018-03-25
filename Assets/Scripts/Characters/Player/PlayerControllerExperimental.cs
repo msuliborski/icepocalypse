@@ -19,7 +19,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     private bool _wallImpact = false;
     private bool _tubeImpact = false;
     private bool _stoppedImpact = false;
-    private bool _stoppedReleased = false;
+    private bool _slopeImpact = false;
    
 
     public enum PlayerState
@@ -28,10 +28,12 @@ public class PlayerControllerExperimental : MonoBehaviour
         Grounded,
         Attacking,
         WallClimbing,
+        HandBarring,
         WallHugging,
         ObstacleSliding,
         TubeSliding,
-        TubeStopped
+        TubeStopped,
+        Sloping
     }
 
     public PlayerState CurrentState = PlayerState.Inert;
@@ -40,7 +42,9 @@ public class PlayerControllerExperimental : MonoBehaviour
     public LayerMask Wall;
     public LayerMask Tube;
     public LayerMask Obstacle;
+    public LayerMask HandBar;
     public LayerMask Stopper;
+    public LayerMask Slope;
 
     
 
@@ -62,6 +66,8 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (Physics2D.IsTouchingLayers(_collider, Ground)) CurrentState = PlayerState.Grounded;
         else if (Physics2D.IsTouchingLayers(_collider, Wall)) CurrentState = PlayerState.WallHugging;
         else if (Physics2D.IsTouchingLayers(_collider, Obstacle)) CurrentState = PlayerState.ObstacleSliding;
+        else if (Physics2D.IsTouchingLayers(_collider, HandBar)) CurrentState = PlayerState.HandBarring;
+        else if (Physics2D.IsTouchingLayers(_collider, Slope)) CurrentState = PlayerState.Sloping;
         else if (Physics2D.IsTouchingLayers(_collider, Tube))
         {
             if (Physics2D.IsTouchingLayers(_collider, Stopper)) CurrentState = PlayerState.TubeStopped;
@@ -73,6 +79,40 @@ public class PlayerControllerExperimental : MonoBehaviour
          
         switch (CurrentState)
         {
+            
+
+            case PlayerState.Grounded:
+
+                _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);
+                if (Input.GetKeyDown(KeyCode.RightArrow)) setFacingRight(true);
+                if (Input.GetKeyDown(KeyCode.LeftArrow)) setFacingRight(false);
+                if (Input.GetKeyDown(KeyCode.DownArrow)) _moveDirection = 0;
+                if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
+
+                _wallTimer = 0;
+                _rigidbody.gravityScale = 10;
+                _wallImpact = false;
+                _tubeImpact = false;
+                _stoppedImpact = false;
+                transform.rotation = Quaternion.Euler(0, 0, 0);
+
+                break;
+
+
+            case PlayerState.Inert:
+
+                if (Input.GetKeyDown(KeyCode.RightArrow)) setFacingRight(true);
+                if (Input.GetKeyDown(KeyCode.LeftArrow)) setFacingRight(false);
+                _wallTimer = 0;
+                _rigidbody.gravityScale = 10;
+                _wallImpact = false;
+                _tubeImpact = false;
+                _stoppedImpact = false;
+                _slopeImpact = false;
+                transform.rotation = Quaternion.Euler(0, 0, 0);
+
+                break;
+
             case PlayerState.WallHugging:
 
                 _wallTimer += Time.deltaTime;
@@ -102,20 +142,19 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                 break;
 
-            case PlayerState.Grounded:
+            case PlayerState.Sloping:
 
-                _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);
-                if (Input.GetKeyDown(KeyCode.RightArrow)) setFacingRight(true); 
-                if (Input.GetKeyDown(KeyCode.LeftArrow)) setFacingRight(false); 
-                if (Input.GetKeyDown(KeyCode.DownArrow)) _moveDirection = 0;
+
+                transform.rotation = Quaternion.Euler(0, 0, -30);
+                setFacingRight(true);
+                _rigidbody.gravityScale = 2;
                 if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
 
-                _wallTimer = 0;
-                _rigidbody.gravityScale = 10;
-                _wallImpact = false;
-                _tubeImpact = false;
-                _stoppedImpact = false;
-                _stoppedReleased = false;
+
+                break;
+
+            case PlayerState.ObstacleSliding:
+
 
                 break;
 
@@ -133,7 +172,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                 if (_rigidbody.velocity.y <= -3) _rigidbody.velocity = new Vector2(0, -3);
 
 
-                _wallImpact = false;
+                
 
                 break;
 
@@ -147,33 +186,23 @@ public class PlayerControllerExperimental : MonoBehaviour
                     _rigidbody.gravityScale = 0;
                 }
 
-                //if (!_stoppedReleased) _rigidbody.gravityScale = 0;
+               
 
                 if (Input.GetKeyDown(KeyCode.DownArrow))
                 {
                     _rigidbody.gravityScale = 10;
                     TubeStopperDestroy.Invoke();
                     Debug.Log("Chuj");
-                    //_stoppedReleased = true;
+                    
                     
                 }
 
 
                 break;
 
+           
 
-            case PlayerState.Inert:
-
-                if (Input.GetKeyDown(KeyCode.RightArrow)) setFacingRight(true);
-                if (Input.GetKeyDown(KeyCode.LeftArrow)) setFacingRight(false);
-                _wallTimer = 0;
-                _rigidbody.gravityScale = 10;
-                _wallImpact = false;
-                _tubeImpact = false;
-                _stoppedImpact = false;
-                _stoppedReleased = false;
-
-                break;
+            
         }
         
 
