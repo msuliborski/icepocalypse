@@ -229,7 +229,7 @@ GameObject:
   - component: {fileID: 33152361651631416}
   - component: {fileID: 23068615562060788}
   - component: {fileID: 61113217936287966}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -350,7 +350,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4301847427699090}
   - component: {fileID: 61238785357877620}
-  m_Layer: 10
+  - component: {fileID: 114574182414334332}
+  - component: {fileID: 114974851407405244}
+  m_Layer: 12
   m_Name: Stopper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1989,3 +1991,42 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 0.99999994}
   m_EdgeRadius: 0
+--- !u!114 &114574182414334332
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1827907977065806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c12c2ae1f0a6a644b26d596163492c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114974851407405244
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1827907977065806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09798795485e471abd1c1544a45d9ad4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 6f92b19b83838ef4982a5b61329596c0, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114574182414334332}
+        m_MethodName: TubeStopperDestroying
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
