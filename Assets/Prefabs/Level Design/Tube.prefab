@@ -37,7 +37,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4015220891838654}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: Tube
   m_TagString: Untagged
   m_Icon: {fileID: 0}

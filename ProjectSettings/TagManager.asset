@@ -17,11 +17,11 @@ TagManager:
   - 
   - Ground
   - Wall
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Tube
+  - Obstacle
+  - Stopper
+  - Slope
+  - Handbar
   - 
   - 
   - 
