@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c4e8ad63-8195-417f-9738-88a5bdcbe743" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Icepocalypse/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/.idea.Icepocalypse/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/PlayerEnemyScene.unity" afterPath="$PROJECT_DIR$/Assets/Scenes/PlayerEnemyScene.unity" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/nTestScene.unity" afterPath="$PROJECT_DIR$/Assets/Scenes/nTestScene.unity" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Characters/Player/PlayerControllerExperimental.cs" afterPath="$PROJECT_DIR$/Assets/Scripts/Characters/Player/PlayerControllerExperimental.cs" />
-      <change beforePath="$PROJECT_DIR$/Assets/UIController.cs" afterPath="$PROJECT_DIR$/Assets/UIController.cs" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -107,8 +103,8 @@
       <file leaf-file-name="UIController.cs" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assets/UIController.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="368">
-              <caret line="79" column="28" lean-forward="false" selection-start-line="79" selection-start-column="28" selection-end-line="79" selection-end-column="28" />
+            <state relative-caret-position="173">
+              <caret line="66" column="44" lean-forward="false" selection-start-line="66" selection-start-column="44" selection-end-line="66" selection-end-column="44" />
               <folding>
                 <marker date="1521996545365" expanded="true" signature="6:144" ph="..." />
                 <marker date="1521996545365" expanded="true" signature="187:2790" ph="{...}" />
@@ -324,12 +320,12 @@
       <updated>1521900163893</updated>
       <workItem from="1521900166375" duration="304000" />
       <workItem from="1521900500561" duration="3751000" />
-      <workItem from="1521983417911" duration="8399000" />
+      <workItem from="1521983417911" duration="8616000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="12454000" />
+    <option name="totallyTimeSpent" value="12671000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -342,7 +338,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="1177" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Errors In Solution" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -563,8 +558,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assets/UIController.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="368">
-          <caret line="79" column="28" lean-forward="false" selection-start-line="79" selection-start-column="28" selection-end-line="79" selection-end-column="28" />
+        <state relative-caret-position="173">
+          <caret line="66" column="44" lean-forward="false" selection-start-line="66" selection-start-column="44" selection-end-line="66" selection-end-column="44" />
           <folding>
             <marker date="1521996545365" expanded="true" signature="6:144" ph="..." />
             <marker date="1521996545365" expanded="true" signature="187:2790" ph="{...}" />
