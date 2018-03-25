@@ -64,9 +64,9 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (CurrentState == PlayerState.WallHugging)
         {
             if (FacingRight)
-                setFacingRight(false);
+                SetFacingRight(false);
             else
-                setFacingRight(true);
+                SetFacingRight(true);
         }
     }
 
@@ -119,8 +119,8 @@ public class PlayerControllerExperimental : MonoBehaviour
             case PlayerState.Grounded:
 
                 _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);
-                if (Input.GetKeyDown(KeyCode.RightArrow)) setFacingRight(true); 
-                if (Input.GetKeyDown(KeyCode.LeftArrow)) setFacingRight(false); 
+                if (Input.GetKeyDown(KeyCode.RightArrow)) SetFacingRight(true); 
+                if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false); 
                 if (Input.GetKeyDown(KeyCode.DownArrow)) StopMovement();
                 if (Input.GetKeyDown(KeyCode.Space)) Jump();
 
@@ -178,8 +178,8 @@ public class PlayerControllerExperimental : MonoBehaviour
 
             case PlayerState.Inert:
 
-                if (Input.GetKeyDown(KeyCode.RightArrow)) setFacingRight(true);
-                if (Input.GetKeyDown(KeyCode.LeftArrow)) setFacingRight(false);
+                if (Input.GetKeyDown(KeyCode.RightArrow)) SetFacingRight(true);
+                if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false);
                 _wallTimer = 0;
                 _rigidbody.gravityScale = 10;
                 _wallImpact = false;
@@ -200,7 +200,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     }
 
-    public void setFacingRight(bool _facingRight)
+    public void SetFacingRight(bool _facingRight)
     {
         if (_facingRight)
         {

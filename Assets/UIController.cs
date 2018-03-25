@@ -21,7 +21,7 @@ public class UIController : MonoBehaviour
 	{
 		Debug.Log("facing left");
 		var pce = Player.GetComponent<PlayerControllerExperimental>();
-		pce.setFacingRight(false);
+		pce.SetFacingRight(false);
 
 		var leftButton = LeftButton.GetComponent<Button>();
 		leftButton.interactable = false;
@@ -38,7 +38,7 @@ public class UIController : MonoBehaviour
 	{
 		Debug.Log("facing right");
 		var pce = Player.GetComponent<PlayerControllerExperimental>();
-		pce.setFacingRight(true);
+		pce.SetFacingRight(true);
 		
 		
 		var leftButton = LeftButton.GetComponent<Button>();
