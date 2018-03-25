@@ -13,6 +13,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     public float MoveSpeed;
     public float _wallTimer = 0;
     public bool FacingRight = true;
+    
     float _moveDirection = 0;
 
    
@@ -57,6 +58,24 @@ public class PlayerControllerExperimental : MonoBehaviour
     }
 
 
+    public void Jump()
+    {
+        _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
+        if (CurrentState == PlayerState.WallHugging)
+        {
+            if (FacingRight)
+                setFacingRight(false);
+            else
+                setFacingRight(true);
+        }
+    }
+
+    public void StopMovement()
+    {
+        _moveDirection = 0;
+    }
+
+
     void Update()
     {
         if (Physics2D.IsTouchingLayers(_collider, Ground)) CurrentState = PlayerState.Grounded;
@@ -90,14 +109,9 @@ public class PlayerControllerExperimental : MonoBehaviour
                     if (_rigidbody.velocity.y <= -4) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, -4);
                 }
 
-                if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
+                if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    _rigidbody.velocity = new Vector2(_rigidbody.velocity.x - _moveDirection * WallReflectionForce, JumpForce);
-
-                    if (FacingRight)
-                        setFacingRight(false);
-                    else
-                        setFacingRight(true);
+                    Jump();
                 }
 
                 break;
@@ -107,8 +121,8 @@ public class PlayerControllerExperimental : MonoBehaviour
                 _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);
                 if (Input.GetKeyDown(KeyCode.RightArrow)) setFacingRight(true); 
                 if (Input.GetKeyDown(KeyCode.LeftArrow)) setFacingRight(false); 
-                if (Input.GetKeyDown(KeyCode.DownArrow)) _moveDirection = 0;
-                if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
+                if (Input.GetKeyDown(KeyCode.DownArrow)) StopMovement();
+                if (Input.GetKeyDown(KeyCode.Space)) Jump();
 
                 _wallTimer = 0;
                 _rigidbody.gravityScale = 10;
@@ -186,7 +200,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     }
 
-    void setFacingRight(bool _facingRight)
+    public void setFacingRight(bool _facingRight)
     {
         if (_facingRight)
         {

@@ -14,14 +14,27 @@
         </e>
         <e p="Scripts" t="Include">
           <e p="CameraController.cs" t="Include" />
+          <e p="Characters" t="Include">
+            <e p="Enemies" t="Include">
+              <e p="EnemyController.cs" t="Include" />
+            </e>
+            <e p="Player" t="Include">
+              <e p="PlayerController.cs" t="Include" />
+              <e p="PlayerControllerExperimental.cs" t="Include" />
+            </e>
+          </e>
           <e p="GameEventListener.cs" t="Include" />
-          <e p="PlayerController.cs" t="Include" />
+          <e p="Tube" t="Include">
+            <e p="TubeStopperDestroyer.cs" t="Include" />
+          </e>
           <e p="Variables" t="Include">
             <e p="FloatVariable.cs" t="Include" />
             <e p="GameEvent.cs" t="Include" />
+            <e p="IntVariable.cs" t="Include" />
             <e p="Variable.cs" t="Include" />
           </e>
         </e>
+        <e p="UIController.cs" t="Include" />
       </e>
       <e p="Icepocalypse.sln" t="IncludeFlat" />
       <e p="Library" t="ExcludeRecursive" />
