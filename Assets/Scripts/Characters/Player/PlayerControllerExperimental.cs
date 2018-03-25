@@ -15,12 +15,13 @@ public class PlayerControllerExperimental : MonoBehaviour
     public bool FacingRight = true;
     float _moveDirection = 0;
 
-   
+
     private bool _wallImpact = false;
     private bool _tubeImpact = false;
     private bool _stoppedImpact = false;
     private bool _slopeImpact = false;
-   
+    private bool _obstacleHasJumped = false;
+
 
     public enum PlayerState
     {
@@ -46,7 +47,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     public LayerMask Stopper;
     public LayerMask Slope;
 
-    
+
 
     private Rigidbody2D _rigidbody;
     private Collider2D _collider;
@@ -74,12 +75,12 @@ public class PlayerControllerExperimental : MonoBehaviour
             else CurrentState = PlayerState.TubeSliding;
         }
         else CurrentState = PlayerState.Inert;
-        
 
-         
+
+
         switch (CurrentState)
         {
-            
+
 
             case PlayerState.Grounded:
 
@@ -89,12 +90,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.DownArrow)) _moveDirection = 0;
                 if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
 
-                _wallTimer = 0;
-                _rigidbody.gravityScale = 10;
-                _wallImpact = false;
-                _tubeImpact = false;
-                _stoppedImpact = false;
-                transform.rotation = Quaternion.Euler(0, 0, 0);
+                resetImpacts();
 
                 break;
 
@@ -103,13 +99,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                 if (Input.GetKeyDown(KeyCode.RightArrow)) setFacingRight(true);
                 if (Input.GetKeyDown(KeyCode.LeftArrow)) setFacingRight(false);
-                _wallTimer = 0;
-                _rigidbody.gravityScale = 10;
-                _wallImpact = false;
-                _tubeImpact = false;
-                _stoppedImpact = false;
-                _slopeImpact = false;
-                transform.rotation = Quaternion.Euler(0, 0, 0);
+                resetImpacts();
 
                 break;
 
@@ -150,10 +140,18 @@ public class PlayerControllerExperimental : MonoBehaviour
                 _rigidbody.gravityScale = 2;
                 if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
 
-
                 break;
 
             case PlayerState.ObstacleSliding:
+
+                if (!_obstacleHasJumped) if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))) _obstacleHasJumped = true;
+                else
+                {
+                    _rigidbody.isKinematic = true;
+                    if (_rigidbody.velocity.x > 1) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, 0);
+                    else _rigidbody.velocity = new Vector2(1, 0);
+                }
+
 
 
                 break;
@@ -171,14 +169,11 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                 if (_rigidbody.velocity.y <= -3) _rigidbody.velocity = new Vector2(0, -3);
 
-
-                
-
                 break;
 
             case PlayerState.TubeStopped:
 
-                
+
                 if (!_stoppedImpact)
                 {
                     _rigidbody.velocity = new Vector2(0, 0);
@@ -186,31 +181,28 @@ public class PlayerControllerExperimental : MonoBehaviour
                     _rigidbody.gravityScale = 0;
                 }
 
-               
+
 
                 if (Input.GetKeyDown(KeyCode.DownArrow))
                 {
                     _rigidbody.gravityScale = 10;
                     TubeStopperDestroy.Invoke();
-                    Debug.Log("Chuj");
-                    
-                    
                 }
 
 
                 break;
 
-           
 
-            
+
+
         }
-        
 
 
-       
 
-       
-        
+
+
+
+
 
 
     }
@@ -231,6 +223,24 @@ public class PlayerControllerExperimental : MonoBehaviour
             else transform.localScale *= 1;
             _moveDirection = -1;
         }
+
+
+    }
+
+
+    private void resetImpacts()
+    {
+        _wallTimer = 0;
+        _rigidbody.gravityScale = 10;
+        _wallImpact = false;
+        _tubeImpact = false;
+        _stoppedImpact = false;
+        _slopeImpact = false;
+        _obstacleImpact = false;
+        _rigidbody.isKinematic = false;
+        _obstacleHasJumped = false;
+        transform.rotation = Quaternion.Euler(0, 0, 0);
+
 
 
     }
