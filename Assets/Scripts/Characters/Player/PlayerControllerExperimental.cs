@@ -19,7 +19,6 @@ public class PlayerControllerExperimental : MonoBehaviour
     private bool _wallImpact = false;
     private bool _tubeImpact = false;
     private bool _stoppedImpact = false;
-    private bool _slopeImpact = false;
     private bool _obstacleHasJumped = false;
 
 
@@ -64,9 +63,9 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void Update()
     {
-        if (Physics2D.IsTouchingLayers(_collider, Ground)) CurrentState = PlayerState.Grounded;
+        if (Physics2D.IsTouchingLayers(_collider, Obstacle)) CurrentState = PlayerState.ObstacleSliding;
+        else if (Physics2D.IsTouchingLayers(_collider, Ground)) CurrentState = PlayerState.Grounded;
         else if (Physics2D.IsTouchingLayers(_collider, Wall)) CurrentState = PlayerState.WallHugging;
-        else if (Physics2D.IsTouchingLayers(_collider, Obstacle)) CurrentState = PlayerState.ObstacleSliding;
         else if (Physics2D.IsTouchingLayers(_collider, HandBar)) CurrentState = PlayerState.HandBarring;
         else if (Physics2D.IsTouchingLayers(_collider, Slope)) CurrentState = PlayerState.Sloping;
         else if (Physics2D.IsTouchingLayers(_collider, Tube))
@@ -235,8 +234,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         _wallImpact = false;
         _tubeImpact = false;
         _stoppedImpact = false;
-        _slopeImpact = false;
-        _obstacleImpact = false;
+        _obstacleHasJumped = false;
         _rigidbody.isKinematic = false;
         _obstacleHasJumped = false;
         transform.rotation = Quaternion.Euler(0, 0, 0);
