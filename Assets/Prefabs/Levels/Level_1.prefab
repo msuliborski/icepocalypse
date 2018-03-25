@@ -5667,13 +5667,13 @@ MonoBehaviour:
     m_Bits: 2048
   HandBar:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 16384
   Stopper:
     serializedVersion: 2
     m_Bits: 4096
   Slope:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8192
 --- !u!114 &114101128182471538
 MonoBehaviour:
   m_ObjectHideFlags: 1
