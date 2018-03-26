@@ -234,6 +234,7 @@ MonoBehaviour:
   MoveSpeed: 10
   _wallTimer: 0
   FacingRight: 1
+  _obstacleHasJumped: 0
   CurrentState: 0
   Ground:
     serializedVersion: 2
@@ -247,6 +248,12 @@ MonoBehaviour:
   Obstacle:
     serializedVersion: 2
     m_Bits: 2048
+  HandBar:
+    serializedVersion: 2
+    m_Bits: 16384
   Stopper:
     serializedVersion: 2
     m_Bits: 4096
+  Slope:
+    serializedVersion: 2
+    m_Bits: 24576
