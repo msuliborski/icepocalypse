@@ -79,17 +79,19 @@ public class PlayerControllerExperimental : MonoBehaviour
 
 
 
+
         switch (CurrentState)
         {
 
 
             case PlayerState.Grounded:
-
+                //Debug.Log("setting velocity " + Time.deltaTime);
+                //Debug.Log("move direction " + _moveDirection);
                 _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);
                 if (Input.GetKeyDown(KeyCode.RightArrow)) SetFacingRight(true);
                 if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false);
-                if (Input.GetKeyDown(KeyCode.DownArrow)) StopMovement();
-                if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))) Jump();
+                if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
+                if (Input.GetKeyDown(KeyCode.Space)) Jump();
 
                 resetImpacts();
                 _tubeIgnore = false;
@@ -122,7 +124,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                     if (_rigidbody.velocity.y <= -4) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, -4);
                 }
 
-                if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))) Jump();
+                if ((Input.GetKeyDown(KeyCode.Space))) Jump();
                 
                   
                 break;
@@ -133,7 +135,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                 transform.rotation = Quaternion.Euler(0, 0, -30);
                 SetFacingRight(true);
                 _rigidbody.gravityScale = 2;
-                if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))) Jump();
+                if ((Input.GetKeyDown(KeyCode.Space))) Jump();
 
                 break;
 
@@ -141,7 +143,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                 if (!_obstacleHasJumped)
                 {
-                    if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))) Jump();
+                    if (Input.GetKeyDown(KeyCode.Space)) Jump();
                     else if(Input.GetKeyDown(KeyCode.LeftArrow))
                     {
                         SetFacingRight(false);
@@ -151,8 +153,6 @@ public class PlayerControllerExperimental : MonoBehaviour
                 else
                 {
                     _rigidbody.velocity = new Vector2(1, 10);
-                    Debug.Log("chuj");
-
                 }
 
 
@@ -188,9 +188,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                 if (Input.GetKeyDown(KeyCode.DownArrow))
                 {
-                    _rigidbody.gravityScale = 10;
-                    TubeStopperDestroy.Invoke();
-                    _tubeIgnore = true;
+                    OnKeyDown();
                 }
 
 
@@ -200,15 +198,22 @@ public class PlayerControllerExperimental : MonoBehaviour
 
 
         }
+    }
 
-
-
-
-
-
-
-
-
+    public void OnKeyDown()
+    {
+        switch (CurrentState)
+        {
+            case PlayerState.TubeStopped:
+                _rigidbody.gravityScale = 10;
+                TubeStopperDestroy.Invoke();
+                _tubeIgnore = true;
+                break;
+            
+            default:
+                StopMovement();
+                break;
+        }
     }
 
 
@@ -252,7 +257,8 @@ public class PlayerControllerExperimental : MonoBehaviour
             else transform.localScale *= 1;
             _moveDirection = -1;
         }
-
+        
+        Debug.Log("wystawiamy asd");
 
     }
 
