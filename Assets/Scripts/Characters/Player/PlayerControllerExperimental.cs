@@ -31,7 +31,8 @@ public class PlayerControllerExperimental : MonoBehaviour
         WallClimbing,
         HandBarring,
         WallHugging,
-        ObstacleClimbing,
+        ObstacleClimbing_L,
+        ObstacleClimbing_R,
         TubeSliding,
         TubeStopped,
         Sloping
@@ -42,7 +43,8 @@ public class PlayerControllerExperimental : MonoBehaviour
     public LayerMask Ground;
     public LayerMask Wall;
     public LayerMask Tube;
-    public LayerMask Obstacle;
+    public LayerMask Obstacle_R;
+    public LayerMask Obstacle_L;
     public LayerMask HandBar;
     public LayerMask Stopper;
     public LayerMask Slope;
@@ -64,7 +66,8 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void Update()
     {   
-        if (Physics2D.IsTouchingLayers(_collider, Obstacle)) CurrentState = PlayerState.ObstacleClimbing;
+        if (Physics2D.IsTouchingLayers(_collider, Obstacle_R)) CurrentState = PlayerState.ObstacleClimbing_R;
+        else if (Physics2D.IsTouchingLayers(_collider, Obstacle_L)) CurrentState = PlayerState.ObstacleClimbing_L;
         else if (Physics2D.IsTouchingLayers(_collider, Tube) && !_tubeIgnore)
         {
             if (Physics2D.IsTouchingLayers(_collider, Stopper)) CurrentState = PlayerState.TubeStopped;
@@ -139,24 +142,40 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                 break;
 
-            case PlayerState.ObstacleClimbing:
+           case PlayerState.ObstacleClimbing_L:
 
                 if (!_obstacleHasJumped)
                 {
-                    if (Input.GetKeyDown(KeyCode.Space)) Jump();
+                    if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))) Jump();
                     else if(Input.GetKeyDown(KeyCode.LeftArrow))
                     {
                         SetFacingRight(false);
-                        transform.position = new Vector2(transform.position.x - 0.1f, transform.position.y);
+                        transform.position = new Vector2(transform.position.x - 0.3f, transform.position.y);
                     }
                 }
                 else
                 {
-                    _rigidbody.velocity = new Vector2(1, 10);
+                    _rigidbody.velocity = new Vector2(4, 8);
+
                 }
+                break;
 
+            case PlayerState.ObstacleClimbing_R:
 
+                if (!_obstacleHasJumped)
+                {
+                    if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))) Jump();
+                    else if(Input.GetKeyDown(KeyCode.RightArrow))
+                    {
+                        SetFacingRight(false);
+                        transform.position = new Vector2(transform.position.x + 0.3f, transform.position.y);
+                    }
+                }
+                else
+                {
+                    _rigidbody.velocity = new Vector2(-4, 8);
 
+                }
                 break;
 
             case PlayerState.TubeSliding:
@@ -234,7 +253,7 @@ public class PlayerControllerExperimental : MonoBehaviour
             else
                 SetFacingRight(true);
         }
-        else if (CurrentState == PlayerState.ObstacleClimbing) _obstacleHasJumped = true;
+         else if (CurrentState == PlayerState.ObstacleClimbing_R || CurrentState == PlayerState.ObstacleClimbing_L) _obstacleHasJumped = true;
 
 
 
