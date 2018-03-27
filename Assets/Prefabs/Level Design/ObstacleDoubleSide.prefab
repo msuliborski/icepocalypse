@@ -58,7 +58,7 @@ GameObject:
   - component: {fileID: 33870041726363692}
   - component: {fileID: 23606339327071050}
   - component: {fileID: 68521356231136472}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Obstacle_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -325,7 +325,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.99999994}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!68 &68042337585430350
 EdgeCollider2D:
@@ -356,7 +356,7 @@ EdgeCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 1, y: 0}
   m_EdgeRadius: 0
   m_Points:
   - {x: -0.49994087, y: -0.500051}

@@ -18,12 +18,12 @@ TagManager:
   - Ground
   - Wall
   - Tube
-  - Obstacle
+  - Obstacle_L
   - Stopper
   - Slope
   - Handbar
-  - 
-  - 
+  - Spikes
+  - Obstacle_R
   - 
   - 
   - 
