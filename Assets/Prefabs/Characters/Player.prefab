@@ -229,8 +229,8 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  JumpForce: 25
-  WallReflectionForce: 10
+  JumpForce: 18
+  WallReflectionForce: 16
   MoveSpeed: 10
   _wallTimer: 0
   FacingRight: 1
@@ -245,7 +245,10 @@ MonoBehaviour:
   Tube:
     serializedVersion: 2
     m_Bits: 1024
-  Obstacle:
+  Obstacle_R:
+    serializedVersion: 2
+    m_Bits: 65536
+  Obstacle_L:
     serializedVersion: 2
     m_Bits: 2048
   HandBar:
@@ -256,4 +259,4 @@ MonoBehaviour:
     m_Bits: 4096
   Slope:
     serializedVersion: 2
-    m_Bits: 24576
+    m_Bits: 8192

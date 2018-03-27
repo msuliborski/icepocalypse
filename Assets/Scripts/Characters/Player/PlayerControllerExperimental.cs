@@ -146,7 +146,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                 if (!_obstacleHasJumped)
                 {
-                    if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))) Jump();
+                    if (Input.GetKey(KeyCode.Space)) Jump();
                     else if(Input.GetKeyDown(KeyCode.LeftArrow))
                     {
                         SetFacingRight(false);
@@ -155,7 +155,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                 }
                 else
                 {
-                    _rigidbody.velocity = new Vector2(4, 8);
+                    _rigidbody.velocity = new Vector2(7, 7);
 
                 }
                 break;
@@ -164,7 +164,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                 if (!_obstacleHasJumped)
                 {
-                    if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))) Jump();
+                    if (Input.GetKeyDown(KeyCode.Space)) Jump();
                     else if(Input.GetKeyDown(KeyCode.RightArrow))
                     {
                         SetFacingRight(false);
@@ -173,7 +173,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                 }
                 else
                 {
-                    _rigidbody.velocity = new Vector2(-4, 8);
+                    _rigidbody.velocity = new Vector2(-7, 7);
 
                 }
                 break;
