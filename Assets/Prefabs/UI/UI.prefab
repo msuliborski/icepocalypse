@@ -368,7 +368,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 838c2b738faef462cacfa70a39471f01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 0}
+  Player: {fileID: 1910452992870528, guid: 32ad8cbb2debb6345a1cdf8201a11561, type: 2}
   LeftButton: {fileID: 1881390476068778}
   RightButton: {fileID: 1075185736634770}
   StopButton: {fileID: 1284832168442988}
