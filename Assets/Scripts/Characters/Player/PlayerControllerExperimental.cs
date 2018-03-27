@@ -66,7 +66,8 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void Update()
     {   
-        if (Physics2D.IsTouchingLayers(_collider, Obstacle_R)) CurrentState = PlayerState.ObstacleClimbing_R;
+        if (Physics2D.IsTouchingLayers(_collider, Ground)) CurrentState = PlayerState.Grounded;
+        else if (Physics2D.IsTouchingLayers(_collider, Obstacle_R)) CurrentState = PlayerState.ObstacleClimbing_R;
         else if (Physics2D.IsTouchingLayers(_collider, Obstacle_L)) CurrentState = PlayerState.ObstacleClimbing_L;
         else if (Physics2D.IsTouchingLayers(_collider, Tube) && !_tubeIgnore)
         {
@@ -74,7 +75,6 @@ public class PlayerControllerExperimental : MonoBehaviour
             else CurrentState = PlayerState.TubeSliding;
         }
         
-        else if (Physics2D.IsTouchingLayers(_collider, Ground)) CurrentState = PlayerState.Grounded;
         else if (Physics2D.IsTouchingLayers(_collider, Wall)) CurrentState = PlayerState.WallHugging;
         else if (Physics2D.IsTouchingLayers(_collider, HandBar)) CurrentState = PlayerState.HandBarring;
         else if (Physics2D.IsTouchingLayers(_collider, Slope)) CurrentState = PlayerState.Sloping;
@@ -155,7 +155,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                 }
                 else
                 {
-                    _rigidbody.velocity = new Vector2(7, 7);
+                    _rigidbody.velocity = new Vector2(8, 5);
 
                 }
                 break;
@@ -173,7 +173,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                 }
                 else
                 {
-                    _rigidbody.velocity = new Vector2(-7, 7);
+                    _rigidbody.velocity = new Vector2(-8, 5);
 
                 }
                 break;
