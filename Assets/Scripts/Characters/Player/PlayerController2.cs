@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
-public class PlayerControllerExperimental : MonoBehaviour
+public class PlayerController2 : MonoBehaviour
 {
     public UnityEvent TubeStopperDestroy;
     public float JumpForce;
@@ -19,7 +19,6 @@ public class PlayerControllerExperimental : MonoBehaviour
     private bool _wallImpact = false;
     private bool _tubeImpact = false;
     private bool _stoppedImpact = false;
-    private bool _slopeImpact = false;
     public bool _obstacleHasJumped = false;
     private bool _tubeIgnore = false;
 
@@ -50,6 +49,12 @@ public class PlayerControllerExperimental : MonoBehaviour
     public LayerMask Stopper;
     public LayerMask Slope;
 
+    bool grounded = false;
+    bool walled = false;
+    bool groundedAndWalled = false;
+
+
+
 
 
     private Rigidbody2D _rigidbody;
@@ -65,8 +70,47 @@ public class PlayerControllerExperimental : MonoBehaviour
     }
 
 
+    void OnCollisionEnter2D(Collision2D coll)
+    {
+        switch(coll.gameObject.layer)
+        {
+
+
+
+        }
+
+        if (coll.gameObject.layer == Ground)
+        {
+            grounded = true;
+            
+        }
+        else if (coll.gameObject.layer == Wall)
+        {
+            _rigidbody.velocity = new Vector2(0, 0);
+            _rigidbody.gravityScale = 0;
+        }
+
+    }
+
+    void OnCollisionExit2D(Collision2D coll)
+    {
+        if (coll.gameObject.layer == Ground)
+        {
+            
+        }
+        else if (coll.gameObject.layer == Wall)
+        {
+            _rigidbody.gravityScale = 10;
+        }
+
+        
+
+
+    }
+
+
     void Update()
-    {   
+    {
         if (Physics2D.IsTouchingLayers(_collider, Ground)) CurrentState = PlayerState.Grounded;
         else if (Physics2D.IsTouchingLayers(_collider, Obstacle_R)) CurrentState = PlayerState.ObstacleClimbing_R;
         else if (Physics2D.IsTouchingLayers(_collider, Obstacle_L)) CurrentState = PlayerState.ObstacleClimbing_L;
@@ -75,30 +119,22 @@ public class PlayerControllerExperimental : MonoBehaviour
             if (Physics2D.IsTouchingLayers(_collider, Stopper)) CurrentState = PlayerState.TubeStopped;
             else CurrentState = PlayerState.TubeSliding;
         }
-        
+
         else if (Physics2D.IsTouchingLayers(_collider, Wall)) CurrentState = PlayerState.WallHugging;
         else if (Physics2D.IsTouchingLayers(_collider, HandBar)) CurrentState = PlayerState.HandBarring;
         else if (Physics2D.IsTouchingLayers(_collider, Slope)) CurrentState = PlayerState.Sloping;
         else CurrentState = PlayerState.Inert;
 
-
-
-
         switch (CurrentState)
         {
 
-
             case PlayerState.Grounded:
-
-                movement();
-
+                
+                _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);
                 if (Input.GetKeyDown(KeyCode.RightArrow)) SetFacingRight(true);
                 if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false);
                 if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
                 if (Input.GetKeyDown(KeyCode.Space)) Jump();
-
-                resetImpacts();
-                _tubeIgnore = false;
 
                 break;
 
@@ -107,7 +143,6 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                 if (Input.GetKeyDown(KeyCode.RightArrow)) SetFacingRight(true);
                 if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false);
-                resetImpacts();
 
                 break;
 
@@ -115,38 +150,43 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                 _wallTimer += Time.deltaTime;
 
-                onWallImpact();
-
-                manageWallTimer();
+                if (_wallTimer >= 0.15)
+                {
+                    _rigidbody.gravityScale = 3;
+                    if (_rigidbody.velocity.y <= -4) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, -4);
+                }
 
                 if ((Input.GetKeyDown(KeyCode.Space))) Jump();
-                
-                  
-                break;
 
+
+                break;
+/*
             case PlayerState.Sloping:
 
-                onSlopeImpact();
 
                 transform.rotation = Quaternion.Euler(0, 0, -30);
-
+                SetFacingRight(true);
+                _rigidbody.gravityScale = 2;
                 if ((Input.GetKeyDown(KeyCode.Space))) Jump();
 
                 break;
 
-           case PlayerState.ObstacleClimbing_L:
+            case PlayerState.ObstacleClimbing_L:
 
                 if (!_obstacleHasJumped)
                 {
                     if (Input.GetKey(KeyCode.Space)) Jump();
-                    else if(Input.GetKeyDown(KeyCode.LeftArrow))
+                    else if (Input.GetKeyDown(KeyCode.LeftArrow))
                     {
                         SetFacingRight(false);
                         transform.position = new Vector2(transform.position.x - 0.3f, transform.position.y);
                     }
                 }
-                else _rigidbody.velocity = new Vector2(8, 5);
+                else
+                {
+                    _rigidbody.velocity = new Vector2(8, 5);
 
+                }
                 break;
 
             case PlayerState.ObstacleClimbing_R:
@@ -154,19 +194,29 @@ public class PlayerControllerExperimental : MonoBehaviour
                 if (!_obstacleHasJumped)
                 {
                     if (Input.GetKeyDown(KeyCode.Space)) Jump();
-                    else if(Input.GetKeyDown(KeyCode.RightArrow))
+                    else if (Input.GetKeyDown(KeyCode.RightArrow))
                     {
                         SetFacingRight(false);
                         transform.position = new Vector2(transform.position.x + 0.3f, transform.position.y);
                     }
                 }
-                else _rigidbody.velocity = new Vector2(-8, 5);
+                else
+                {
+                    _rigidbody.velocity = new Vector2(-8, 5);
 
+                }
                 break;
 
             case PlayerState.TubeSliding:
 
-                onTubeImpact();
+                if (!_tubeImpact)
+                {
+
+                    _tubeImpact = true;
+                    _rigidbody.velocity = new Vector2(0, 0);
+                    _rigidbody.gravityScale = 1f;
+
+                }
 
                 if (_rigidbody.velocity.y <= -3) _rigidbody.velocity = new Vector2(0, -3);
 
@@ -175,15 +225,26 @@ public class PlayerControllerExperimental : MonoBehaviour
             case PlayerState.TubeStopped:
 
 
-                onTubeStopperImpact();
+                if (!_stoppedImpact)
+                {
+                    _rigidbody.velocity = new Vector2(0, 0);
+                    _stoppedImpact = true;
+                    _rigidbody.gravityScale = 0;
+                }
 
-                if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
+
+
+                if (Input.GetKeyDown(KeyCode.DownArrow))
+                {
+                    OnKeyDown();
+                }
+
 
                 break;
 
 
 
-
+    */
         }
     }
 
@@ -196,18 +257,13 @@ public class PlayerControllerExperimental : MonoBehaviour
                 TubeStopperDestroy.Invoke();
                 _tubeIgnore = true;
                 break;
-            
+
             default:
                 StopMovement();
                 break;
         }
     }
 
-
-    private void movement()
-    {
-        _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);
-    }
 
     public void StopMovement()
     {
@@ -226,7 +282,7 @@ public class PlayerControllerExperimental : MonoBehaviour
             else
                 SetFacingRight(true);
         }
-         else if (CurrentState == PlayerState.ObstacleClimbing_R || CurrentState == PlayerState.ObstacleClimbing_L) _obstacleHasJumped = true;
+        else if (CurrentState == PlayerState.ObstacleClimbing_R || CurrentState == PlayerState.ObstacleClimbing_L) _obstacleHasJumped = true;
 
 
 
@@ -249,66 +305,11 @@ public class PlayerControllerExperimental : MonoBehaviour
             else transform.localScale *= 1;
             _moveDirection = -1;
         }
-        
-    }
 
-
-    private void manageWallTimer()
-    {
-        if (_wallTimer >= 0.15)
-        {
-            _rigidbody.gravityScale = 3;
-            if (_rigidbody.velocity.y <= -4) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, -4);
-        }
+        Debug.Log("wystawiamy asd");
 
     }
 
-    private void onSlopeImpact()
-    {
-        if (!_slopeImpact)
-        {
-            _slopeImpact = true;
-            
- ;           //_rigidbody.constraints = RigidbodyConstraints2D.None;
-            SetFacingRight(true);
-            _rigidbody.gravityScale = 2;
-        }
-
-        
-    }
-
-    private void onTubeStopperImpact()
-    {
-        if (!_stoppedImpact)
-        {
-            _rigidbody.velocity = new Vector2(0, 0);
-            _stoppedImpact = true;
-            _rigidbody.gravityScale = 0;
-        }
-    }
-
-    private void onTubeImpact()
-    {
-        if (!_tubeImpact)
-        {
-
-            _tubeImpact = true;
-            _rigidbody.velocity = new Vector2(0, 0);
-            _rigidbody.gravityScale = 1f;
-
-        }
-    }
-
-    private void onWallImpact()
-    {
-        if (!_wallImpact)
-        {
-            _wallImpact = true;
-            _rigidbody.velocity = new Vector2(0, 0);
-            _rigidbody.gravityScale = 0;
-        }
-
-    }
 
     private void resetImpacts()
     {
@@ -317,14 +318,80 @@ public class PlayerControllerExperimental : MonoBehaviour
         _wallImpact = false;
         _tubeImpact = false;
         _stoppedImpact = false;
-        _slopeImpact = false;
-        //_rigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
-        transform.rotation = Quaternion.Euler(0, 0, 0);
         _obstacleHasJumped = false;
         _rigidbody.isKinematic = false;
         _obstacleHasJumped = false;
-     }
+        //  _tubeIgnore = false;
+        transform.rotation = Quaternion.Euler(0, 0, 0);
+
+
+
+    }
 }
 
+/*
+        Grounded = Physics2D.IsTouchingLayers(_collider, Ground);
+        Walled = Physics2D.IsTouchingLayers(_collider, Wall);
+
+        if (Grounded)
+        {
+            _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);           
+            
+            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
+            {
+                _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
+            }
+        }
+
+        if (Walled && _rigidbody.velocity.y < 0)
+        {
+            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
+            {
+                          
+                if (Facing == Sides.RIGHT)
+                {
+                     _rigidbody.velocity = new Vector2(_rigidbody.velocity.x - BounceFromWallForce, JumpForce);
+                    Facing = Sides.LEFT;
+                    Flip();
+                }
+                else 
+                {
+                     _rigidbody.velocity = new Vector2(_rigidbody.velocity.x + BounceFromWallForce, JumpForce);
+                    Facing = Sides.RIGHT;
+                    Flip();
+                }
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.RightArrow)) _moveDirection++;
+        if (Input.GetKeyDown(KeyCode.LeftArrow)) _moveDirection--;
+        if (Input.GetKeyUp(KeyCode.RightArrow)) _moveDirection--;
+        if (Input.GetKeyUp(KeyCode.LeftArrow)) _moveDirection++;
+        
+        if (_moveDirection == 1)
+        {
+            if (Facing == Sides.RIGHT)
+            {
+                Facing = Sides.LEFT;
+                Flip();
+            }
+        }
+        else if (_moveDirection == -1)
+        {
+            if (Facing == Sides.LEFT)
+            {
+                Facing = Sides.RIGHT;
+                Flip();
+            }
+        }
+    }
+    void Flip()
+    {
+        Vector2 localScale = gameObject.transform.localScale;
+        localScale.x *= -1;
+        gameObject.transform.localScale = localScale;
+    }
+
+     */
 
 
