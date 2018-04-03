@@ -104,8 +104,8 @@ public class WildDogScript : MonoBehaviour
         {
             Destroy(_playerObject);
             _playerObject = null;
-            _rb.isKinematic = false;
-            this.GetComponent<BoxCollider2D>().isTrigger = false;
+            //_rb.isKinematic = false;
+            //this.GetComponent<BoxCollider2D>().isTrigger = false;
         }
 
         if ( Input.GetKeyDown( KeyCode.F) && _keyPressesIterator < 20 )
@@ -118,6 +118,7 @@ public class WildDogScript : MonoBehaviour
             //_rb.isKinematic = false;
             //this.GetComponent<BoxCollider2D>().isTrigger = false;
             Destroy(gameObject);
+            _playerObject.transform.rotation = new Quaternion(0f, 0f, 0f, 0f);
         }
     }
 
@@ -126,7 +127,7 @@ public class WildDogScript : MonoBehaviour
         if (col.gameObject.tag == "Player")
         {
             _isClutching = true;
-            this.GetComponent<BoxCollider2D>().isTrigger = true;
+            //this.GetComponent<BoxCollider2D>().isTrigger = true;
             _time = Time.time;
         }
     }
