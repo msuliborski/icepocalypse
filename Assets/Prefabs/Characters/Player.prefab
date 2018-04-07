@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 23541445383034570}
   - component: {fileID: 61721577153555882}
   - component: {fileID: 50170926940052808}
-  - component: {fileID: 114938933126834404}
+  - component: {fileID: 114458170442097392}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -202,7 +202,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &114938933126834404
+--- !u!114 &114458170442097392
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -210,53 +210,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 1910452992870528}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf84ed34d89b56945bef85ec73925951, type: 3}
+  m_Script: {fileID: 11500000, guid: cba51444d59d39a4f941b2478e1e0c95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   TubeStopperDestroy:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: 6f92b19b83838ef4982a5b61329596c0, type: 2}
-        m_MethodName: Raise
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  JumpForce: 18
-  WallReflectionForce: 16
-  MoveSpeed: 10
+    m_CallsDirty: 1
+  JumpForce: 0
+  WallReflectionForce: 0
+  MoveSpeed: 0
   _wallTimer: 0
   FacingRight: 1
-  _obstacleHasJumped: 0
+  _moveDirection: 0
   CurrentState: 0
-  Ground:
-    serializedVersion: 2
-    m_Bits: 256
-  Wall:
-    serializedVersion: 2
-    m_Bits: 512
-  Tube:
-    serializedVersion: 2
-    m_Bits: 1024
-  Obstacle_R:
-    serializedVersion: 2
-    m_Bits: 65536
-  Obstacle_L:
-    serializedVersion: 2
-    m_Bits: 2048
-  HandBar:
-    serializedVersion: 2
-    m_Bits: 16384
-  Stopper:
-    serializedVersion: 2
-    m_Bits: 4096
-  Slope:
-    serializedVersion: 2
-    m_Bits: 8192
+  _rigidbody: {fileID: 0}
+  _collider: {fileID: 0}
+  currentCollisions: []
