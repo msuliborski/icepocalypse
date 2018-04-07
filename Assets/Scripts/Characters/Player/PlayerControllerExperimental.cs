@@ -24,7 +24,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     private bool _tubeIgnore = false;
 
 
-    public enum PlayerState
+	public enum PlayerState
     {
         Inert,
         Grounded,
@@ -39,7 +39,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         Sloping
     }
 
-    public PlayerState CurrentState = PlayerState.Inert;
+	public PlayerState CurrentState = PlayerState.Inert;
 
     public LayerMask Ground;
     public LayerMask Wall;
