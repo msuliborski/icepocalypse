@@ -15,15 +15,7 @@ public class PlayerController2 : MonoBehaviour
     public bool FacingRight = true;
     float _moveDirection = 0;
 
-
-    private bool _wallImpact = false;
-    private bool _tubeImpact = false;
-    private bool _stoppedImpact = false;
-    public bool _obstacleHasJumped = false;
-    private bool _tubeIgnore = false;
-
-
-    public enum PlayerState
+    public enum State
     {
         Inert,
         Grounded,
@@ -35,36 +27,27 @@ public class PlayerController2 : MonoBehaviour
         ObstacleClimbing_R,
         TubeSliding,
         TubeStopped,
-        Sloping
+        Sloping,
+        Cornering
     }
 
-    public PlayerState CurrentState = PlayerState.Inert;
 
-    public LayerMask Ground;
-    public LayerMask Wall;
-    public LayerMask Tube;
-    public LayerMask Obstacle_R;
-    public LayerMask Obstacle_L;
-    public LayerMask HandBar;
-    public LayerMask Stopper;
-    public LayerMask Slope;
-
-    bool grounded = false;
-    bool walled = false;
-    bool groundedAndWalled = false;
-
-
-
+    public State CurrentState = State.Inert;
+    
+   // public bool _grounded = false;
+   // public bool _walled = false;
+    //public bool _inert = false;
 
 
     private Rigidbody2D _rigidbody;
     private Collider2D _collider;
-
+    public LayerMask Ground;
 
 
     // Use this for initialization
     void Start()
     {
+       // Ground = LayerMask.GetMask("Ground");
         _rigidbody = gameObject.GetComponent<Rigidbody2D>();
         _collider = gameObject.GetComponent<Collider2D>();
     }
@@ -72,196 +55,133 @@ public class PlayerController2 : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D coll)
     {
-        switch(coll.gameObject.layer)
+        if (coll.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
-
-
-
-        }
-
-        if (coll.gameObject.layer == Ground)
-        {
-            grounded = true;
+            if (CurrentState != State.Grounded)
+            {
+                _rigidbody.velocity = new Vector2(0, 0);
+                _rigidbody.gravityScale = 0;
+            }
             
-        }
-        else if (coll.gameObject.layer == Wall)
-        {
-            _rigidbody.velocity = new Vector2(0, 0);
-            _rigidbody.gravityScale = 0;
         }
 
     }
+
+  /*  void OnCollisionStay2D(Collision2D coll)
+    {
+        if (coll.gameObject.layer == LayerMask.GetMask("Wall"))
+        {
+            if (CurrentState == State.Grounded)
+            {
+                CurrentState = State.WallHugging;
+                _rigidbody.velocity = new Vector2(0, 0);
+                _rigidbody.gravityScale = 0;
+            }
+
+
+        }
+        
+    }*/
 
     void OnCollisionExit2D(Collision2D coll)
     {
-        if (coll.gameObject.layer == Ground)
+        if (coll.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
-            
+            if (CurrentState == State.Cornering)
+            {
+               _rigidbody.velocity = new Vector2(0, 0);
+                _rigidbody.gravityScale = 0;
+            }
         }
-        else if (coll.gameObject.layer == Wall)
+        else if (coll.collider.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
-            _rigidbody.gravityScale = 10;
+            if (CurrentState == State.WallHugging)
+            {
+                _rigidbody.gravityScale = 10;
+                _wallTimer = 0;
+            }
         }
-
-        
-
-
+       
     }
 
 
-    void Update()
+    void LateUpdate()
     {
-        if (Physics2D.IsTouchingLayers(_collider, Ground)) CurrentState = PlayerState.Grounded;
-        else if (Physics2D.IsTouchingLayers(_collider, Obstacle_R)) CurrentState = PlayerState.ObstacleClimbing_R;
-        else if (Physics2D.IsTouchingLayers(_collider, Obstacle_L)) CurrentState = PlayerState.ObstacleClimbing_L;
-        else if (Physics2D.IsTouchingLayers(_collider, Tube) && !_tubeIgnore)
-        {
-            if (Physics2D.IsTouchingLayers(_collider, Stopper)) CurrentState = PlayerState.TubeStopped;
-            else CurrentState = PlayerState.TubeSliding;
-        }
 
-        else if (Physics2D.IsTouchingLayers(_collider, Wall)) CurrentState = PlayerState.WallHugging;
-        else if (Physics2D.IsTouchingLayers(_collider, HandBar)) CurrentState = PlayerState.HandBarring;
-        else if (Physics2D.IsTouchingLayers(_collider, Slope)) CurrentState = PlayerState.Sloping;
-        else CurrentState = PlayerState.Inert;
+        if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Ground")))
+        {
+            if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Wall"))) CurrentState = State.Cornering;
+            else CurrentState = State.Grounded;
+        }
+       else if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Tube")))
+        {
+            if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Stopper"))) CurrentState = State.TubeStopped;
+            else CurrentState = State.TubeSliding;
+        }
+        else if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Wall"))) CurrentState = State.WallHugging;
+        else if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Handbar"))) CurrentState = State.HandBarring;
+        else if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Slope"))) CurrentState = State.Sloping;
+        else CurrentState = State.Inert;
+
+
 
         switch (CurrentState)
         {
 
-            case PlayerState.Grounded:
-                
+            case State.Grounded:
                 _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);
                 if (Input.GetKeyDown(KeyCode.RightArrow)) SetFacingRight(true);
                 if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false);
                 if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
                 if (Input.GetKeyDown(KeyCode.Space)) Jump();
-
                 break;
 
+            case State.WallHugging:
+                _wallTimer += Time.deltaTime;
+                manageWallTimer();
+                if ((Input.GetKeyDown(KeyCode.Space))) Jump();
+                break;
 
-            case PlayerState.Inert:
-
+            case State.Cornering:
+                _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);
                 if (Input.GetKeyDown(KeyCode.RightArrow)) SetFacingRight(true);
                 if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false);
-
+                if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
+                if (Input.GetKeyDown(KeyCode.Space)) Jump();
                 break;
-
-            case PlayerState.WallHugging:
-
-                _wallTimer += Time.deltaTime;
-
-                if (_wallTimer >= 0.15)
-                {
-                    _rigidbody.gravityScale = 3;
-                    if (_rigidbody.velocity.y <= -4) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, -4);
-                }
-
-                if ((Input.GetKeyDown(KeyCode.Space))) Jump();
-
-
-                break;
-/*
-            case PlayerState.Sloping:
-
-
-                transform.rotation = Quaternion.Euler(0, 0, -30);
-                SetFacingRight(true);
-                _rigidbody.gravityScale = 2;
-                if ((Input.GetKeyDown(KeyCode.Space))) Jump();
-
-                break;
-
-            case PlayerState.ObstacleClimbing_L:
-
-                if (!_obstacleHasJumped)
-                {
-                    if (Input.GetKey(KeyCode.Space)) Jump();
-                    else if (Input.GetKeyDown(KeyCode.LeftArrow))
-                    {
-                        SetFacingRight(false);
-                        transform.position = new Vector2(transform.position.x - 0.3f, transform.position.y);
-                    }
-                }
-                else
-                {
-                    _rigidbody.velocity = new Vector2(8, 5);
-
-                }
-                break;
-
-            case PlayerState.ObstacleClimbing_R:
-
-                if (!_obstacleHasJumped)
-                {
-                    if (Input.GetKeyDown(KeyCode.Space)) Jump();
-                    else if (Input.GetKeyDown(KeyCode.RightArrow))
-                    {
-                        SetFacingRight(false);
-                        transform.position = new Vector2(transform.position.x + 0.3f, transform.position.y);
-                    }
-                }
-                else
-                {
-                    _rigidbody.velocity = new Vector2(-8, 5);
-
-                }
-                break;
-
-            case PlayerState.TubeSliding:
-
-                if (!_tubeImpact)
-                {
-
-                    _tubeImpact = true;
-                    _rigidbody.velocity = new Vector2(0, 0);
-                    _rigidbody.gravityScale = 1f;
-
-                }
-
-                if (_rigidbody.velocity.y <= -3) _rigidbody.velocity = new Vector2(0, -3);
-
-                break;
-
-            case PlayerState.TubeStopped:
-
-
-                if (!_stoppedImpact)
-                {
-                    _rigidbody.velocity = new Vector2(0, 0);
-                    _stoppedImpact = true;
-                    _rigidbody.gravityScale = 0;
-                }
-
-
-
-                if (Input.GetKeyDown(KeyCode.DownArrow))
-                {
-                    OnKeyDown();
-                }
-
-
-                break;
-
-
-
-    */
+                
         }
+
+        /*
+        if (_grounded)
+        {
+            _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);
+            if (Input.GetKeyDown(KeyCode.RightArrow)) SetFacingRight(true);
+            if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false);
+            if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
+            if (Input.GetKeyDown(KeyCode.Space)) Jump();
+
+        }
+        else if (_walled)
+        {
+            _wallTimer += Time.deltaTime;
+
+            manageWallTimer();
+
+            if ((Input.GetKeyDown(KeyCode.Space))) Jump();
+
+        }
+        */
+
+
+
+
+
     }
 
     public void OnKeyDown()
     {
-        switch (CurrentState)
-        {
-            case PlayerState.TubeStopped:
-                _rigidbody.gravityScale = 10;
-                TubeStopperDestroy.Invoke();
-                _tubeIgnore = true;
-                break;
-
-            default:
-                StopMovement();
-                break;
-        }
+        StopMovement();
     }
 
 
@@ -270,22 +190,35 @@ public class PlayerController2 : MonoBehaviour
         _moveDirection = 0;
     }
 
+    private void manageWallTimer()
+    {
+        if (_wallTimer >= 0.15)
+        {
+            _rigidbody.gravityScale = 3;
+            if (_rigidbody.velocity.y <= -4) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, -4);
+        }
+    }
+
     public void Jump()
     {
-        if (CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Sloping) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
-        else if (CurrentState == PlayerState.WallHugging)
+        switch(CurrentState)
         {
-            _rigidbody.velocity = new Vector2(_rigidbody.velocity.x - _moveDirection * WallReflectionForce, JumpForce);
+            case State.Grounded:
+                _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
+                break;
+            case State.Cornering:
+                _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
+                break;
+            case State.WallHugging:
+                _rigidbody.velocity = new Vector2(_rigidbody.velocity.x - _moveDirection * WallReflectionForce, JumpForce);
 
-            if (FacingRight)
-                SetFacingRight(false);
-            else
-                SetFacingRight(true);
+                if (FacingRight)
+                    SetFacingRight(false);
+                else
+                    SetFacingRight(true);
+                break;
+
         }
-        else if (CurrentState == PlayerState.ObstacleClimbing_R || CurrentState == PlayerState.ObstacleClimbing_L) _obstacleHasJumped = true;
-
-
-
 
     }
 
@@ -306,92 +239,5 @@ public class PlayerController2 : MonoBehaviour
             _moveDirection = -1;
         }
 
-        Debug.Log("wystawiamy asd");
-
-    }
-
-
-    private void resetImpacts()
-    {
-        _wallTimer = 0;
-        _rigidbody.gravityScale = 10;
-        _wallImpact = false;
-        _tubeImpact = false;
-        _stoppedImpact = false;
-        _obstacleHasJumped = false;
-        _rigidbody.isKinematic = false;
-        _obstacleHasJumped = false;
-        //  _tubeIgnore = false;
-        transform.rotation = Quaternion.Euler(0, 0, 0);
-
-
-
     }
 }
-
-/*
-        Grounded = Physics2D.IsTouchingLayers(_collider, Ground);
-        Walled = Physics2D.IsTouchingLayers(_collider, Wall);
-
-        if (Grounded)
-        {
-            _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);           
-            
-            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
-            {
-                _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
-            }
-        }
-
-        if (Walled && _rigidbody.velocity.y < 0)
-        {
-            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
-            {
-                          
-                if (Facing == Sides.RIGHT)
-                {
-                     _rigidbody.velocity = new Vector2(_rigidbody.velocity.x - BounceFromWallForce, JumpForce);
-                    Facing = Sides.LEFT;
-                    Flip();
-                }
-                else 
-                {
-                     _rigidbody.velocity = new Vector2(_rigidbody.velocity.x + BounceFromWallForce, JumpForce);
-                    Facing = Sides.RIGHT;
-                    Flip();
-                }
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.RightArrow)) _moveDirection++;
-        if (Input.GetKeyDown(KeyCode.LeftArrow)) _moveDirection--;
-        if (Input.GetKeyUp(KeyCode.RightArrow)) _moveDirection--;
-        if (Input.GetKeyUp(KeyCode.LeftArrow)) _moveDirection++;
-        
-        if (_moveDirection == 1)
-        {
-            if (Facing == Sides.RIGHT)
-            {
-                Facing = Sides.LEFT;
-                Flip();
-            }
-        }
-        else if (_moveDirection == -1)
-        {
-            if (Facing == Sides.LEFT)
-            {
-                Facing = Sides.RIGHT;
-                Flip();
-            }
-        }
-    }
-    void Flip()
-    {
-        Vector2 localScale = gameObject.transform.localScale;
-        localScale.x *= -1;
-        gameObject.transform.localScale = localScale;
-    }
-
-     */
-
-
