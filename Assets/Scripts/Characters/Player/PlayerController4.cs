@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
-public class PlayerController2 : MonoBehaviour
+public class PlayerController4 : MonoBehaviour
 {
     public UnityEvent TubeStopperDestroy;
     public float JumpForce;
@@ -33,21 +33,23 @@ public class PlayerController2 : MonoBehaviour
 
 
     public State CurrentState = State.Inert;
-    
-   // public bool _grounded = false;
-   // public bool _walled = false;
-    //public bool _inert = false;
+
+
+
+    public bool _grounded = false;
+    public bool _walled = false;
+    public bool _inert = false;
 
 
     private Rigidbody2D _rigidbody;
     private Collider2D _collider;
-    public LayerMask Ground;
+
 
 
     // Use this for initialization
     void Start()
     {
-       // Ground = LayerMask.GetMask("Ground");
+
         _rigidbody = gameObject.GetComponent<Rigidbody2D>();
         _collider = gameObject.GetComponent<Collider2D>();
     }
@@ -55,73 +57,57 @@ public class PlayerController2 : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D coll)
     {
-        if (coll.gameObject.layer == LayerMask.NameToLayer("Wall"))
+        if (coll.collider.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
-            if (CurrentState != State.Grounded)
+            Debug.Log("hjkh");
+            _walled = true;
+            if (!_grounded)
             {
                 _rigidbody.velocity = new Vector2(0, 0);
                 _rigidbody.gravityScale = 0;
             }
-            
+
+
         }
+        else if (coll.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            _grounded = true;
+
+
+        }
+
+
 
     }
-
-  /*  void OnCollisionStay2D(Collision2D coll)
-    {
-        if (coll.gameObject.layer == LayerMask.GetMask("Wall"))
-        {
-            if (CurrentState == State.Grounded)
-            {
-                CurrentState = State.WallHugging;
-                _rigidbody.velocity = new Vector2(0, 0);
-                _rigidbody.gravityScale = 0;
-            }
-
-
-        }
-        
-    }*/
-
     void OnCollisionExit2D(Collision2D coll)
     {
         if (coll.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
-            if (CurrentState == State.Cornering)
+            _grounded = false;
+            if (_walled)
             {
-               _rigidbody.velocity = new Vector2(0, 0);
+                _rigidbody.velocity = new Vector2(0, 0);
                 _rigidbody.gravityScale = 0;
             }
         }
         else if (coll.collider.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
-            if (CurrentState == State.WallHugging)
-            {
-                _rigidbody.gravityScale = 10;
-                _wallTimer = 0;
-            }
+            _walled = false;
+            _rigidbody.gravityScale = 10;
+            _wallTimer = 0;
+
         }
-       
+
     }
 
 
-    void LateUpdate()
+    void Update()
     {
 
-        if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Ground")))
-        {
-            if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Wall"))) CurrentState = State.Cornering;
-            else CurrentState = State.Grounded;
-        }
-       else if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Tube")))
-        {
-            if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Stopper"))) CurrentState = State.TubeStopped;
-            else CurrentState = State.TubeSliding;
-        }
-        else if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Wall"))) CurrentState = State.WallHugging;
-        else if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Handbar"))) CurrentState = State.HandBarring;
-        else if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Slope"))) CurrentState = State.Sloping;
+        if (_grounded) CurrentState = State.Grounded;
+        else if (_walled) CurrentState = State.WallHugging;
         else CurrentState = State.Inert;
+
 
 
 
@@ -149,7 +135,7 @@ public class PlayerController2 : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
                 if (Input.GetKeyDown(KeyCode.Space)) Jump();
                 break;
-                
+
         }
 
         /*
@@ -201,7 +187,7 @@ public class PlayerController2 : MonoBehaviour
 
     public void Jump()
     {
-        switch(CurrentState)
+        switch (CurrentState)
         {
             case State.Grounded:
                 _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);

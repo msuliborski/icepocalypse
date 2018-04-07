@@ -182,7 +182,7 @@ GameObject:
   - component: {fileID: 23609769251009518}
   - component: {fileID: 61956264019775212}
   - component: {fileID: 50314044612112042}
-  - component: {fileID: 114100916840911368}
+  - component: {fileID: 114068917165034232}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -2098,7 +2098,7 @@ GameObject:
   - component: {fileID: 33435528656059018}
   - component: {fileID: 65276070245161742}
   - component: {fileID: 23923796018747570}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Handbar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2317,7 +2317,7 @@ GameObject:
   - component: {fileID: 33026781678976274}
   - component: {fileID: 65044329688754716}
   - component: {fileID: 23950831172629856}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Handbar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2678,7 +2678,7 @@ GameObject:
   - component: {fileID: 33447722203574134}
   - component: {fileID: 65777648289967094}
   - component: {fileID: 23709022670595990}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Handbar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5584,7 +5584,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1036782658192920}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.9, y: 16, z: 0}
+  m_LocalPosition: {x: 42.9, y: 6, z: 0}
   m_LocalScale: {x: 0.95, y: 1.9, z: 1}
   m_Children:
   - {fileID: 4866399732233784}
@@ -13410,7 +13410,7 @@ AudioListener:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1091728987386532}
   m_Enabled: 1
---- !u!114 &114100916840911368
+--- !u!114 &114068917165034232
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -13418,56 +13418,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 1036782658192920}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf84ed34d89b56945bef85ec73925951, type: 3}
+  m_Script: {fileID: 11500000, guid: fb78d7c21b2e4b948b389c0c45589b9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   TubeStopperDestroy:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: 6f92b19b83838ef4982a5b61329596c0, type: 2}
-        m_MethodName: Raise
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   JumpForce: 18
   WallReflectionForce: 16
-  MoveSpeed: 10
+  MoveSpeed: 8
   _wallTimer: 0
   FacingRight: 1
   _obstacleHasJumped: 0
+  _grounded: 0
+  _walled: 0
+  _edged_TL: 0
+  _edged_TR: 0
+  _edged_BL: 0
+  _edged_BR: 0
+  _spiked: 0
+  _handbared: 0
+  _sloped: 0
+  _tubed: 0
+  _tubeStopped: 0
   CurrentState: 0
-  Ground:
-    serializedVersion: 2
-    m_Bits: 256
-  Wall:
-    serializedVersion: 2
-    m_Bits: 512
-  Tube:
-    serializedVersion: 2
-    m_Bits: 1024
-  Obstacle_R:
-    serializedVersion: 2
-    m_Bits: 65536
-  Obstacle_L:
-    serializedVersion: 2
-    m_Bits: 2048
-  HandBar:
-    serializedVersion: 2
-    m_Bits: 16384
-  Stopper:
-    serializedVersion: 2
-    m_Bits: 4096
-  Slope:
-    serializedVersion: 2
-    m_Bits: 8192
 --- !u!114 &114132115202401002
 MonoBehaviour:
   m_ObjectHideFlags: 1
