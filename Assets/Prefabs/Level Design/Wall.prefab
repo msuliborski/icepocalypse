@@ -868,8 +868,8 @@ EdgeCollider2D:
   m_Offset: {x: -1, y: -1}
   m_EdgeRadius: 0
   m_Points:
-  - {x: 0.4, y: 0.6}
-  - {x: 0.5, y: 0.6}
+  - {x: 0.4, y: 0.7}
+  - {x: 0.5, y: 0.7}
 --- !u!68 &68183614694305696
 EdgeCollider2D:
   m_ObjectHideFlags: 1
@@ -919,8 +919,8 @@ EdgeCollider2D:
   m_Offset: {x: -1, y: -1}
   m_EdgeRadius: 0
   m_Points:
-  - {x: 0.4, y: 1.5}
-  - {x: 0.5, y: 1.5}
+  - {x: 0.4, y: 1.4}
+  - {x: 0.5, y: 1.4}
 --- !u!68 &68420884990146730
 EdgeCollider2D:
   m_ObjectHideFlags: 1
@@ -936,8 +936,8 @@ EdgeCollider2D:
   m_Offset: {x: 0, y: 0}
   m_EdgeRadius: 0
   m_Points:
-  - {x: 0.5, y: -0.4}
-  - {x: 0.6, y: -0.4}
+  - {x: 0.5, y: -0.3}
+  - {x: 0.6, y: -0.3}
 --- !u!68 &68459326221713894
 EdgeCollider2D:
   m_ObjectHideFlags: 1
@@ -1021,5 +1021,5 @@ EdgeCollider2D:
   m_Offset: {x: 0, y: 0}
   m_EdgeRadius: 0
   m_Points:
-  - {x: 0.5, y: 0.5}
-  - {x: 0.6, y: 0.5}
+  - {x: 0.5, y: 0.4}
+  - {x: 0.6, y: 0.4}

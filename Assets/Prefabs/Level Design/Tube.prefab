@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 61476096481889230}
   - component: {fileID: 114728653659345912}
   - component: {fileID: 114554063150248954}
-  m_Layer: 12
+  m_Layer: 11
   m_Name: Stopper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
