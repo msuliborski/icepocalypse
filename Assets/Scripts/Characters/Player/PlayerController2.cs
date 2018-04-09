@@ -69,21 +69,7 @@ public class PlayerController2 : MonoBehaviour
 
     }
 
-  /*  void OnCollisionStay2D(Collision2D coll)
-    {
-        if (coll.gameObject.layer == LayerMask.GetMask("Wall"))
-        {
-            if (CurrentState == State.Grounded)
-            {
-                CurrentState = State.WallHugging;
-                _rigidbody.velocity = new Vector2(0, 0);
-                _rigidbody.gravityScale = 0;
-            }
-
-
-        }
-        
-    }*/
+ 
 
     void OnCollisionExit2D(Collision2D coll)
     {
@@ -116,7 +102,7 @@ public class PlayerController2 : MonoBehaviour
 
         if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Ground")))
         {
-            PrevState = CurrentState;
+            
             if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Wall"))) CurrentState = State.Cornering;
             else CurrentState = State.Grounded;
         }

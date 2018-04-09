@@ -59,8 +59,7 @@ public class PlayerController4 : MonoBehaviour
     {
         if (coll.collider.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
-            Debug.Log("hjkh");
-            _walled = true;
+           _walled = true;
             if (!_grounded)
             {
                 _rigidbody.velocity = new Vector2(0, 0);
@@ -72,7 +71,7 @@ public class PlayerController4 : MonoBehaviour
         else if (coll.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             _grounded = true;
-
+            Debug.Log("GRAUNDD!");
 
         }
 
