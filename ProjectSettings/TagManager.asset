@@ -19,14 +19,14 @@ TagManager:
   - Ground
   - Wall
   - Tube
-  - Obstacle_L
-  - Stopper
+  - TubeStopper
   - Slope
   - Handbar
   - Spikes
-  - Obstacle_R
-  - 
-  - 
+  - Edge_TL
+  - Edge_TR
+  - Edge_BL
+  - Edge_BR
   - 
   - 
   - 
