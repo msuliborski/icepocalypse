@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Scripts.Variables;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
@@ -54,34 +55,32 @@ public class UIController : MonoBehaviour
 
 	public void OnStopButtonClicked()
 	{
-		Debug.Log("stop button clicked");
-		var pce = Player.GetComponent<PlayerControllerExperimental>();
-		pce.StopMovement();
-		
-		var leftButton = LeftButton.GetComponent<Button>();
-		leftButton.interactable = true;
-
-		var rightButton = RightButton.GetComponent<Button>();
-		rightButton.interactable = true;
-
-		var stopButton = StopButton.GetComponent<Button>();
-		stopButton.interactable = false;
+		SceneManager.LoadScene(0);
 		
 	}
 
-	private void CheckGesture(float distance)
+	private void CheckGesture(Vector2 dist)
 	{
-		if (distance > SwipeDetectDistance)
+		if (dist.y > SwipeDetectDistance)
 		{
 			Debug.Log("swipe up");
 			var pce = Player.GetComponent<PlayerControllerExperimental>();
 			pce.Jump();
 		}
-		else if(distance < -SwipeDetectDistance)
+		else if(dist.y < -SwipeDetectDistance)
 		{
 			var pce = Player.GetComponent<PlayerControllerExperimental>();
 			pce.OnKeyDown();
 			Debug.Log("swipe down");
+		}
+
+		if (dist.x > SwipeDetectDistance * 2.5f)
+		{
+			OnRightButtonClicked();
+		}
+		else if (dist.x < -SwipeDetectDistance * 2.5f)
+		{
+			OnLeftButtonClicked();
 		}
 		
 	}
@@ -101,8 +100,10 @@ public class UIController : MonoBehaviour
 		{
 			if (_touching)
 			{
-				var distance = Input.mousePosition.y - _startPosition.y;
-				CheckGesture(distance);
+				Vector2 dist;
+				dist.x = Input.mousePosition.x - _startPosition.x;
+				dist.y = Input.mousePosition.y - _startPosition.y;
+				CheckGesture(dist);
 			}
 			_touching = false;
 		}
@@ -116,8 +117,10 @@ public class UIController : MonoBehaviour
 				break;
 			
 			case TouchPhase.Ended:
-				var distance = touch.position.y - _startPosition.y;
-				CheckGesture(distance);
+				Vector2 dist;
+				dist.x = Input.mousePosition.x - _startPosition.x;
+				dist.y = Input.mousePosition.y - _startPosition.y;
+				CheckGesture(dist);
 				break;
 				
 ;		}
