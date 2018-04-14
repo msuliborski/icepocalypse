@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 23541445383034570}
   - component: {fileID: 61721577153555882}
   - component: {fileID: 50170926940052808}
-  - component: {fileID: 114458170442097392}
+  - component: {fileID: 114342131917973164}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -69,7 +69,7 @@ Transform:
   m_GameObject: {fileID: 1910452992870528}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 5.9, y: 16, z: 0}
-  m_LocalScale: {x: 0.95, y: 1.9, z: 1}
+  m_LocalScale: {x: 0.98, y: 1.98, z: 1}
   m_Children:
   - {fileID: 4405318206569360}
   m_Father: {fileID: 0}
@@ -202,7 +202,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &114458170442097392
+--- !u!114 &114342131917973164
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -210,7 +210,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1910452992870528}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cba51444d59d39a4f941b2478e1e0c95, type: 3}
+  m_Script: {fileID: 11500000, guid: fb78d7c21b2e4b948b389c0c45589b9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   TubeStopperDestroy:
@@ -218,14 +218,22 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-    m_CallsDirty: 1
-  JumpForce: 0
-  WallReflectionForce: 0
-  MoveSpeed: 0
+  JumpForce: 18
+  WallReflectionForce: 16
+  MoveSpeed: 8
   _wallTimer: 0
   FacingRight: 1
-  _moveDirection: 0
+  _obstacleHasJumped: 0
+  _grounded: 0
+  _walled: 0
+  _edged_TL: 0
+  _edged_TR: 0
+  _edged_BL: 0
+  _edged_BR: 0
+  _spiked: 0
+  _handbared: 0
+  _sloped: 0
+  _tubed: 0
+  _tubeStopped: 0
   CurrentState: 0
-  _rigidbody: {fileID: 0}
-  _collider: {fileID: 0}
-  currentCollisions: []
+  isScripting: 0
