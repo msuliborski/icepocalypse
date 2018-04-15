@@ -35,13 +35,9 @@ public class PlayerControllerExperimental : MonoBehaviour
     private Vector3 _edgePoint2;
     private Vector3 _edgePoint3;
 
-
-    public enum ScriptName
-    {
-        EdgeClimbing
-    }
-
-    public ScriptName CurrentScript;
+    private List<Vector3> _scriptDestinations;
+    private float _scriptSpeed;
+    private int _index;
 
 
     public enum PlayerState
@@ -57,7 +53,6 @@ public class PlayerControllerExperimental : MonoBehaviour
         TubeSliding,
         TubeStopped,
         Sloping,
-        
     }
 
 	public PlayerState CurrentState = PlayerState.Inert;
@@ -88,27 +83,45 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (!_isScripting)
         {
 
-            if (collision.gameObject.transform.name == "Edge") _edgePoint1 = new Vector3(_rigidbody.transform.position.x, collision.gameObject.transform.localScale.y - playerHeight / 2, _rigidbody.transform.position.z);
-            
+          /*
+           if (collision.gameObject.transform.name == "Edge")
+            {
+                _index = 0;
+                _scriptDestinations.Clear();
+                _scriptDestinations.Add(new Vector3(_rigidbody.transform.position.x, collision.gameObject.transform.localScale.y - playerHeight / 2, _rigidbody.transform.position.z));
                 
-           
-
+            }
+            */
+            if (collision.gameObject.transform.name == "Wall_L")
+            {
+                _index = 0;
+                _scriptDestinations.Clear();
+                _scriptDestinations.Add(collision.gameObject.transform.position + new Vector3(-0.5f - playerWidth / 2, collision.gameObject.transform.localScale.y / 2 - playerHeight / 2, 0));
+                _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
+                _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(1f, 0, 0));
+            }
+            else if (collision.gameObject.transform.name == "Wall_R")
+            {
+                _index = 0;
+                _scriptDestinations.Clear();
+                _scriptDestinations.Add(collision.gameObject.transform.position + new Vector3(1f, collision.gameObject.transform.localScale.y / 2 + playerHeight, 0));
+                _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
+                _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(-1f, 0, 0));
+            }
         }
     }
 
     private void script()
     {
-        switch (CurrentScript)
+        transform.position = Vector2.MoveTowards(_rigidbody.transform.position, _scriptDestinations[_index], _scriptSpeed * Time.deltaTime);
+        if (_rigidbody.transform.position == _scriptDestinations[_index])
         {
-            case ScriptName.EdgeClimbing:
-                if (!_firstPointReached)
-                {
-                    transform.position = Vector2.MoveTowards(_rigidbody.transform.position, _edgePoint1, 4 * Time.deltaTime);
-                    if (_rigidbody.transform.position == _edgePoint1) _firstPointReached = true;
-                    
-                }
-                break;
-
+            if (_index < _scriptDestinations.Count - 1) _index++;
+            else
+            {
+                _rigidbody.isKinematic = false;
+                _isScripting = false;
+            }
         }
     }
 
@@ -218,7 +231,9 @@ public class PlayerControllerExperimental : MonoBehaviour
                     break;
 
                 case PlayerState.EgdeClimbingCorner:
-                    onEdgeCornerImpact();
+
+                    setScript(4.0f);
+
                     break;
 
             }
@@ -280,7 +295,6 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
     }
 
-
     private void manageWallTimer()
     {
         _wallTimer += Time.deltaTime;
@@ -321,25 +335,12 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
     }
 
-
-
-    private void onEdgeCornerImpact()
+    void setScript(float speed)
     {
+        _scriptSpeed = speed;
         _isScripting = true;
-        CurrentScript = ScriptName.EdgeClimbing;
         _rigidbody.isKinematic = true;
-       //if(!_edgeCornerImpact)
-        //{
-          //  _edgeCornerImpact = true;
-           // transform.position = Vector2.MoveTowards(_rigidbody.transform.position, _edgePoint1, 4 * Time.deltaTime);
-       // }
     }
-
-    private void onEdgeBodyImpact()
-    {
-       // _isScripting = true;
-    }
-
     private void onWallImpact()
     {
         if (!_wallImpact)
@@ -363,12 +364,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         _obstacleHasJumped = false;
     }
 
-    private void resetPoints()
-    {
-        _firstPointReached = false;
-        _secondPointReached = false;
-        _thirdPointReached = false;
-    }
+    
 }
 
 
