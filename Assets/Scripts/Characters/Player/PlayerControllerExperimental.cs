@@ -32,13 +32,12 @@ public class PlayerControllerExperimental : MonoBehaviour
         WallClimbing,
         HandBarring,
         WallHugging,
-        ObstacleClimbing_L,
-        ObstacleClimbing_R,
+        EgdeClimbingBody,
+        EgdeClimbingCorner,
         TubeSliding,
         TubeStopped,
         Sloping,
-        EdgeClimbingL, 
-        EdgeClimbingR
+        
     }
 
 	public PlayerState CurrentState = PlayerState.Inert;
@@ -51,21 +50,20 @@ public class PlayerControllerExperimental : MonoBehaviour
     private LayerMask HandBar;
     private LayerMask Stopper;
     private LayerMask Slope;
-    private LayerMask Edge_TL;
-    private LayerMask Edge_TR;
-    private LayerMask Edge_BL;
-    private LayerMask Edge_BR;
+    private LayerMask Edge;
 
     private Rigidbody2D _rigidbody;
     private Collider2D _colliderWhole;
     private Collider2D _colliderBody;
     private Collider2D _colliderLegs;
+    private Collider2D _colliderCorner;
 
     // Use this for initialization
     void Start()
     {
         _rigidbody = gameObject.GetComponent<Rigidbody2D>();
         _colliderBody = gameObject.GetComponents<Collider2D>()[0];
+        _colliderCorner = gameObject.GetComponents<Collider2D>()[3];
         _colliderLegs = gameObject.GetComponents<Collider2D>()[2];
         _colliderWhole = gameObject.GetComponents<Collider2D>()[1];
         Ground = LayerMask.GetMask("Ground");
@@ -74,10 +72,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         Stopper = LayerMask.GetMask("TubeStopper");
         HandBar = LayerMask.GetMask("Handbar");
         Slope = LayerMask.GetMask("Slope");
-        Edge_TL = LayerMask.GetMask("Edge_TL");
-        Edge_TR = LayerMask.GetMask("Edge_TR");
-        Edge_BL = LayerMask.GetMask("Edge_BL");
-        Edge_BR = LayerMask.GetMask("Edge_BR");
+        Edge = LayerMask.GetMask("Edge");
     }
 
 
@@ -89,18 +84,15 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
         else
         {
-            if (Physics2D.IsTouchingLayers(_colliderLegs, Ground)) { CurrentState = PlayerState.Grounded;
-                Debug.Log("sss");
-            }
-            else if (Physics2D.IsTouchingLayers(_colliderBody, Obstacle_R)) CurrentState = PlayerState.ObstacleClimbing_R;
-            else if (Physics2D.IsTouchingLayers(_colliderBody, Obstacle_L)) CurrentState = PlayerState.ObstacleClimbing_L;
+            if (Physics2D.IsTouchingLayers(_colliderLegs, Ground)) CurrentState = PlayerState.Grounded;
             else if (Physics2D.IsTouchingLayers(_colliderBody, Tube) && !_tubeIgnore)
             {
                 if (Physics2D.IsTouchingLayers(_colliderLegs, Stopper)) CurrentState = PlayerState.TubeStopped;
                 else CurrentState = PlayerState.TubeSliding;
             }
             else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
-            else if (Physics2D.IsTouchingLayers(_colliderBody, Edge_BL)) CurrentState = PlayerState.EdgeClimbingL;
+            else if (Physics2D.IsTouchingLayers(_colliderBody, Edge)) CurrentState = PlayerState.EgdeClimbingBody;
+            else if (Physics2D.IsTouchingLayers(_colliderCorner, Edge)) CurrentState = PlayerState.EgdeClimbingCorner;
             else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
             else if (Physics2D.IsTouchingLayers(_colliderWhole, HandBar)) CurrentState = PlayerState.HandBarring;
             else if (Physics2D.IsTouchingLayers(_colliderWhole, Slope)) CurrentState = PlayerState.Sloping;
@@ -108,8 +100,6 @@ public class PlayerControllerExperimental : MonoBehaviour
 
             switch (CurrentState)
             {
-
-
                 case PlayerState.Grounded:
 
                     movement();
@@ -122,7 +112,6 @@ public class PlayerControllerExperimental : MonoBehaviour
                     _tubeIgnore = false;
 
                     break;
-
 
                 case PlayerState.Inert:
 
@@ -168,6 +157,15 @@ public class PlayerControllerExperimental : MonoBehaviour
                     if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
 
                     break;
+
+                case PlayerState.EgdeClimbingBody:
+
+                    break;
+
+                case PlayerState.EgdeClimbingCorner:
+
+                    break;
+
             }
         }
     }
@@ -211,7 +209,6 @@ public class PlayerControllerExperimental : MonoBehaviour
             else
                 SetFacingRight(true);
         }
-         else if (CurrentState == PlayerState.ObstacleClimbing_R || CurrentState == PlayerState.ObstacleClimbing_L) _obstacleHasJumped = true;
     }
 
     public void SetFacingRight(bool _facingRight)
