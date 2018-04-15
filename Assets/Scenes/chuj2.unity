@@ -113,7 +113,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &1360501069
+--- !u!1001 &139490609
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -122,11 +122,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4153209056374456, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 437.77274
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4153209056374456, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 125.35582
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4153209056374456, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
       propertyPath: m_LocalPosition.z
@@ -152,17 +152,48 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1559294666529846, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
-      propertyPath: m_TagString
-      value: corner_collider
+    - target: {fileID: 4984546252182128, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 25.6
       objectReference: {fileID: 0}
-    - target: {fileID: 1503063474274188, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
-      propertyPath: m_TagString
-      value: legs_collider
+    - target: {fileID: 4984546252182128, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 8.7
       objectReference: {fileID: 0}
-    - target: {fileID: 1149864353261938, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
-      propertyPath: m_TagString
-      value: body_collider
+    - target: {fileID: 50337660429004526, guid: 033dfe421c4b34912944da56dcbd4588,
+        type: 2}
+      propertyPath: m_CollisionDetection
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 50337660429004526, guid: 033dfe421c4b34912944da56dcbd4588,
+        type: 2}
+      propertyPath: m_Interpolate
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 68117993753528750, guid: 033dfe421c4b34912944da56dcbd4588,
+        type: 2}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 68117993753528750, guid: 033dfe421c4b34912944da56dcbd4588,
+        type: 2}
+      propertyPath: m_Points.Array.data[0].x
+      value: -0.5061455
+      objectReference: {fileID: 0}
+    - target: {fileID: 61958137967479768, guid: 033dfe421c4b34912944da56dcbd4588,
+        type: 2}
+      propertyPath: m_Size.y
+      value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 61910979267393110, guid: 033dfe421c4b34912944da56dcbd4588,
+        type: 2}
+      propertyPath: m_Size.y
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 61910979267393110, guid: 033dfe421c4b34912944da56dcbd4588,
+        type: 2}
+      propertyPath: m_Offset.y
+      value: 0.425
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}

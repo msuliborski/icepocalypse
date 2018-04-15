@@ -13,32 +13,20 @@ public class PlayerControllerExperimental : MonoBehaviour
     public float MoveSpeed = 10;
     public float _wallTimer = 0;
     public bool FacingRight = true;
-    float _moveDirection = 0;
+    private float _moveDirection = 0;
 
-    private bool _edgeCornerImpact = false;
-    private bool _edgeBodyImpact = false;
     private bool _wallImpact = false;
     private bool _tubeImpact = false;
     private bool _stoppedImpact = false;
     private bool _slopeImpact = false;
     public bool _obstacleHasJumped = false;
     private bool _tubeIgnore = false;
-
-    public bool _isScripting = false;
-
-
-    private bool _firstPointReached = false;
-    private bool _secondPointReached = false;
-    private bool _thirdPointReached = false;
-
-    private Vector3 _edgePoint1;
-    private Vector3 _edgePoint2;
-    private Vector3 _edgePoint3;
-
+    
     private List<Vector3> _scriptDestinations;
     private float _scriptSpeed;
+    public bool _isScripting = false;
     public int _index;
-
+    public int _indexToReact = -1;    
 
     public enum PlayerState
     {
@@ -76,54 +64,34 @@ public class PlayerControllerExperimental : MonoBehaviour
     private float playerWidth;
     private float playerHeight;
 
-
-
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (!_isScripting)
         {
-
-          /*
-           if (collision.gameObject.transform.name == "Edge")
-            {
-                _index = 0;
-                _scriptDestinations.Clear();
-                _scriptDestinations.Add(new Vector3(_rigidbody.transform.position.x, collision.gameObject.transform.localScale.y - playerHeight / 2, _rigidbody.transform.position.z));
-                
-            }
-            */
             if (collision.gameObject.transform.name == "Wall")
             {
-               
-                
-                _index = 0;
+                //_index = 0;
                 _scriptDestinations.Clear();
                 _scriptDestinations.Add(collision.gameObject.transform.position + new Vector3(-1f , collision.gameObject.transform.localScale.y/2 - 1f, 0));
                 _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
                 _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(1f, 0, 0));
-
-                Debug.Log(collision.gameObject.transform.position);
-                Debug.Log(_scriptDestinations[0]);
-            
-           // else if (collision.gameObject.transform.name == "Wall")
-            
-               
-               // _index = 0;
-               // _scriptDestinations.Clear();
-               // _scriptDestinations.Add(collision.gameObject.transform.position + new Vector3(1f, collision.gameObject.transform.localScale.y / 2 + playerHeight, 0));
-               // _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
-               // _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(-1f, 0, 0));
             }
         }
     }
 
     private void script()
     {
-        Debug.Log(_scriptDestinations[0] + " ergres " + _scriptDestinations[1]);
         transform.position = Vector2.MoveTowards(_rigidbody.transform.position, _scriptDestinations[_index], _scriptSpeed * Time.deltaTime);
         if (_rigidbody.transform.position == _scriptDestinations[_index])
         {
-            if (_index < _scriptDestinations.Count - 1) _index++;
+            if (_index < _scriptDestinations.Count - 1)
+            {
+                if (_indexToReact == _index)
+                {
+                    if (Input.GetKeyDown(KeyCode.Space)) OnKeySpace();
+                }
+                else _index++;
+            }
             else
             {
                 _rigidbody.isKinematic = false;
@@ -152,11 +120,9 @@ public class PlayerControllerExperimental : MonoBehaviour
         _scriptDestinations = new List<Vector3>();
     }
 
-
     void Update()
     {
-        //Debug.Log(_scriptDestinations[0] +" vaeyfvewv "+ _scriptDestinations[1]);
-
+        
         if (Input.GetKeyDown(KeyCode.P)) Debug.Break();
 
         if (_isScripting) script();
@@ -169,7 +135,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                 else CurrentState = PlayerState.TubeSliding;
             }
             else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
-            // else if (Physics2D.IsTouchingLayers(_colliderBody, Edge)) CurrentState = PlayerState.EgdeClimbingBody;
+            else if (Physics2D.IsTouchingLayers(_colliderBody, Edge)) CurrentState = PlayerState.EgdeClimbingBody;
             else if (Physics2D.IsTouchingLayers(_colliderCorner, Edge)) CurrentState = PlayerState.EgdeClimbingCorner; 
             else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
             else if (Physics2D.IsTouchingLayers(_colliderWhole, HandBar)) CurrentState = PlayerState.HandBarring;
@@ -193,8 +159,6 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                 case PlayerState.Inert:
 
-                    // if (Input.GetKeyDown(KeyCode.RightArrow)) SetFacingRight(true);
-                    // if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false);
                     resetImpacts();
 
                     break;
@@ -202,11 +166,9 @@ public class PlayerControllerExperimental : MonoBehaviour
                 case PlayerState.WallHugging:
 
                     onWallImpact();
-
                     manageWallTimer();
 
                     if ((Input.GetKeyDown(KeyCode.Space))) OnKeySpace();
-
 
                     break;
 
@@ -238,16 +200,17 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                 case PlayerState.EgdeClimbingBody:
 
+                    onEdgeBodyImpact(4.0f);
+
                     break;
 
                 case PlayerState.EgdeClimbingCorner:
-                    _isScripting = true;
-                    _rigidbody.isKinematic = true;
-                    setScript(4.0f);
-                    _rigidbody.velocity = new Vector3(0, 0, 0);
+
+                    onEdgeCornerImpact(4.0f);
 
                     break;
 
+                
             }
         }
     }
@@ -279,15 +242,19 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     public void OnKeySpace()
     {
-        if (CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Sloping) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
-        else if (CurrentState == PlayerState.WallHugging)
+        if (_isScripting) _index++;
+        else
         {
-            _rigidbody.velocity = new Vector2(_rigidbody.velocity.x - _moveDirection * WallReflectionForce, JumpForce);
+            if (CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Sloping) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
+            else if (CurrentState == PlayerState.WallHugging)
+            {
+                _rigidbody.velocity = new Vector2(_rigidbody.velocity.x - _moveDirection * WallReflectionForce, JumpForce);
 
-            if (FacingRight)
-                SetFacingRight(false);
-            else
-                SetFacingRight(true);
+                if (FacingRight)
+                    SetFacingRight(false);
+                else
+                    SetFacingRight(true);
+            }
         }
     }
 
@@ -347,12 +314,26 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
     }
 
-    void setScript(float speed)
+    void onEdgeCornerImpact(float speed)
     {
         _scriptSpeed = speed;
-        //_isScripting = true;
-        //_rigidbody.isKinematic = true;
+        _isScripting = true;
+        _rigidbody.isKinematic = true;
+        _rigidbody.velocity = new Vector3(0, 0, 0);
+        _index = 0;
+        _indexToReact = 0;
     }
+
+    void onEdgeBodyImpact(float speed)
+    {
+        _scriptSpeed = speed;
+        _isScripting = true;
+        _rigidbody.isKinematic = true;
+        _rigidbody.velocity = new Vector3(0, 0, 0);
+        _index = 1;
+        _indexToReact = -1;
+    }
+
     private void onWallImpact()
     {
         if (!_wallImpact)
@@ -375,8 +356,6 @@ public class PlayerControllerExperimental : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 0, 0);
         _obstacleHasJumped = false;
     }
-
-    
 }
 
 
