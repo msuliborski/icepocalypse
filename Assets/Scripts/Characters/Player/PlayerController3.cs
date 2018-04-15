@@ -115,8 +115,7 @@ public class PlayerController3 : MonoBehaviour
         
         playerWidth = _rigidbody.transform.localScale.x;
         playerHeight = _rigidbody.transform.localScale.y;
-		
-    }
+	}
 
 
 	void OnCollisionEnter2D(Collision2D collision) {
