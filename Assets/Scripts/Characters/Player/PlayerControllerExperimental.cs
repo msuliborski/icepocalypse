@@ -22,6 +22,8 @@ public class PlayerControllerExperimental : MonoBehaviour
     public bool _obstacleHasJumped = false;
     private bool _tubeIgnore = false;
 
+    public bool _isScripting = false;
+
     public enum PlayerState
     {
         Inert,
@@ -80,84 +82,91 @@ public class PlayerControllerExperimental : MonoBehaviour
 
 
     void Update()
-    {   
-        if (Physics2D.IsTouchingLayers(_colliderLegs, Ground)) CurrentState = PlayerState.Grounded;
-        else if (Physics2D.IsTouchingLayers(_colliderBody, Obstacle_R)) CurrentState = PlayerState.ObstacleClimbing_R;
-        else if (Physics2D.IsTouchingLayers(_colliderBody, Obstacle_L)) CurrentState = PlayerState.ObstacleClimbing_L;
-        else if (Physics2D.IsTouchingLayers(_colliderBody, Tube) && !_tubeIgnore)
+    {
+        if (_isScripting)
         {
-            if (Physics2D.IsTouchingLayers(_colliderLegs, Stopper)) CurrentState = PlayerState.TubeStopped;
-            else CurrentState = PlayerState.TubeSliding;
+
         }
-        else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
-        else if (Physics2D.IsTouchingLayers(_colliderBody, Edge_BL)) CurrentState = PlayerState.EdgeClimbingL;
-        else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
-        else if (Physics2D.IsTouchingLayers(_colliderWhole, HandBar)) CurrentState = PlayerState.HandBarring;
-        else if (Physics2D.IsTouchingLayers(_colliderWhole, Slope)) CurrentState = PlayerState.Sloping;
-        else CurrentState = PlayerState.Inert;
-
-        switch (CurrentState)
+        else
         {
+            if (Physics2D.IsTouchingLayers(_colliderLegs, Ground)) CurrentState = PlayerState.Grounded;
+            else if (Physics2D.IsTouchingLayers(_colliderBody, Obstacle_R)) CurrentState = PlayerState.ObstacleClimbing_R;
+            else if (Physics2D.IsTouchingLayers(_colliderBody, Obstacle_L)) CurrentState = PlayerState.ObstacleClimbing_L;
+            else if (Physics2D.IsTouchingLayers(_colliderBody, Tube) && !_tubeIgnore)
+            {
+                if (Physics2D.IsTouchingLayers(_colliderLegs, Stopper)) CurrentState = PlayerState.TubeStopped;
+                else CurrentState = PlayerState.TubeSliding;
+            }
+            else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
+            else if (Physics2D.IsTouchingLayers(_colliderBody, Edge_BL)) CurrentState = PlayerState.EdgeClimbingL;
+            else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
+            else if (Physics2D.IsTouchingLayers(_colliderWhole, HandBar)) CurrentState = PlayerState.HandBarring;
+            else if (Physics2D.IsTouchingLayers(_colliderWhole, Slope)) CurrentState = PlayerState.Sloping;
+            else CurrentState = PlayerState.Inert;
+
+            switch (CurrentState)
+            {
 
 
-            case PlayerState.Grounded:
+                case PlayerState.Grounded:
 
-                movement();
+                    movement();
 
-                if (Input.GetKeyDown(KeyCode.RightArrow)) SetFacingRight(true);
-                if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false);
-                if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
-                if (Input.GetKeyDown(KeyCode.Space)) OnKeySpace();
-                resetImpacts();
-                _tubeIgnore = false;
+                    if (Input.GetKeyDown(KeyCode.RightArrow)) SetFacingRight(true);
+                    if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false);
+                    if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
+                    if (Input.GetKeyDown(KeyCode.Space)) OnKeySpace();
+                    resetImpacts();
+                    _tubeIgnore = false;
 
-                break;
+                    break;
 
 
-            case PlayerState.Inert:
+                case PlayerState.Inert:
 
-               // if (Input.GetKeyDown(KeyCode.RightArrow)) SetFacingRight(true);
-               // if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false);
-                resetImpacts();
+                    // if (Input.GetKeyDown(KeyCode.RightArrow)) SetFacingRight(true);
+                    // if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false);
+                    resetImpacts();
 
-                break;
+                    break;
 
-            case PlayerState.WallHugging:
+                case PlayerState.WallHugging:
 
-                onWallImpact();
+                    onWallImpact();
 
-                manageWallTimer();
+                    manageWallTimer();
 
-                if ((Input.GetKeyDown(KeyCode.Space))) OnKeySpace();
-                
-                  
-                break;
+                    if ((Input.GetKeyDown(KeyCode.Space))) OnKeySpace();
 
-            case PlayerState.Sloping:
 
-                onSlopeImpact();
+                    break;
 
-                transform.rotation = Quaternion.Euler(0, 0, -30);
+                case PlayerState.Sloping:
 
-                if ((Input.GetKeyDown(KeyCode.Space))) OnKeySpace();
+                    onSlopeImpact();
 
-                break;
-           
-            case PlayerState.TubeSliding:
+                    transform.rotation = Quaternion.Euler(0, 0, -30);
 
-                onTubeImpact();
+                    if ((Input.GetKeyDown(KeyCode.Space))) OnKeySpace();
 
-                if (_rigidbody.velocity.y <= -3) _rigidbody.velocity = new Vector2(0, -3);
+                    break;
 
-                break;
+                case PlayerState.TubeSliding:
 
-            case PlayerState.TubeStopped:
+                    onTubeImpact();
 
-                onTubeStopperImpact();
+                    if (_rigidbody.velocity.y <= -3) _rigidbody.velocity = new Vector2(0, -3);
 
-                if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
+                    break;
 
-                break;
+                case PlayerState.TubeStopped:
+
+                    onTubeStopperImpact();
+
+                    if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
+
+                    break;
+            }
         }
     }
 
