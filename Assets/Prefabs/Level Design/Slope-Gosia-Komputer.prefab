@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 23448593969116266}
   - component: {fileID: 61499060139655016}
   m_Layer: 13
-  m_Name: Slope
+  m_Name: Slope-Gosia-Komputer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
