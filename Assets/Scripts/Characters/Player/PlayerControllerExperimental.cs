@@ -37,7 +37,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private List<Vector3> _scriptDestinations;
     private float _scriptSpeed;
-    private int _index;
+    public int _index;
 
 
     public enum PlayerState
@@ -92,27 +92,34 @@ public class PlayerControllerExperimental : MonoBehaviour
                 
             }
             */
-            if (collision.gameObject.transform.name == "Wall_L")
+            if (collision.gameObject.transform.name == "Wall")
             {
+               
+                
                 _index = 0;
                 _scriptDestinations.Clear();
-                _scriptDestinations.Add(collision.gameObject.transform.position + new Vector3(-0.5f - playerWidth / 2, collision.gameObject.transform.localScale.y / 2 - playerHeight / 2, 0));
+                _scriptDestinations.Add(collision.gameObject.transform.position + new Vector3(-1f , collision.gameObject.transform.localScale.y/2 - 1f, 0));
                 _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
                 _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(1f, 0, 0));
-            }
-            else if (collision.gameObject.transform.name == "Wall_R")
-            {
-                _index = 0;
-                _scriptDestinations.Clear();
-                _scriptDestinations.Add(collision.gameObject.transform.position + new Vector3(1f, collision.gameObject.transform.localScale.y / 2 + playerHeight, 0));
-                _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
-                _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(-1f, 0, 0));
+
+                Debug.Log(collision.gameObject.transform.position);
+                Debug.Log(_scriptDestinations[0]);
+            
+           // else if (collision.gameObject.transform.name == "Wall")
+            
+               
+               // _index = 0;
+               // _scriptDestinations.Clear();
+               // _scriptDestinations.Add(collision.gameObject.transform.position + new Vector3(1f, collision.gameObject.transform.localScale.y / 2 + playerHeight, 0));
+               // _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
+               // _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(-1f, 0, 0));
             }
         }
     }
 
     private void script()
     {
+        Debug.Log(_scriptDestinations[0] + " ergres " + _scriptDestinations[1]);
         transform.position = Vector2.MoveTowards(_rigidbody.transform.position, _scriptDestinations[_index], _scriptSpeed * Time.deltaTime);
         if (_rigidbody.transform.position == _scriptDestinations[_index])
         {
@@ -142,11 +149,14 @@ public class PlayerControllerExperimental : MonoBehaviour
         Edge = LayerMask.GetMask("Edge");
         playerWidth = _rigidbody.transform.localScale.x;
         playerHeight = _rigidbody.transform.localScale.y;
+        _scriptDestinations = new List<Vector3>();
     }
 
 
     void Update()
     {
+        //Debug.Log(_scriptDestinations[0] +" vaeyfvewv "+ _scriptDestinations[1]);
+
         if (Input.GetKeyDown(KeyCode.P)) Debug.Break();
 
         if (_isScripting) script();
@@ -160,7 +170,7 @@ public class PlayerControllerExperimental : MonoBehaviour
             }
             else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
             // else if (Physics2D.IsTouchingLayers(_colliderBody, Edge)) CurrentState = PlayerState.EgdeClimbingBody;
-            else if (Physics2D.IsTouchingLayers(_colliderCorner, Edge)) CurrentState = PlayerState.EgdeClimbingCorner;
+            else if (Physics2D.IsTouchingLayers(_colliderCorner, Edge)) CurrentState = PlayerState.EgdeClimbingCorner; 
             else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
             else if (Physics2D.IsTouchingLayers(_colliderWhole, HandBar)) CurrentState = PlayerState.HandBarring;
             else if (Physics2D.IsTouchingLayers(_colliderWhole, Slope)) CurrentState = PlayerState.Sloping;
@@ -231,8 +241,10 @@ public class PlayerControllerExperimental : MonoBehaviour
                     break;
 
                 case PlayerState.EgdeClimbingCorner:
-
+                    _isScripting = true;
+                    _rigidbody.isKinematic = true;
                     setScript(4.0f);
+                    _rigidbody.velocity = new Vector3(0, 0, 0);
 
                     break;
 
@@ -338,8 +350,8 @@ public class PlayerControllerExperimental : MonoBehaviour
     void setScript(float speed)
     {
         _scriptSpeed = speed;
-        _isScripting = true;
-        _rigidbody.isKinematic = true;
+        //_isScripting = true;
+        //_rigidbody.isKinematic = true;
     }
     private void onWallImpact()
     {
