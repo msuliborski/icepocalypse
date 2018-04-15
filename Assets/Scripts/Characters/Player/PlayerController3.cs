@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -447,7 +447,7 @@ public class PlayerController3 : MonoBehaviour
 
 
 
-=======
+/*
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -894,6 +894,6 @@ public class PlayerController3 : MonoBehaviour
      }
 }
 
+    */
 
 
->>>>>>> 87c2c57d4f5f5b43457a506cf9309f0c11b12a8a

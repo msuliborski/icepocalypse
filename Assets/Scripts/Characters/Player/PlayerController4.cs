@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -9,9 +9,9 @@ using UnityEngine.Events;
 public class PlayerController4 : MonoBehaviour
 {
     public UnityEvent TubeStopperDestroy;
-    public float JumpForce;
-    public float WallReflectionForce;
-    public float MoveSpeed;
+    public float JumpForce = 15;
+    public float WallReflectionForce = 17;
+    public float MoveSpeed = 10;
     public float _wallTimer = 0;
     public bool FacingRight = true;
     float _moveDirection = 0;
@@ -60,7 +60,7 @@ public class PlayerController4 : MonoBehaviour
     {
         if (coll.collider.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
-           _walled = true;
+            _walled = true;
             if (!_grounded)
             {
                 _rigidbody.velocity = new Vector2(0, 0);
@@ -138,26 +138,7 @@ public class PlayerController4 : MonoBehaviour
 
         }
 
-        /*
-        if (_grounded)
-        {
-            _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);
-            if (Input.GetKeyDown(KeyCode.RightArrow)) SetFacingRight(true);
-            if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false);
-            if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
-            if (Input.GetKeyDown(KeyCode.Space)) Jump();
-
-        }
-        else if (_walled)
-        {
-            _wallTimer += Time.deltaTime;
-
-            manageWallTimer();
-
-            if ((Input.GetKeyDown(KeyCode.Space))) Jump();
-
-        }
-        */
+       
 
 
 
@@ -226,7 +207,9 @@ public class PlayerController4 : MonoBehaviour
         }
 
     }
-=======
+}
+
+    /*
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -367,7 +350,7 @@ public class PlayerController4 : MonoBehaviour
 
         }
 
-        /*
+        
         if (_grounded)
         {
             _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);
@@ -386,7 +369,7 @@ public class PlayerController4 : MonoBehaviour
             if ((Input.GetKeyDown(KeyCode.Space))) Jump();
 
         }
-        */
+        
 
 
 
@@ -455,5 +438,5 @@ public class PlayerController4 : MonoBehaviour
         }
 
     }
->>>>>>> b7eb3e10ba4341598d15d3446e134dc630b431f1
-}
+
+}*/

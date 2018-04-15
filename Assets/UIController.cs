@@ -65,7 +65,7 @@ public class UIController : MonoBehaviour
 		{
 			Debug.Log("swipe up");
 			var pce = Player.GetComponent<PlayerControllerExperimental>();
-			pce.Jump();
+			pce.OnKeySpace();
 		}
 		else if(dist.y < -SwipeDetectDistance)
 		{

@@ -8,16 +8,16 @@ using UnityEngine.Events;
 public class PlayerController5 : MonoBehaviour
 {
     public UnityEvent TubeStopperDestroy;
-    public float JumpForce;
-    public float WallReflectionForce;
-    public float MoveSpeed;
+    public float JumpForce = 18;
+    public float WallReflectionForce = 17;
+    public float MoveSpeed = 10;
     public float _wallTimer = 0;
     public bool FacingRight = true;
     float _moveDirection = 0;
     int counter = 0;
 
-    public bool _obstacleHasJumped = false;
     private bool _tubeIgnore = false;
+    private bool _hasBounced = false;
 
 
     public enum PlayerState
@@ -49,15 +49,25 @@ public class PlayerController5 : MonoBehaviour
 
 
     private Rigidbody2D _rigidbody;
-    private Collider2D _collider;
-
+    private Collider2D _colliderWhole;
+    private Collider2D _colliderBody;
+    private Collider2D _colliderLegs;
+    
 
 
     // Use this for initialization
     void Start()
     {
         _rigidbody = gameObject.GetComponent<Rigidbody2D>();
-        _collider = gameObject.GetComponent<Collider2D>();
+        _colliderBody = gameObject.GetComponents<Collider2D>()[2];
+        _colliderLegs = gameObject.GetComponents<Collider2D>()[1];
+        _colliderWhole = gameObject.GetComponents<Collider2D>()[0];
+        Ground = LayerMask.GetMask("Ground");
+        Wall = LayerMask.GetMask("Wall");
+        Tube = LayerMask.GetMask("Tube");
+        Stopper = LayerMask.GetMask("TubeStopper");
+        HandBar = LayerMask.GetMask("Handbar");
+        Slope = LayerMask.GetMask("Slope");
     }
 
 
@@ -65,7 +75,8 @@ public class PlayerController5 : MonoBehaviour
     {
         if (coll.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
-            //Debug.Log("WallEnter"+counter);
+            // if(coll.gameObject.GetComponent<Collider2D> == _colliderBody) { }
+            Debug.Log(coll.gameObject.name);
             counter++;
             if (CurrentState != PlayerState.Grounded) onWallImpact();
         }
@@ -89,7 +100,7 @@ public class PlayerController5 : MonoBehaviour
         }
         else if (coll.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
-            //Debug.Log("WallEnter"+counter);
+            Debug.Log("WallEnter"+counter);
             counter++;
             _rigidbody.gravityScale = 10;
             _wallTimer = 0;
@@ -114,10 +125,11 @@ public class PlayerController5 : MonoBehaviour
         }
         else if (coll.collider.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
-            //Debug.Log("WallExit" + counter);
+            Debug.Log("WallExit" + counter);
             counter++;
             _rigidbody.gravityScale = 10;
             _wallTimer = 0;
+            _hasBounced = false;
         }
         else if (coll.collider.gameObject.layer == LayerMask.NameToLayer("Stopper"))
         {
@@ -132,6 +144,7 @@ public class PlayerController5 : MonoBehaviour
             counter++;
             transform.rotation = Quaternion.Euler(0, 0, 0);
             _rigidbody.gravityScale = 10;
+            
         }
 
     }
@@ -139,18 +152,22 @@ public class PlayerController5 : MonoBehaviour
 
     void Update()
     {
-        if (Physics2D.IsTouchingLayers(_collider, Ground)) CurrentState = PlayerState.Grounded;
-        else if (Physics2D.IsTouchingLayers(_collider, Obstacle_R)) CurrentState = PlayerState.ObstacleClimbing_R;
-        else if (Physics2D.IsTouchingLayers(_collider, Obstacle_L)) CurrentState = PlayerState.ObstacleClimbing_L;
-        else if (Physics2D.IsTouchingLayers(_collider, Tube) && !_tubeIgnore)
+
+        if (Input.GetKeyDown(KeyCode.P)) Debug.Break();
+
+       
+
+
+        if (Physics2D.IsTouchingLayers(_colliderLegs, Ground)) CurrentState = PlayerState.Grounded;
+        else if (Physics2D.IsTouchingLayers(_colliderBody, Tube) && !_tubeIgnore)
         {
-            if (Physics2D.IsTouchingLayers(_collider, Stopper)) CurrentState = PlayerState.TubeStopped;
+            if (Physics2D.IsTouchingLayers(_colliderBody, Stopper)) CurrentState = PlayerState.TubeStopped;
             else CurrentState = PlayerState.TubeSliding;
         }
 
-        else if (Physics2D.IsTouchingLayers(_collider, Wall)) CurrentState = PlayerState.WallHugging;
-        else if (Physics2D.IsTouchingLayers(_collider, HandBar)) CurrentState = PlayerState.HandBarring;
-        else if (Physics2D.IsTouchingLayers(_collider, Slope)) CurrentState = PlayerState.Sloping;
+        else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
+        else if (Physics2D.IsTouchingLayers(_colliderBody, HandBar)) CurrentState = PlayerState.HandBarring;
+        else if (Physics2D.IsTouchingLayers(_colliderWhole, Slope)) CurrentState = PlayerState.Sloping;
         else CurrentState = PlayerState.Inert;
 
 
@@ -167,24 +184,21 @@ public class PlayerController5 : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.RightArrow)) SetFacingRight(true);
                 if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false);
                 if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
-                if (Input.GetKeyDown(KeyCode.Space)) Jump();
+                if (Input.GetKeyDown(KeyCode.Space)) onKeySpace();
 
                break;
 
 
             case PlayerState.Inert:
 
-                if (Input.GetKeyDown(KeyCode.RightArrow)) SetFacingRight(true);
-                if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false);
 
-                break;
+               break;
 
             case PlayerState.WallHugging:
 
                manageWallTimer();
 
-                if ((Input.GetKeyDown(KeyCode.Space))) Jump();
-
+                if ((Input.GetKeyDown(KeyCode.Space))) onKeySpace();
 
                 break;
 
@@ -192,37 +206,7 @@ public class PlayerController5 : MonoBehaviour
 
                 transform.rotation = Quaternion.Euler(0, 0, -30);
 
-                if ((Input.GetKeyDown(KeyCode.Space))) Jump();
-
-                break;
-
-            case PlayerState.ObstacleClimbing_L:
-
-                if (!_obstacleHasJumped)
-                {
-                    if (Input.GetKey(KeyCode.Space)) Jump();
-                    else if (Input.GetKeyDown(KeyCode.LeftArrow))
-                    {
-                        SetFacingRight(false);
-                        transform.position = new Vector2(transform.position.x - 0.3f, transform.position.y);
-                    }
-                }
-                else _rigidbody.velocity = new Vector2(8, 5);
-
-                break;
-
-            case PlayerState.ObstacleClimbing_R:
-
-                if (!_obstacleHasJumped)
-                {
-                    if (Input.GetKeyDown(KeyCode.Space)) Jump();
-                    else if (Input.GetKeyDown(KeyCode.RightArrow))
-                    {
-                        SetFacingRight(false);
-                        transform.position = new Vector2(transform.position.x + 0.3f, transform.position.y);
-                    }
-                }
-                else _rigidbody.velocity = new Vector2(-8, 5);
+                if ((Input.GetKeyDown(KeyCode.Space))) onKeySpace();
 
                 break;
 
@@ -271,21 +255,16 @@ public class PlayerController5 : MonoBehaviour
         _moveDirection = 0;
     }
 
-    public void Jump()
+    public void onKeySpace()
     {
         if (CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Sloping) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
-        else if (CurrentState == PlayerState.WallHugging)
+        else if (CurrentState == PlayerState.WallHugging && !_hasBounced)
         {
-            _rigidbody.velocity = new Vector2(_rigidbody.velocity.x - _moveDirection * WallReflectionForce, JumpForce);
-
+            if (!_hasBounced) _hasBounced = true;
             if (FacingRight) SetFacingRight(false);
             else SetFacingRight(true);
+            _rigidbody.velocity = new Vector2(_moveDirection * WallReflectionForce, JumpForce);
         }
-        else if (CurrentState == PlayerState.ObstacleClimbing_R || CurrentState == PlayerState.ObstacleClimbing_L) _obstacleHasJumped = true;
-
-
-
-
     }
 
     public void SetFacingRight(bool _facingRight)
@@ -293,15 +272,13 @@ public class PlayerController5 : MonoBehaviour
         if (_facingRight)
         {
             FacingRight = true;
-            if (transform.localScale.x > 0) transform.localScale *= 1;
-            else transform.localScale *= -1;
+            if (transform.localScale.x < 0) transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
             _moveDirection = 1;
         }
         else
         {
             FacingRight = false;
-            if (transform.localScale.x > 0) transform.localScale *= -1;
-            else transform.localScale *= 1;
+            if (transform.localScale.x > 0) transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
             _moveDirection = -1;
         }
 
@@ -326,6 +303,7 @@ public class PlayerController5 : MonoBehaviour
         //_rigidbody.constraints = RigidbodyConstraints2D.None;
         SetFacingRight(true);
         _rigidbody.gravityScale = 2;
+        
 
 
 
@@ -356,18 +334,6 @@ public class PlayerController5 : MonoBehaviour
 
     }
 
- /*   private void resetImpacts()
-    {
-        
-        _tubeImpact = false;
-        _stoppedImpact = false;
-        _slopeImpact = false;
-        //_rigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
-       // transform.rotation = Quaternion.Euler(0, 0, 0);
-        _obstacleHasJumped = false;
-        _rigidbody.isKinematic = false;
-        _obstacleHasJumped = false;
-    }*/
 }
 
 

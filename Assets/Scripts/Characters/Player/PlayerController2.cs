@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -33,7 +33,7 @@ public class PlayerController2 : MonoBehaviour
     }
 
 
-    public State CurrentState = State.Inert; 
+    public State CurrentState = State.Inert;
     public State PrevState = State.Inert;
 
 
@@ -50,7 +50,7 @@ public class PlayerController2 : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-       // Ground = LayerMask.GetMask("Ground");
+        // Ground = LayerMask.GetMask("Ground");
         _rigidbody = gameObject.GetComponent<Rigidbody2D>();
         _collider = gameObject.GetComponent<Collider2D>();
     }
@@ -65,12 +65,12 @@ public class PlayerController2 : MonoBehaviour
                 _rigidbody.velocity = new Vector2(0, 0);
                 _rigidbody.gravityScale = 0;
             }
-            
+
         }
 
     }
 
- 
+
 
     void OnCollisionExit2D(Collision2D coll)
     {
@@ -78,14 +78,14 @@ public class PlayerController2 : MonoBehaviour
         {
             if (PrevState == State.Cornering)
             {
-               _rigidbody.velocity = new Vector2(0, 0);
-               _rigidbody.gravityScale = 0;
+                _rigidbody.velocity = new Vector2(0, 0);
+                _rigidbody.gravityScale = 0;
             }
         }
         else if (coll.collider.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
 
-         //   _rigidbody.gravityScale = 10;
+            //   _rigidbody.gravityScale = 10;
             Debug.Log("wall exit");
             if (PrevState == State.WallHugging)
             {
@@ -94,7 +94,7 @@ public class PlayerController2 : MonoBehaviour
                 _wallTimer = 0;
             }
         }
-       
+
     }
 
 
@@ -103,7 +103,7 @@ public class PlayerController2 : MonoBehaviour
 
         if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Ground")))
         {
-            
+
             if (Physics2D.IsTouchingLayers(_collider, LayerMask.GetMask("Wall"))) CurrentState = State.Cornering;
             else CurrentState = State.Grounded;
         }
@@ -160,7 +160,7 @@ public class PlayerController2 : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
                 if (Input.GetKeyDown(KeyCode.Space)) Jump();
                 break;
-                
+
         }
 
         /*
@@ -212,7 +212,7 @@ public class PlayerController2 : MonoBehaviour
 
     public void Jump()
     {
-        switch(CurrentState)
+        switch (CurrentState)
         {
             case State.Grounded:
                 _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
@@ -251,7 +251,8 @@ public class PlayerController2 : MonoBehaviour
         }
 
     }
-=======
+}
+/*
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -323,7 +324,7 @@ public class PlayerController2 : MonoBehaviour
 
     }
 
-  /*  void OnCollisionStay2D(Collision2D coll)
+    void OnCollisionStay2D(Collision2D coll)
     {
         if (coll.gameObject.layer == LayerMask.GetMask("Wall"))
         {
@@ -337,7 +338,7 @@ public class PlayerController2 : MonoBehaviour
 
         }
         
-    }*/
+    }
 
     void OnCollisionExit2D(Collision2D coll)
     {
@@ -430,7 +431,7 @@ public class PlayerController2 : MonoBehaviour
                 
         }
 
-        /*
+        
         if (_grounded)
         {
             _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);
@@ -449,7 +450,7 @@ public class PlayerController2 : MonoBehaviour
             if ((Input.GetKeyDown(KeyCode.Space))) Jump();
 
         }
-        */
+        
 
 
 
@@ -519,4 +520,4 @@ public class PlayerController2 : MonoBehaviour
 
     }
 >>>>>>> b7eb3e10ba4341598d15d3446e134dc630b431f1
-}
+}*/
