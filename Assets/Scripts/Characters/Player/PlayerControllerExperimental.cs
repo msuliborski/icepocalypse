@@ -93,10 +93,10 @@ public class PlayerControllerExperimental : MonoBehaviour
      void Start()
      {
         _rigidbody = gameObject.GetComponent<Rigidbody2D>();
-        _colliderBody = gameObject.GetComponents<Collider2D>()[0];
-        _colliderCorner = gameObject.GetComponents<Collider2D>()[3];
-        _colliderLegs = gameObject.GetComponents<Collider2D>()[2];
-        _colliderWhole = gameObject.GetComponents<Collider2D>()[1];
+        _colliderBody = gameObject.GetComponents<Collider2D>()[1];
+        _colliderCorner = gameObject.GetComponents<Collider2D>()[3]; 
+        _colliderLegs = gameObject.GetComponents<Collider2D>()[2];  // okay
+        _colliderWhole = gameObject.GetComponents<Collider2D>()[0]; 
         Ground = LayerMask.GetMask("Ground");
         Wall = LayerMask.GetMask("Wall");
         Tube = LayerMask.GetMask("Tube");
@@ -115,6 +115,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
         else
         {
+
             if (Physics2D.IsTouchingLayers(_colliderLegs, Ground)) CurrentState = PlayerState.Grounded;
             else if (Physics2D.IsTouchingLayers(_colliderBody, Tube) && !_tubeIgnore)
             {
@@ -122,7 +123,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                 else CurrentState = PlayerState.TubeSliding;
             }
             else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
-            else if (Physics2D.IsTouchingLayers(_colliderBody, Edge)) CurrentState = PlayerState.EgdeClimbingBody;
+           // else if (Physics2D.IsTouchingLayers(_colliderBody, Edge)) CurrentState = PlayerState.EgdeClimbingBody;
             else if (Physics2D.IsTouchingLayers(_colliderCorner, Edge)) CurrentState = PlayerState.EgdeClimbingCorner;
             else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
             else if (Physics2D.IsTouchingLayers(_colliderWhole, HandBar)) CurrentState = PlayerState.HandBarring;
