@@ -40,7 +40,9 @@ GameObject:
   - component: {fileID: 23541445383034570}
   - component: {fileID: 61721577153555882}
   - component: {fileID: 50170926940052808}
-  - component: {fileID: 114342131917973164}
+  - component: {fileID: 61345538301371632}
+  - component: {fileID: 61719232905707814}
+  - component: {fileID: 114093462152338296}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -177,6 +179,56 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!61 &61345538301371632
+BoxCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1910452992870528}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.9}
+  m_EdgeRadius: 0
+--- !u!61 &61719232905707814
+BoxCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1910452992870528}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.45}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.45, y: 0.1}
+  m_EdgeRadius: 0
 --- !u!61 &61721577153555882
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -202,7 +254,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &114342131917973164
+--- !u!114 &114093462152338296
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -210,7 +262,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1910452992870528}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb78d7c21b2e4b948b389c0c45589b9f, type: 3}
+  m_Script: {fileID: 11500000, guid: 915df489c7f4b724ab5f38af78e11714, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   TubeStopperDestroy:
@@ -219,21 +271,32 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   JumpForce: 18
-  WallReflectionForce: 16
-  MoveSpeed: 8
+  WallReflectionForce: 17
+  MoveSpeed: 10
   _wallTimer: 0
   FacingRight: 1
-  _obstacleHasJumped: 0
-  _grounded: 0
-  _walled: 0
-  _edged_TL: 0
-  _edged_TR: 0
-  _edged_BL: 0
-  _edged_BR: 0
-  _spiked: 0
-  _handbared: 0
-  _sloped: 0
-  _tubed: 0
-  _tubeStopped: 0
   CurrentState: 0
-  isScripting: 0
+  Ground:
+    serializedVersion: 2
+    m_Bits: 0
+  Wall:
+    serializedVersion: 2
+    m_Bits: 0
+  Tube:
+    serializedVersion: 2
+    m_Bits: 0
+  Obstacle_R:
+    serializedVersion: 2
+    m_Bits: 0
+  Obstacle_L:
+    serializedVersion: 2
+    m_Bits: 0
+  HandBar:
+    serializedVersion: 2
+    m_Bits: 0
+  Stopper:
+    serializedVersion: 2
+    m_Bits: 0
+  Slope:
+    serializedVersion: 2
+    m_Bits: 0

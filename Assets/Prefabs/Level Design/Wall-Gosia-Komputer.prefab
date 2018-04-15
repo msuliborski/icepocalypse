@@ -177,7 +177,7 @@ GameObject:
   - component: {fileID: 4132993161056400}
   - component: {fileID: 61437344493552182}
   m_Layer: 0
-  m_Name: Wall
+  m_Name: Wall-Gosia-Komputer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
