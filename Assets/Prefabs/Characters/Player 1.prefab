@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 61085884734708986}
   m_Layer: 0
   m_Name: corner_collider
-  m_TagString: Untagged
+  m_TagString: corner_collider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 61979928485215980}
   m_Layer: 0
   m_Name: legs_collider
-  m_TagString: Untagged
+  m_TagString: legs_collider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -72,7 +72,7 @@ GameObject:
   - component: {fileID: 61250802627469764}
   m_Layer: 0
   m_Name: body_collider
-  m_TagString: Untagged
+  m_TagString: body_collider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

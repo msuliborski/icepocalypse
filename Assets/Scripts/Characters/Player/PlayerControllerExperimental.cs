@@ -27,7 +27,14 @@ public class PlayerControllerExperimental : MonoBehaviour
     public bool _isScripting = false;
 
 
-    private Vector2 _edgePoint1;
+    private bool _firstPointReached = false;
+    private bool _secondPointReached = false;
+    private bool _thirdPointReached = false;
+
+    private Vector3 _edgePoint1;
+    private Vector3 _edgePoint2;
+    private Vector3 _edgePoint3;
+
 
     public enum ScriptName
     {
@@ -71,7 +78,8 @@ public class PlayerControllerExperimental : MonoBehaviour
     private Collider2D _colliderLegs;
     private Collider2D _colliderCorner;
 
-
+    private float playerWidth;
+    private float playerHeight;
 
 
 
@@ -80,23 +88,38 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (!_isScripting)
         {
 
-            if (collision.gameObject.transform.name == "Edge")
-            {
-                _edgePoint1 = new Vector3(_rigidbody.transform.position.x, collision.gameObject.transform.localScale.y);
+            if (collision.gameObject.transform.name == "Edge") _edgePoint1 = new Vector3(_rigidbody.transform.position.x, collision.gameObject.transform.localScale.y - playerHeight / 2, _rigidbody.transform.position.z);
+            
                 
-            }
+           
 
         }
     }
-    
+
+    private void script()
+    {
+        switch (CurrentScript)
+        {
+            case ScriptName.EdgeClimbing:
+                if (!_firstPointReached)
+                {
+                    transform.position = Vector2.MoveTowards(_rigidbody.transform.position, _edgePoint1, 4 * Time.deltaTime);
+                    if (_rigidbody.transform.position == _edgePoint1) _firstPointReached = true;
+                    
+                }
+                break;
+
+        }
+    }
+
     // Use this for initialization
-     void Start()
+    void Start()
      {
         _rigidbody = gameObject.GetComponent<Rigidbody2D>();
-        _colliderBody = gameObject.GetComponents<Collider2D>()[1];
-        _colliderCorner = gameObject.GetComponents<Collider2D>()[3]; 
-        _colliderLegs = gameObject.GetComponents<Collider2D>()[2];  // okay
-        _colliderWhole = gameObject.GetComponents<Collider2D>()[0]; 
+        _colliderBody = GameObject.FindGameObjectWithTag("body_collider").GetComponent<Collider2D>();
+        _colliderCorner = GameObject.FindGameObjectWithTag("corner_collider").GetComponent<Collider2D>();
+        _colliderLegs = GameObject.FindGameObjectWithTag("legs_collider").GetComponent<Collider2D>();
+        _colliderWhole = gameObject.GetComponent<Collider2D>(); 
         Ground = LayerMask.GetMask("Ground");
         Wall = LayerMask.GetMask("Wall");
         Tube = LayerMask.GetMask("Tube");
@@ -104,18 +127,18 @@ public class PlayerControllerExperimental : MonoBehaviour
         HandBar = LayerMask.GetMask("Handbar");
         Slope = LayerMask.GetMask("Slope");
         Edge = LayerMask.GetMask("Edge");
+        playerWidth = _rigidbody.transform.localScale.x;
+        playerHeight = _rigidbody.transform.localScale.y;
     }
 
 
     void Update()
     {
-        if (_isScripting)
-        {
+        if (Input.GetKeyDown(KeyCode.P)) Debug.Break();
 
-        }
+        if (_isScripting) script();
         else
         {
-
             if (Physics2D.IsTouchingLayers(_colliderLegs, Ground)) CurrentState = PlayerState.Grounded;
             else if (Physics2D.IsTouchingLayers(_colliderBody, Tube) && !_tubeIgnore)
             {
@@ -123,7 +146,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                 else CurrentState = PlayerState.TubeSliding;
             }
             else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
-           // else if (Physics2D.IsTouchingLayers(_colliderBody, Edge)) CurrentState = PlayerState.EgdeClimbingBody;
+            // else if (Physics2D.IsTouchingLayers(_colliderBody, Edge)) CurrentState = PlayerState.EgdeClimbingBody;
             else if (Physics2D.IsTouchingLayers(_colliderCorner, Edge)) CurrentState = PlayerState.EgdeClimbingCorner;
             else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
             else if (Physics2D.IsTouchingLayers(_colliderWhole, HandBar)) CurrentState = PlayerState.HandBarring;
@@ -195,7 +218,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                     break;
 
                 case PlayerState.EgdeClimbingCorner:
-
+                    onEdgeCornerImpact();
                     break;
 
             }
@@ -217,8 +240,6 @@ public class PlayerControllerExperimental : MonoBehaviour
                 break;
         }
     }
-
-
     private void movement()
     {
         _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);
@@ -304,16 +325,19 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onEdgeCornerImpact()
     {
-       if(!_edgeCornerImpact)
-        {
-            _edgeCornerImpact = true;
-            transform.position = Vector2.MoveTowards(_rigidbody.transform.position, _edgePoint1, 4 * Time.deltaTime);
-        }
+        _isScripting = true;
+        CurrentScript = ScriptName.EdgeClimbing;
+        _rigidbody.isKinematic = true;
+       //if(!_edgeCornerImpact)
+        //{
+          //  _edgeCornerImpact = true;
+           // transform.position = Vector2.MoveTowards(_rigidbody.transform.position, _edgePoint1, 4 * Time.deltaTime);
+       // }
     }
 
     private void onEdgeBodyImpact()
     {
-        _isScripting = true;
+       // _isScripting = true;
     }
 
     private void onWallImpact()
@@ -337,6 +361,13 @@ public class PlayerControllerExperimental : MonoBehaviour
         _slopeImpact = false;
         transform.rotation = Quaternion.Euler(0, 0, 0);
         _obstacleHasJumped = false;
+    }
+
+    private void resetPoints()
+    {
+        _firstPointReached = false;
+        _secondPointReached = false;
+        _thirdPointReached = false;
     }
 }
 
