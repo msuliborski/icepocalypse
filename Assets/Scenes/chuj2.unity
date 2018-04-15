@@ -662,6 +662,52 @@ Prefab:
     - target: {fileID: 4843774372630154, guid: 32ad8cbb2debb6345a1cdf8201a11561, type: 2}
       propertyPath: m_LocalPosition.x
       value: 5.9
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 5a7f22e5f55c28b4d6bf6cc4d8f7661ae69f6281
+      objectReference: {fileID: 0}
+    - target: {fileID: 4843774372630154, guid: 32ad8cbb2debb6345a1cdf8201a11561, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 4843774372630154, guid: 32ad8cbb2debb6345a1cdf8201a11561, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4843774372630154, guid: 32ad8cbb2debb6345a1cdf8201a11561, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4843774372630154, guid: 32ad8cbb2debb6345a1cdf8201a11561, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4843774372630154, guid: 32ad8cbb2debb6345a1cdf8201a11561, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4843774372630154, guid: 32ad8cbb2debb6345a1cdf8201a11561, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4843774372630154, guid: 32ad8cbb2debb6345a1cdf8201a11561, type: 2}
+      propertyPath: m_RootOrder
+<<<<<<< HEAD
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+=======
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 61719232905707814, guid: 32ad8cbb2debb6345a1cdf8201a11561,
+        type: 2}
+      propertyPath: m_Offset.y
+      value: -0.46
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 114093462152338296, guid: 32ad8cbb2debb6345a1cdf8201a11561, type: 2}
+=======
       objectReference: {fileID: 0}
     - target: {fileID: 4843774372630154, guid: 32ad8cbb2debb6345a1cdf8201a11561, type: 2}
       propertyPath: m_LocalPosition.y
@@ -692,6 +738,8 @@ Prefab:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+>>>>>>> 8abff2a4a60cc57774c53e5124c4369a1f011885
+>>>>>>> 5a7f22e5f55c28b4d6bf6cc4d8f7661ae69f6281
   m_ParentPrefab: {fileID: 100100000, guid: 32ad8cbb2debb6345a1cdf8201a11561, type: 2}
   m_IsPrefabParent: 0
 --- !u!4 &40452483 stripped
@@ -10066,6 +10114,41 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1291290573}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+--- !u!1 &1314223863 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1910452992870528, guid: 32ad8cbb2debb6345a1cdf8201a11561,
+    type: 2}
+  m_PrefabInternal: {fileID: 40452482}
+--- !u!114 &1314223864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1314223863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf84ed34d89b56945bef85ec73925951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TubeStopperDestroy:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  JumpForce: 18
+  WallReflectionForce: 17
+  MoveSpeed: 10
+  _wallTimer: 0
+  FacingRight: 1
+  _obstacleHasJumped: 0
+  _isScripting: 0
+  CurrentState: 0
+=======
+>>>>>>> 8abff2a4a60cc57774c53e5124c4369a1f011885
+>>>>>>> 5a7f22e5f55c28b4d6bf6cc4d8f7661ae69f6281
 --- !u!1 &1317895943
 GameObject:
   m_ObjectHideFlags: 0
@@ -10486,7 +10569,15 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1370655604}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+<<<<<<< HEAD
   m_LocalPosition: {x: 19.5, y: 15, z: 0}
+=======
+<<<<<<< HEAD
+  m_LocalPosition: {x: 19.5, y: 19.75, z: 0}
+=======
+  m_LocalPosition: {x: 19.5, y: 15, z: 0}
+>>>>>>> 8abff2a4a60cc57774c53e5124c4369a1f011885
+>>>>>>> 5a7f22e5f55c28b4d6bf6cc4d8f7661ae69f6281
   m_LocalScale: {x: 1, y: 2, z: 1}
   m_Children:
   - {fileID: 507616444}
