@@ -15,7 +15,6 @@ public class PlayerControllerExperimental : MonoBehaviour
     public bool FacingRight = true;
     float _moveDirection = 0;
 
-
     private bool _wallImpact = false;
     private bool _tubeImpact = false;
     private bool _stoppedImpact = false;
@@ -23,8 +22,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     public bool _obstacleHasJumped = false;
     private bool _tubeIgnore = false;
 
-
-	public enum PlayerState
+    public enum PlayerState
     {
         Inert,
         Grounded,
@@ -98,9 +96,6 @@ public class PlayerControllerExperimental : MonoBehaviour
         else if (Physics2D.IsTouchingLayers(_colliderWhole, Slope)) CurrentState = PlayerState.Sloping;
         else CurrentState = PlayerState.Inert;
 
-
-
-
         switch (CurrentState)
         {
 
@@ -163,10 +158,6 @@ public class PlayerControllerExperimental : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
 
                 break;
-
-
-
-
         }
     }
 
@@ -210,10 +201,6 @@ public class PlayerControllerExperimental : MonoBehaviour
                 SetFacingRight(true);
         }
          else if (CurrentState == PlayerState.ObstacleClimbing_R || CurrentState == PlayerState.ObstacleClimbing_L) _obstacleHasJumped = true;
-
-
-
-
     }
 
     public void SetFacingRight(bool _facingRight)
@@ -230,7 +217,6 @@ public class PlayerControllerExperimental : MonoBehaviour
             if (transform.localScale.x > 0) transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
             _moveDirection = -1;
         }
-
     }
 
 
@@ -242,7 +228,6 @@ public class PlayerControllerExperimental : MonoBehaviour
             _rigidbody.gravityScale = 3;
             if (_rigidbody.velocity.y <= -4) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, -4);
         }
-
     }
 
     private void onSlopeImpact()
@@ -253,8 +238,6 @@ public class PlayerControllerExperimental : MonoBehaviour
             SetFacingRight(true);
             _rigidbody.gravityScale = 2;
         }
-
-        
     }
 
     private void onTubeStopperImpact()
@@ -271,11 +254,9 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
         if (!_tubeImpact)
         {
-
             _tubeImpact = true;
             _rigidbody.velocity = new Vector2(0, 0);
             _rigidbody.gravityScale = 1f;
-
         }
     }
 
@@ -300,9 +281,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         _slopeImpact = false;
         transform.rotation = Quaternion.Euler(0, 0, 0);
         _obstacleHasJumped = false;
-        
-        
-     }
+    }
 }
 
 
