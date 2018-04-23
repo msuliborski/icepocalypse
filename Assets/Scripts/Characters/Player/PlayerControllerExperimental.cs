@@ -26,7 +26,8 @@ public class PlayerControllerExperimental : MonoBehaviour
     private float _scriptSpeed;
     public bool _isScripting = false;
     public int _index;
-    public int _indexToReact = -1;    
+    public int _indexToReact = -1;
+    private KeyCode _keyToReact;
 
     public enum PlayerState
     {
@@ -61,6 +62,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     private Collider2D _colliderLegs;
     private Collider2D _colliderCorner;
 
+    private float tubeHeight;
     private float playerWidth;
     private float playerHeight;
 
@@ -72,9 +74,16 @@ public class PlayerControllerExperimental : MonoBehaviour
             {
                 //_index = 0;
                 _scriptDestinations.Clear();
-                _scriptDestinations.Add(collision.gameObject.transform.position + new Vector3(-1f , collision.gameObject.transform.localScale.y/2 - 1f, 0));
+                _scriptDestinations.Add(collision.gameObject.transform.position + new Vector3(-1f, collision.gameObject.transform.localScale.y / 2 - 1f, 0f));
                 _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
                 _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(1f, 0, 0));
+            }
+            else if (collision.gameObject.transform.name == "WallT")
+            {
+                _scriptDestinations.Clear();
+                tubeHeight = collision.gameObject.GetComponent<SpriteRenderer>().bounds.size.y;
+                _scriptDestinations.Add(collision.gameObject.transform.position + new Vector3(collision.gameObject.transform.localScale.x + playerWidth, 0f, 0f));
+                _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0f, tubeHeight,0f));
             }
         }
     }
@@ -88,7 +97,18 @@ public class PlayerControllerExperimental : MonoBehaviour
             {
                 if (_indexToReact == _index)
                 {
-                    if (Input.GetKeyDown(KeyCode.Space)) OnKeySpace();
+                    if (Input.GetKeyDown(_keyToReact))
+                    {
+                        switch(_keyToReact)
+                        {
+                            case KeyCode.Space:
+                                OnKeySpace();
+                                break;
+                            case KeyCode.DownArrow:
+                                OnKeyDown();
+                                break;
+                        }
+                    }
                 }
                 else _index++;
             }
@@ -186,27 +206,27 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                     onTubeImpact();
 
-                    if (_rigidbody.velocity.y <= -3) _rigidbody.velocity = new Vector2(0, -3);
+                   // if (_rigidbody.velocity.y <= -3) _rigidbody.velocity = new Vector2(0, -3);
 
                     break;
 
-                case PlayerState.TubeStopped:
+                //case PlayerState.TubeStopped:
 
-                    onTubeStopperImpact();
+                  //  onTubeStopperImpact();
 
-                    if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
+                  //  if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
 
-                    break;
+                   // break;
 
                 case PlayerState.EgdeClimbingBody:
 
-                    onEdgeBodyImpact(4.0f);
+                    onEdgeBodyImpact();
 
                     break;
 
                 case PlayerState.EgdeClimbingCorner:
 
-                    onEdgeCornerImpact(4.0f);
+                    onEdgeCornerImpact();
 
                     break;
 
@@ -217,17 +237,21 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     public void OnKeyDown()
     {
-        switch (CurrentState)
+        if (_isScripting) _index++;
+        else
         {
-            case PlayerState.TubeStopped:
-                _rigidbody.gravityScale = 10;
-                TubeStopperDestroy.Invoke();
-                _tubeIgnore = true;
-                break;
-            
-            default:
-                StopMovement();
-                break;
+            switch (CurrentState)
+            {
+               /* case PlayerState.TubeStopped:
+                    _rigidbody.gravityScale = 10;
+                    TubeStopperDestroy.Invoke();
+                    _tubeIgnore = true;
+                    break;
+               */
+                default:
+                    StopMovement();
+                    break;
+            }
         }
     }
     private void movement()
@@ -306,27 +330,35 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onTubeImpact()
     {
-        if (!_tubeImpact)
-        {
-            _tubeImpact = true;
-            _rigidbody.velocity = new Vector2(0, 0);
-            _rigidbody.gravityScale = 1f;
-        }
+        // if (!_tubeImpact)
+        //{
+        //  _tubeImpact = true;
+        // _rigidbody.velocity = new Vector2(0, 0);
+        // _rigidbody.gravityScale = 1f;
+        //}
+        _scriptSpeed = 4.0f;
+        _isScripting = true;
+        _rigidbody.isKinematic = true;
+        _rigidbody.velocity = new Vector3(0, 0, 0);
+        _index = 0;
+        _indexToReact = 1;
+        _keyToReact = KeyCode.DownArrow;
     }
 
-    void onEdgeCornerImpact(float speed)
+    void onEdgeCornerImpact()
     {
-        _scriptSpeed = speed;
+        _scriptSpeed = 4.0f;
         _isScripting = true;
         _rigidbody.isKinematic = true;
         _rigidbody.velocity = new Vector3(0, 0, 0);
         _index = 0;
         _indexToReact = 0;
+        _keyToReact = KeyCode.Space;
     }
 
-    void onEdgeBodyImpact(float speed)
+    void onEdgeBodyImpact()
     {
-        _scriptSpeed = speed;
+        _scriptSpeed = 4.0f;
         _isScripting = true;
         _rigidbody.isKinematic = true;
         _rigidbody.velocity = new Vector3(0, 0, 0);
