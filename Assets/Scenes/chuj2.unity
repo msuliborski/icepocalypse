@@ -152,49 +152,66 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4984546252182128, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 25.6
+    - target: {fileID: 1906961839806920, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
-    - target: {fileID: 4984546252182128, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 8.7
+    - target: {fileID: 1296444586475238, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
-    - target: {fileID: 50337660429004526, guid: 033dfe421c4b34912944da56dcbd4588,
-        type: 2}
-      propertyPath: m_CollisionDetection
-      value: 0
+    - target: {fileID: 1626684252051002, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
-    - target: {fileID: 50337660429004526, guid: 033dfe421c4b34912944da56dcbd4588,
-        type: 2}
-      propertyPath: m_Interpolate
-      value: 0
+    - target: {fileID: 1129151212355284, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
+      propertyPath: m_TagString
+      value: WallTube
       objectReference: {fileID: 0}
-    - target: {fileID: 68117993753528750, guid: 033dfe421c4b34912944da56dcbd4588,
-        type: 2}
-      propertyPath: m_IsTrigger
-      value: 0
+    - target: {fileID: 1296444586475238, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
+      propertyPath: m_Name
+      value: Wall2
       objectReference: {fileID: 0}
-    - target: {fileID: 68117993753528750, guid: 033dfe421c4b34912944da56dcbd4588,
-        type: 2}
-      propertyPath: m_Points.Array.data[0].x
-      value: -0.5061455
+    - target: {fileID: 1481780804917118, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
+      propertyPath: m_TagString
+      value: WallEdge
       objectReference: {fileID: 0}
-    - target: {fileID: 61958137967479768, guid: 033dfe421c4b34912944da56dcbd4588,
-        type: 2}
-      propertyPath: m_Size.y
-      value: 0.65
+    - target: {fileID: 1906961839806920, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
+      propertyPath: m_Name
+      value: Wall1
       objectReference: {fileID: 0}
-    - target: {fileID: 61910979267393110, guid: 033dfe421c4b34912944da56dcbd4588,
-        type: 2}
-      propertyPath: m_Size.y
-      value: 0.15
-      objectReference: {fileID: 0}
-    - target: {fileID: 61910979267393110, guid: 033dfe421c4b34912944da56dcbd4588,
-        type: 2}
-      propertyPath: m_Offset.y
-      value: 0.425
+    - target: {fileID: 1626684252051002, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
+      propertyPath: m_Name
+      value: Wall3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 033dfe421c4b34912944da56dcbd4588, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &900279297
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 900279298}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &900279298
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 900279297}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 54.41, y: 7.93, z: 0.0021865352}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
