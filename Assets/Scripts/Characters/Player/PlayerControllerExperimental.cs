@@ -99,8 +99,7 @@ public class PlayerControllerExperimental : MonoBehaviour
             }
         }
     }
-
-    // Use this for initialization
+    
     void Start()
      {
         _rigidbody = gameObject.GetComponent<Rigidbody2D>();
