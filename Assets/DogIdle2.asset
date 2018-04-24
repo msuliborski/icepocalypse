@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae0543fe805424df99fe08ce744cbe49, type: 3}
+  m_Name: DogIdle2
+  m_EditorClassIdentifier: 
+  m_PoseEntries:
+  - path: Bones/Hip
+    localPosition: {x: -0.02446556, y: 0.059037972, z: 0}
+    localRotation: {x: 0, y: 0, z: -0.99749357, w: 0.07075796}
+    localScale: {x: 1, y: 1, z: 1}
+  - path: Bones/Hip/Before Back Right
+    localPosition: {x: 0.017831914, y: 0.07473975, z: 0}
+    localRotation: {x: 0, y: 0, z: -0.6335427, w: -0.7737078}
+    localScale: {x: 1, y: 1, z: 1}
+  - path: Bones/Hip/Before Back Right/Back Right Leg
+    localPosition: {x: 0.2262057, y: -0.000000014901161, z: 0}
+    localRotation: {x: 0, y: 0, z: -0.10190025, w: 0.99479467}
+    localScale: {x: 1, y: 1, z: 1}
+  - path: Bones/Hip/Before Back Right/Back Right Leg/New bone
+    localPosition: {x: 0.23055965, y: 0.000000057625584, z: 0}
+    localRotation: {x: 0, y: 0, z: -0.40327227, w: 0.9150801}
+    localScale: {x: 1, y: 1, z: 1}
+  - path: Bones/Hip/Before Back Right/Back Right Leg/New bone/New bone
+    localPosition: {x: 0.05512964, y: -0.002059278, z: 0}
+    localRotation: {x: 0, y: 0, z: -0.22858116, w: 0.97352487}
+    localScale: {x: 1, y: 1, z: 1}
+  - path: Bones/Hip/Back Left Forw
+    localPosition: {x: -0.03346065, y: 0.1579223, z: 0}
+    localRotation: {x: 0, y: 0, z: 0.71607304, w: 0.69802547}
+    localScale: {x: 1, y: 1, z: 1}
+  - path: Bones/Hip/Back Left Forw/Back Left Second
+    localPosition: {x: 0.16337092, y: -0.000000044703484, z: 0}
+    localRotation: {x: 0, y: 0, z: -0.018533025, w: 0.9998283}
+    localScale: {x: 1, y: 1, z: 1}
+  - path: Bones/Hip/Back Left Forw/Back Left Second/Back Left Ankle
+    localPosition: {x: 0.17087059, y: -0.000000008381903, z: 0}
+    localRotation: {x: 0, y: 0, z: -0.48284063, w: 0.87570834}
+    localScale: {x: 1, y: 1, z: 1}
+  - path: Bones/Hip/Back Left Forw/Back Left Second/Back Left Ankle/New bone
+    localPosition: {x: 0.07312268, y: 0.003134299, z: 0}
+    localRotation: {x: 0, y: 0, z: -0.32402888, w: 0.94604725}
+    localScale: {x: 1, y: 1, z: 1}
+  - path: Bones/Hip/Front Right
+    localPosition: {x: 0.32458466, y: 0.03719382, z: 0}
+    localRotation: {x: -0, y: -0, z: -0.48662227, w: -0.8736125}
+    localScale: {x: 1, y: 1, z: 1}
+  - path: Bones/Hip/Front Right/Front Right Super
+    localPosition: {x: 0.13929291, y: -0.0016574785, z: 0}
+    localRotation: {x: 0, y: 0, z: -0.3139894, w: -0.94942653}
+    localScale: {x: 1, y: 1, z: 1}
+  - path: Bones/Hip/Front Right/Front Right Super/Front Right Part
+    localPosition: {x: 0.1399999, y: 0.000000022351742, z: 0}
+    localRotation: {x: 0, y: 0, z: -0.22630097, w: 0.97405744}
+    localScale: {x: 1, y: 1, z: 1}
+  - path: Bones/Hip/Front Right/Front Right Super/Front Right Part/Front Right Ankle
+    localPosition: {x: 0.11647597, y: -0.00000012246892, z: 0}
+    localRotation: {x: 0, y: 0, z: -0.09988162, w: 0.99499935}
+    localScale: {x: 1, y: 1, z: 1}
+  - path: Bones/Hip/Front Right/Front Right Super/Front Right Part/Front Right Ankle/New
+      bone
+    localPosition: {x: 0.09672582, y: 0.0012343479, z: 0}
+    localRotation: {x: 0, y: 0, z: -0.47471377, w: 0.88014024}
+    localScale: {x: 1, y: 1, z: 1}
+  - path: Bones/Hip/Head Bone
+    localPosition: {x: 0.49611777, y: 0, z: 0}
+    localRotation: {x: 0, y: 0, z: -0.08407812, w: -0.99645925}
+    localScale: {x: 1, y: 1, z: 1}
+  - path: Bones/Hip/Front Right Left
+    localPosition: {x: 0.49817857, y: 0.13899094, z: 0}
+    localRotation: {x: 0, y: 0, z: 0.64244413, w: 0.76633257}
+    localScale: {x: 1, y: 1, z: 1}
+  - path: Bones/Hip/Front Right Left/Front Right Ankle
+    localPosition: {x: 0.22804327, y: -0.00000010430813, z: 0}
+    localRotation: {x: 0, y: 0, z: -0.354653, w: 0.93499804}
+    localScale: {x: 1, y: 1, z: 1}
+  - path: Bones/Hip/Front Right Left/Front Right Ankle/New bone
+    localPosition: {x: 0.14150465, y: 0.000000037252903, z: 0}
+    localRotation: {x: 0, y: 0, z: -0.52510834, w: 0.8510354}
+    localScale: {x: 1, y: 1, z: 1}

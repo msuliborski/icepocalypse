@@ -43,3 +43,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Azor
+    uniqueID: 907555929
+    locked: 0

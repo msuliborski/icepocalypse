@@ -3,8 +3,224 @@
   <component name="ContentModelStore">
     <e p="$PROJECT_DIR$" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor-firstpass.csproj" t="IncludeRecursive" />
+      <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
+        <e p="Anima2D" t="Include">
+          <e p="Examples" t="Include">
+            <e p="Scripts" t="Include">
+              <e p="CharacterMotion.cs" t="Include" />
+              <e p="Follow.cs" t="Include" />
+              <e p="SkinnedMeshCombiner.cs" t="Include" />
+              <e p="SpringBone.cs" t="Include" />
+              <e p="SpringCollider.cs" t="Include" />
+              <e p="SpringManager.cs" t="Include" />
+              <e p="SpriteCycle.cs" t="Include" />
+              <e p="SpriteCycleParallax.cs" t="Include" />
+            </e>
+            <e p="Shaders" t="Include">
+              <e p="Unlit-Alpha-Cull-off.shader" t="Include" />
+              <e p="VertexLitOneDirectional.shader" t="Include" />
+              <e p="VisibleInsideMask.shader" t="Include" />
+              <e p="VisibleOutsideMask.shader" t="Include" />
+            </e>
+          </e>
+          <e p="Licenses.txt" t="Include" />
+          <e p="Readme.txt" t="Include" />
+          <e p="Scripts" t="Include">
+            <e p="Bone2D.cs" t="Include" />
+            <e p="Control.cs" t="Include" />
+            <e p="Editor" t="Include">
+              <e p="AnimationBaker.cs" t="Include" />
+              <e p="AnimationFixer" t="Include">
+                <e p="AnimationFixer.cs" t="Include" />
+              </e>
+              <e p="AnimationWindowExtra" t="Include">
+                <e p="AnimationWindowExtra.cs" t="Include" />
+                <e p="AnimationWindowImpl_2017_1.cs" t="Include" />
+                <e p="AnimationWindowImpl_50.cs" t="Include" />
+                <e p="AnimationWindowImpl_51_52_53.cs" t="Include" />
+                <e p="AnimationWindowImpl_54.cs" t="Include" />
+                <e p="AnimationWindowImpl_55.cs" t="Include" />
+                <e p="AnimationWindowImpl_56.cs" t="Include" />
+                <e p="IAnimationWindowImpl.cs" t="Include" />
+              </e>
+              <e p="BbwPlugin.cs" t="Include" />
+              <e p="BindInfo.cs" t="Include" />
+              <e p="BlendShape.cs" t="Include" />
+              <e p="BlendShapeEditor.cs" t="Include" />
+              <e p="BlendShapeFrame.cs" t="Include" />
+              <e p="BlendShapeFrameEditor.cs" t="Include" />
+              <e p="Bone2DEditor.cs" t="Include" />
+              <e p="BoneUtils.cs" t="Include" />
+              <e p="BoneWeight.cs" t="Include" />
+              <e p="ColorRing.cs" t="Include" />
+              <e p="ContextMenu.cs" t="Include" />
+              <e p="CurveUtility.cs" t="Include" />
+              <e p="Edge.cs" t="Include" />
+              <e p="EditorEventHandler.cs" t="Include" />
+              <e p="EditorExtra.cs" t="Include" />
+              <e p="EditorGUIExtra.cs" t="Include" />
+              <e p="EditorUpdater.cs" t="Include" />
+              <e p="Exporter" t="Include">
+                <e p="Exporter.cs" t="Include" />
+              </e>
+              <e p="Gizmos.cs" t="Include" />
+              <e p="HandlesExtra.cs" t="Include" />
+              <e p="Hole.cs" t="Include" />
+              <e p="Ik2DEditor.cs" t="Include" />
+              <e p="IkCCD2DEditor.cs" t="Include" />
+              <e p="IkGroupEditor.cs" t="Include" />
+              <e p="IkLimb2DEditor.cs" t="Include" />
+              <e p="IkUtils.cs" t="Include" />
+              <e p="IndexedEdge.cs" t="Include" />
+              <e p="InspectorEditor.cs" t="Include" />
+              <e p="KeyframeUtility.cs" t="Include" />
+              <e p="MaskCreator.cs" t="Include" />
+              <e p="MeshToolEditor.cs" t="Include" />
+              <e p="Node.cs" t="Include" />
+              <e p="OnionSkin" t="Include">
+                <e p="MaterialCache.cs" t="Include" />
+                <e p="ObjectPool.cs" t="Include" />
+                <e p="OnionLayer.cs" t="Include" />
+                <e p="OnionLayer_56.cs" t="Include" />
+                <e p="OnionLayerManager.cs" t="Include" />
+                <e p="OnionSkinWindow.cs" t="Include" />
+              </e>
+              <e p="PoseManagerEditor.cs" t="Include" />
+              <e p="PoseUtils.cs" t="Include" />
+              <e p="RectHandles.cs" t="Include" />
+              <e p="ScriptableObjectUtility.cs" t="Include" />
+              <e p="SelectionRectTool.cs" t="Include" />
+              <e p="SerializedCache.cs" t="Include" />
+              <e p="SliceEditor.cs" t="Include" />
+              <e p="SpriteMeshAnimationEditor.cs" t="Include" />
+              <e p="SpriteMeshCache.cs" t="Include" />
+              <e p="SpriteMeshData.cs" t="Include" />
+              <e p="SpriteMeshEditor.cs" t="Include" />
+              <e p="SpriteMeshEditorWindow.cs" t="Include" />
+              <e p="SpriteMeshInstanceEditor.cs" t="Include" />
+              <e p="SpriteMeshInstancePostProcessor.cs" t="Include" />
+              <e p="SpriteMeshPostprocessor.cs" t="Include" />
+              <e p="SpriteMeshUtils.cs" t="Include" />
+              <e p="TextureEditorWindow.cs" t="Include" />
+              <e p="Timeline" t="Include">
+                <e p="BlendShapeFrameDopeElement.cs" t="Include" />
+                <e p="IDopeElement.cs" t="Include" />
+                <e p="TickHandler.cs" t="Include" />
+                <e p="TickStyle.cs" t="Include" />
+                <e p="TimeArea.cs" t="Include" />
+                <e p="TimeLine.cs" t="Include" />
+                <e p="ZoomableArea.cs" t="Include" />
+              </e>
+              <e p="ToolsExtra.cs" t="Include" />
+              <e p="Triangle" t="Include">
+                <e p="Algorithm" t="Include">
+                  <e p="Dwyer.cs" t="Include" />
+                  <e p="Incremental.cs" t="Include" />
+                  <e p="ITriangulator.cs" t="Include" />
+                  <e p="SweepLine.cs" t="Include" />
+                </e>
+                <e p="BadTriQueue.cs" t="Include" />
+                <e p="Behavior.cs" t="Include" />
+                <e p="Carver.cs" t="Include" />
+                <e p="Data" t="Include">
+                  <e p="BadSubseg.cs" t="Include" />
+                  <e p="BadTriangle.cs" t="Include" />
+                  <e p="Osub.cs" t="Include" />
+                  <e p="Otri.cs" t="Include" />
+                  <e p="Segment.cs" t="Include" />
+                  <e p="Triangle.cs" t="Include" />
+                  <e p="Vertex.cs" t="Include" />
+                </e>
+                <e p="Enums.cs" t="Include" />
+                <e p="Geometry" t="Include">
+                  <e p="BoundingBox.cs" t="Include" />
+                  <e p="Edge.cs" t="Include" />
+                  <e p="EdgeEnumerator.cs" t="Include" />
+                  <e p="InputGeometry.cs" t="Include" />
+                  <e p="ISegment.cs" t="Include" />
+                  <e p="ITriangle.cs" t="Include" />
+                  <e p="Point.cs" t="Include" />
+                  <e p="RegionPointer.cs" t="Include" />
+                </e>
+                <e p="IO" t="Include">
+                  <e p="DataReader.cs" t="Include" />
+                  <e p="DebugWriter.cs" t="Include" />
+                  <e p="FileReader.cs" t="Include" />
+                  <e p="FileWriter.cs" t="Include" />
+                  <e p="IGeometryFormat.cs" t="Include" />
+                  <e p="IMeshFormat.cs" t="Include" />
+                  <e p="InputTriangle.cs" t="Include" />
+                  <e p="TriangleFormat.cs" t="Include" />
+                </e>
+                <e p="Log" t="Include">
+                  <e p="ILog.cs" t="Include" />
+                  <e p="ILogItem.cs" t="Include" />
+                  <e p="SimpleLog.cs" t="Include" />
+                  <e p="SimpleLogItem.cs" t="Include" />
+                </e>
+                <e p="Mesh.cs" t="Include" />
+                <e p="NewLocation.cs" t="Include" />
+                <e p="Primitives.cs" t="Include" />
+                <e p="Quality.cs" t="Include" />
+                <e p="Sampler.cs" t="Include" />
+                <e p="Smoothing" t="Include">
+                  <e p="ISmoother.cs" t="Include" />
+                  <e p="SimpleSmoother.cs" t="Include" />
+                </e>
+                <e p="Tools" t="Include">
+                  <e p="AdjacencyMatrix.cs" t="Include" />
+                  <e p="BoundedVoronoi.cs" t="Include" />
+                  <e p="CuthillMcKee.cs" t="Include" />
+                  <e p="IVoronoi.cs" t="Include" />
+                  <e p="QuadTree.cs" t="Include" />
+                  <e p="QualityMeasure.cs" t="Include" />
+                  <e p="RegionIterator.cs" t="Include" />
+                  <e p="Statistic.cs" t="Include" />
+                  <e p="Voronoi.cs" t="Include" />
+                  <e p="VoronoiRegion.cs" t="Include" />
+                </e>
+                <e p="TriangleLocator.cs" t="Include" />
+              </e>
+              <e p="VertexAnimation" t="Include">
+                <e p="BakedMesh.cs" t="Include" />
+                <e p="SpriteMeshInstanceTracker.cs" t="Include" />
+                <e p="TransformTracker.cs" t="Include" />
+                <e p="VertexSelection.cs" t="Include" />
+              </e>
+              <e p="VertexManipulator" t="Include">
+                <e p="IVertexManipulable.cs" t="Include" />
+                <e p="IVertexManipulator.cs" t="Include" />
+                <e p="RectManipulator" t="Include">
+                  <e p="IRectManipulable.cs" t="Include" />
+                  <e p="IRectManipulatorData.cs" t="Include" />
+                  <e p="RectManipulator.cs" t="Include" />
+                  <e p="RectManipulatorData.cs" t="Include" />
+                  <e p="RectManipulatorParams.cs" t="Include" />
+                </e>
+                <e p="VertexManipulator.cs" t="Include" />
+              </e>
+              <e p="WeightEditor.cs" t="Include" />
+              <e p="WindowEditorTool.cs" t="Include" />
+            </e>
+            <e p="EditorUpdaterProxy.cs" t="Include" />
+            <e p="Ik2D.cs" t="Include" />
+            <e p="IkCCD2D.cs" t="Include" />
+            <e p="IkGroup.cs" t="Include" />
+            <e p="IkLimb2D.cs" t="Include" />
+            <e p="IkSolver2D.cs" t="Include" />
+            <e p="IkSolver2DCCD.cs" t="Include" />
+            <e p="IkSolver2DLimb.cs" t="Include" />
+            <e p="MathUtils.cs" t="Include" />
+            <e p="Pose.cs" t="Include" />
+            <e p="PoseManager.cs" t="Include" />
+            <e p="SpriteMesh.cs" t="Include" />
+            <e p="SpriteMeshAnimation.cs" t="Include" />
+            <e p="SpriteMeshInstance.cs" t="Include" />
+          </e>
+          <e p="Version.txt" t="Include" />
+        </e>
         <e p="Plugins" t="Include">
           <e p="Editor" t="Include">
             <e p="JetBrains" t="Include">
@@ -33,6 +249,7 @@
             <e p="IntVariable.cs" t="Include" />
             <e p="Variable.cs" t="Include" />
           </e>
+          <e p="WildDogScript.cs" t="Include" />
         </e>
         <e p="UIController.cs" t="Include" />
       </e>
