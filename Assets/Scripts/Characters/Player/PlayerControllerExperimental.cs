@@ -11,7 +11,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     public float JumpForce = 18;
     public float WallReflectionForce = 17;
     public float MoveSpeed = 10;
-    public float _wallTimer = 0;
+    private float _wallTimer = 0;
     public bool FacingRight = true;
     private float _moveDirection = 0;
 
@@ -19,14 +19,13 @@ public class PlayerControllerExperimental : MonoBehaviour
     private bool _tubeImpact = false;
     private bool _stoppedImpact = false;
     private bool _slopeImpact = false;
-    public bool _obstacleHasJumped = false;
-    private bool _tubeIgnore = false;
+    
     
     private List<Vector3> _scriptDestinations;
     private float _scriptSpeed;
-    public bool _isScripting = false;
-    public int _index;
-    public int _indexToReact = -1;
+    private bool _isScripting = false;
+    private int _index;
+    private int _indexToReact = -1;
     private KeyCode _keyToReact;
 
     public enum PlayerState
@@ -40,8 +39,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         EgdeClimbingBody,
         EgdeClimbingCorner,
         TubeSliding,
-        TubeStopped,
-        Sloping,
+        Sloping
     }
 
 	public PlayerState CurrentState = PlayerState.Inert;
@@ -66,61 +64,36 @@ public class PlayerControllerExperimental : MonoBehaviour
     private float playerWidth;
     private float playerHeight;
 
-    void OnCollisionEnter2D(Collision2D collision)
+   private void script()
     {
-        if (!_isScripting)
+        if (_index > _scriptDestinations.Count - 1)
         {
-            if (collision.gameObject.transform.name == "Wall")
-            {
-                //_index = 0;
-                _scriptDestinations.Clear();
-                _scriptDestinations.Add(collision.gameObject.transform.position + new Vector3(-1f, collision.gameObject.transform.localScale.y / 2 - 1f, 0f));
-                _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
-                _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(1f, 0, 0));
-            }
-            else if (collision.gameObject.transform.name == "WallT")
-            {
-                _scriptDestinations.Clear();
-                tubeHeight = collision.gameObject.GetComponent<SpriteRenderer>().bounds.size.y;
-                _scriptDestinations.Add(collision.gameObject.transform.position + new Vector3(collision.gameObject.transform.localScale.x + playerWidth, 0f, 0f));
-                _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0f, tubeHeight,0f));
-            }
+            _rigidbody.isKinematic = false;
+            _isScripting = false;
+            return;
         }
-    }
-
-    private void script()
-    {
         transform.position = Vector2.MoveTowards(_rigidbody.transform.position, _scriptDestinations[_index], _scriptSpeed * Time.deltaTime);
         if (_rigidbody.transform.position == _scriptDestinations[_index])
         {
-            if (_index < _scriptDestinations.Count - 1)
+            if (_indexToReact == _index)
             {
-                if (_indexToReact == _index)
+                if (Input.GetKeyDown(_keyToReact))
                 {
-                    if (Input.GetKeyDown(_keyToReact))
+                    switch(_keyToReact)
                     {
-                        switch(_keyToReact)
-                        {
-                            case KeyCode.Space:
-                                OnKeySpace();
-                                break;
-                            case KeyCode.DownArrow:
-                                OnKeyDown();
-                                break;
-                        }
+                        case KeyCode.Space:
+                            OnKeySpace();
+                            break;
+                        case KeyCode.DownArrow:
+                            OnKeyDown();
+                            break;
                     }
                 }
-                else _index++;
             }
-            else
-            {
-                _rigidbody.isKinematic = false;
-                _isScripting = false;
-            }
+            else _index++;
         }
     }
-
-    // Use this for initialization
+    
     void Start()
      {
         _rigidbody = gameObject.GetComponent<Rigidbody2D>();
@@ -149,11 +122,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         else
         {
             if (Physics2D.IsTouchingLayers(_colliderLegs, Ground)) CurrentState = PlayerState.Grounded;
-            else if (Physics2D.IsTouchingLayers(_colliderBody, Tube) && !_tubeIgnore)
-            {
-                if (Physics2D.IsTouchingLayers(_colliderLegs, Stopper)) CurrentState = PlayerState.TubeStopped;
-                else CurrentState = PlayerState.TubeSliding;
-            }
+            else if (Physics2D.IsTouchingLayers(_colliderWhole, Tube)) CurrentState = PlayerState.TubeSliding;
             else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
             else if (Physics2D.IsTouchingLayers(_colliderBody, Edge)) CurrentState = PlayerState.EgdeClimbingBody;
             else if (Physics2D.IsTouchingLayers(_colliderCorner, Edge)) CurrentState = PlayerState.EgdeClimbingCorner; 
@@ -173,7 +142,6 @@ public class PlayerControllerExperimental : MonoBehaviour
                     if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
                     if (Input.GetKeyDown(KeyCode.Space)) OnKeySpace();
                     resetImpacts();
-                    _tubeIgnore = false;
 
                     break;
 
@@ -206,19 +174,9 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                     onTubeImpact();
 
-                   // if (_rigidbody.velocity.y <= -3) _rigidbody.velocity = new Vector2(0, -3);
-
                     break;
 
-                //case PlayerState.TubeStopped:
-
-                  //  onTubeStopperImpact();
-
-                  //  if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
-
-                   // break;
-
-                case PlayerState.EgdeClimbingBody:
+               case PlayerState.EgdeClimbingBody:
 
                     onEdgeBodyImpact();
 
@@ -229,8 +187,6 @@ public class PlayerControllerExperimental : MonoBehaviour
                     onEdgeCornerImpact();
 
                     break;
-
-                
             }
         }
     }
@@ -242,13 +198,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         {
             switch (CurrentState)
             {
-               /* case PlayerState.TubeStopped:
-                    _rigidbody.gravityScale = 10;
-                    TubeStopperDestroy.Invoke();
-                    _tubeIgnore = true;
-                    break;
-               */
-                default:
+               default:
                     StopMovement();
                     break;
             }
@@ -330,13 +280,15 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onTubeImpact()
     {
-        // if (!_tubeImpact)
-        //{
-        //  _tubeImpact = true;
-        // _rigidbody.velocity = new Vector2(0, 0);
-        // _rigidbody.gravityScale = 1f;
-        //}
-        _scriptSpeed = 4.0f;
+        _scriptDestinations.Clear();
+        GameObject go = findClosestObjectWithTag("WallTube", 1);
+        tubeHeight = go.GetComponent<SpriteRenderer>().bounds.size.y;
+        _scriptDestinations.Add(go.transform.position + new Vector3(playerWidth, tubeHeight / 2 + playerHeight / 2, 0f));
+        _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0f, -tubeHeight, 0f));
+        Debug.Log("POINTS:");
+        Debug.Log("POINT0:" + _scriptDestinations[0]);
+        Debug.Log("POINT1:" + _scriptDestinations[1]);
+        _scriptSpeed = 3.0f;
         _isScripting = true;
         _rigidbody.isKinematic = true;
         _rigidbody.velocity = new Vector3(0, 0, 0);
@@ -347,6 +299,11 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void onEdgeCornerImpact()
     {
+       _scriptDestinations.Clear();
+        GameObject go = findClosestObjectWithTag("Wall", 1);
+       _scriptDestinations.Add(go.transform.position + new Vector3(-1f, go.transform.localScale.y / 2 - 1f, 0f));
+        _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
+        _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(1f, 0, 0));
         _scriptSpeed = 4.0f;
         _isScripting = true;
         _rigidbody.isKinematic = true;
@@ -358,11 +315,15 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void onEdgeBodyImpact()
     {
-        _scriptSpeed = 4.0f;
+        _scriptDestinations.Clear();
+        GameObject go = findClosestObjectWithTag("Wall", 1);
+       _scriptDestinations.Add(go.transform.position + new Vector3(-1f, go.transform.localScale.y / 2 + playerHeight/2, 0f));
+       _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(1f, 0, 0));
+       _scriptSpeed = 4.0f;
         _isScripting = true;
         _rigidbody.isKinematic = true;
         _rigidbody.velocity = new Vector3(0, 0, 0);
-        _index = 1;
+        _index = 0;
         _indexToReact = -1;
     }
 
@@ -374,7 +335,6 @@ public class PlayerControllerExperimental : MonoBehaviour
             _rigidbody.velocity = new Vector2(0, 0);
             _rigidbody.gravityScale = 0;
         }
-
     }
 
     private void resetImpacts()
@@ -386,40 +346,37 @@ public class PlayerControllerExperimental : MonoBehaviour
         _stoppedImpact = false;
         _slopeImpact = false;
         transform.rotation = Quaternion.Euler(0, 0, 0);
-        _obstacleHasJumped = false;
+    }
+
+    private GameObject findClosestObjectWithTag(string tag, int side)
+    {
+        // side: 1 - top, 2 - left, 3 - right, 4 - bottom, 5 - center
+        List<GameObject> gos = new List<GameObject>(GameObject.FindGameObjectsWithTag(tag));
+        GameObject closest = null;
+        float distance = Mathf.Infinity;
+        Vector3 position = transform.position;
+        Vector2 diff;
+        foreach (GameObject go in gos)
+        {
+            switch (side)
+            {
+                case 1:
+                    diff = (go.transform.position + new Vector3(0f, go.GetComponent<SpriteRenderer>().bounds.size.y)) - position;
+                    break;
+                default:
+                    diff = go.transform.position - position;
+                    break;
+            }
+            float curDistance = diff.sqrMagnitude;
+            if (curDistance < distance)
+            {
+                closest = go;
+                distance = curDistance;
+            }
+        }
+        return closest;
     }
 }
 
 
 
-/*
-          case PlayerState.ObstacleClimbing_L:
-
-               if (!_obstacleHasJumped)
-               {
-                   if (Input.GetKey(KeyCode.Space)) Jump();
-                   else if(Input.GetKeyDown(KeyCode.LeftArrow))
-                   {
-                       SetFacingRight(false);
-                       transform.position = new Vector2(transform.position.x - 0.3f, transform.position.y);
-                   }
-               }
-               else _rigidbody.velocity = new Vector2(8, 5);
-
-               break;
-
-           case PlayerState.ObstacleClimbing_R:
-
-               if (!_obstacleHasJumped)
-               {
-                   if (Input.GetKeyDown(KeyCode.Space)) Jump();
-                   else if(Input.GetKeyDown(KeyCode.RightArrow))
-                   {
-                       SetFacingRight(false);
-                       transform.position = new Vector2(transform.position.x + 0.3f, transform.position.y);
-                   }
-               }
-               else _rigidbody.velocity = new Vector2(-8, 5);
-
-               break;
-           */
