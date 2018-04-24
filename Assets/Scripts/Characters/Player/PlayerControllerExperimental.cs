@@ -7,6 +7,8 @@ using UnityEngine.Events;
 
 public class PlayerControllerExperimental : MonoBehaviour
 {
+    #region Variables
+
     public UnityEvent TubeStopperDestroy;
     public float JumpForce = 18;
     public float WallReflectionForce = 17;
@@ -64,36 +66,9 @@ public class PlayerControllerExperimental : MonoBehaviour
     private float playerWidth;
     private float playerHeight;
 
-   private void script()
-    {
-        if (_index > _scriptDestinations.Count - 1)
-        {
-            _rigidbody.isKinematic = false;
-            _isScripting = false;
-            return;
-        }
-        transform.position = Vector2.MoveTowards(_rigidbody.transform.position, _scriptDestinations[_index], _scriptSpeed * Time.deltaTime);
-        if (_rigidbody.transform.position == _scriptDestinations[_index])
-        {
-            if (_indexToReact == _index)
-            {
-                if (Input.GetKeyDown(_keyToReact))
-                {
-                    switch(_keyToReact)
-                    {
-                        case KeyCode.Space:
-                            OnKeySpace();
-                            break;
-                        case KeyCode.DownArrow:
-                            OnKeyDown();
-                            break;
-                    }
-                }
-            }
-            else _index++;
-        }
-    }
-    
+    #endregion
+
+    #region Start&Update
     void Start()
      {
         _rigidbody = gameObject.GetComponent<Rigidbody2D>();
@@ -190,7 +165,9 @@ public class PlayerControllerExperimental : MonoBehaviour
             }
         }
     }
+    #endregion
 
+    #region Input
     public void OnKeyDown()
     {
         if (_isScripting) _index++;
@@ -247,37 +224,9 @@ public class PlayerControllerExperimental : MonoBehaviour
             _moveDirection = -1;
         }
     }
+    #endregion
 
-    private void manageWallTimer()
-    {
-        _wallTimer += Time.deltaTime;
-        if (_wallTimer >= 0.15)
-        {
-            _rigidbody.gravityScale = 3;
-            if (_rigidbody.velocity.y <= -4) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, -4);
-        }
-    }
-
-    private void onSlopeImpact()
-    {
-        if (!_slopeImpact)
-        {
-            _slopeImpact = true;
-            SetFacingRight(true);
-            _rigidbody.gravityScale = 2;
-        }
-    }
-
-    private void onTubeStopperImpact()
-    {
-        if (!_stoppedImpact)
-        {
-            _rigidbody.velocity = new Vector2(0, 0);
-            _stoppedImpact = true;
-            _rigidbody.gravityScale = 0;
-        }
-    }
-
+    #region Impacts
     private void onTubeImpact()
     {
         _scriptDestinations.Clear();
@@ -348,6 +297,60 @@ public class PlayerControllerExperimental : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 
+    private void onSlopeImpact()
+    {
+        if (!_slopeImpact)
+        {
+            _slopeImpact = true;
+            SetFacingRight(true);
+            _rigidbody.gravityScale = 2;
+        }
+    }
+    #endregion
+
+    #region AdditionalFuncs
+
+    private void manageWallTimer()
+    {
+        _wallTimer += Time.deltaTime;
+        if (_wallTimer >= 0.15)
+        {
+            _rigidbody.gravityScale = 3;
+            if (_rigidbody.velocity.y <= -4) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, -4);
+        }
+    }
+
+
+    private void script()
+    {
+        if (_index > _scriptDestinations.Count - 1)
+        {
+            _rigidbody.isKinematic = false;
+            _isScripting = false;
+            return;
+        }
+        transform.position = Vector2.MoveTowards(_rigidbody.transform.position, _scriptDestinations[_index], _scriptSpeed * Time.deltaTime);
+        if (_rigidbody.transform.position == _scriptDestinations[_index])
+        {
+            if (_indexToReact == _index)
+            {
+                if (Input.GetKeyDown(_keyToReact))
+                {
+                    switch (_keyToReact)
+                    {
+                        case KeyCode.Space:
+                            OnKeySpace();
+                            break;
+                        case KeyCode.DownArrow:
+                            OnKeyDown();
+                            break;
+                    }
+                }
+            }
+            else _index++;
+        }
+    }
+
     private GameObject findClosestObjectWithTag(string tag, int side)
     {
         // side: 1 - top, 2 - left, 3 - right, 4 - bottom, 5 - center
@@ -376,6 +379,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
         return closest;
     }
+    #endregion
 }
 
 
