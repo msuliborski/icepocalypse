@@ -268,16 +268,6 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
     }
 
-    private void onTubeStopperImpact()
-    {
-        if (!_stoppedImpact)
-        {
-            _rigidbody.velocity = new Vector2(0, 0);
-            _stoppedImpact = true;
-            _rigidbody.gravityScale = 0;
-        }
-    }
-
     private void onTubeImpact()
     {
         _scriptDestinations.Clear();
