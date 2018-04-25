@@ -227,6 +227,26 @@ public class PlayerControllerExperimental : MonoBehaviour
     #endregion
 
     #region Impacts
+
+    private void manageWallTimer()
+    {
+        _wallTimer += Time.deltaTime;
+        if (_wallTimer >= 0.15)
+        {
+            _rigidbody.gravityScale = 3;
+            if (_rigidbody.velocity.y <= -4) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, -4);
+        }
+    }
+
+    private void onSlopeImpact()
+    {
+        if (!_slopeImpact)
+        {
+            _slopeImpact = true;
+            SetFacingRight(true);
+            _rigidbody.gravityScale = 2;
+        }
+    }
     private void onTubeImpact()
     {
         _scriptDestinations.Clear();
@@ -234,9 +254,6 @@ public class PlayerControllerExperimental : MonoBehaviour
         tubeHeight = go.GetComponent<SpriteRenderer>().bounds.size.y;
         _scriptDestinations.Add(go.transform.position + new Vector3(playerWidth, tubeHeight / 2 + playerHeight / 2, 0f));
         _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0f, -tubeHeight, 0f));
-        Debug.Log("POINTS:");
-        Debug.Log("POINT0:" + _scriptDestinations[0]);
-        Debug.Log("POINT1:" + _scriptDestinations[1]);
         _scriptSpeed = 3.0f;
         _isScripting = true;
         _rigidbody.isKinematic = true;
@@ -295,16 +312,6 @@ public class PlayerControllerExperimental : MonoBehaviour
         _stoppedImpact = false;
         _slopeImpact = false;
         transform.rotation = Quaternion.Euler(0, 0, 0);
-    }
-
-    private void onSlopeImpact()
-    {
-        if (!_slopeImpact)
-        {
-            _slopeImpact = true;
-            SetFacingRight(true);
-            _rigidbody.gravityScale = 2;
-        }
     }
     #endregion
 
