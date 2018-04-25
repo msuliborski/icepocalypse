@@ -13,6 +13,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     public float JumpForce = 18;
     public float WallReflectionForce = 17;
     public float MoveSpeed = 10;
+    public int Hp = 100;
     private float _wallTimer = 0;
     public bool FacingRight = true;
     private float _moveDirection = 0;
@@ -41,7 +42,8 @@ public class PlayerControllerExperimental : MonoBehaviour
         EgdeClimbingBody,
         EgdeClimbingCorner,
         TubeSliding,
-        Sloping
+        Sloping,
+        Death
     }
 
 	public PlayerState CurrentState = PlayerState.Inert;
@@ -52,7 +54,6 @@ public class PlayerControllerExperimental : MonoBehaviour
     private LayerMask Obstacle_R;
     private LayerMask Obstacle_L;
     private LayerMask HandBar;
-    private LayerMask Stopper;
     private LayerMask Slope;
     private LayerMask Edge;
 
@@ -79,7 +80,6 @@ public class PlayerControllerExperimental : MonoBehaviour
         Ground = LayerMask.GetMask("Ground");
         Wall = LayerMask.GetMask("Wall");
         Tube = LayerMask.GetMask("Tube");
-        Stopper = LayerMask.GetMask("TubeStopper");
         HandBar = LayerMask.GetMask("Handbar");
         Slope = LayerMask.GetMask("Slope");
         Edge = LayerMask.GetMask("Edge");
@@ -96,15 +96,19 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (_isScripting) script();
         else
         {
-            if (Physics2D.IsTouchingLayers(_colliderLegs, Ground)) CurrentState = PlayerState.Grounded;
-            else if (Physics2D.IsTouchingLayers(_colliderWhole, Tube)) CurrentState = PlayerState.TubeSliding;
-            else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
-            else if (Physics2D.IsTouchingLayers(_colliderBody, Edge)) CurrentState = PlayerState.EgdeClimbingBody;
-            else if (Physics2D.IsTouchingLayers(_colliderCorner, Edge)) CurrentState = PlayerState.EgdeClimbingCorner; 
-            else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
-            else if (Physics2D.IsTouchingLayers(_colliderWhole, HandBar)) CurrentState = PlayerState.HandBarring;
-            else if (Physics2D.IsTouchingLayers(_colliderWhole, Slope)) CurrentState = PlayerState.Sloping;
-            else CurrentState = PlayerState.Inert;
+            if (Hp > 0)
+            {
+                if (Physics2D.IsTouchingLayers(_colliderLegs, Ground)) CurrentState = PlayerState.Grounded;
+                else if (Physics2D.IsTouchingLayers(_colliderWhole, Tube)) CurrentState = PlayerState.TubeSliding;
+                else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
+                else if (Physics2D.IsTouchingLayers(_colliderBody, Edge)) CurrentState = PlayerState.EgdeClimbingBody;
+                else if (Physics2D.IsTouchingLayers(_colliderCorner, Edge)) CurrentState = PlayerState.EgdeClimbingCorner;
+                else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
+                else if (Physics2D.IsTouchingLayers(_colliderWhole, HandBar)) CurrentState = PlayerState.HandBarring;
+                else if (Physics2D.IsTouchingLayers(_colliderWhole, Slope)) CurrentState = PlayerState.Sloping;
+                else CurrentState = PlayerState.Inert;
+            }
+            else CurrentState = PlayerState.Death;
 
             switch (CurrentState)
             {
@@ -160,6 +164,12 @@ public class PlayerControllerExperimental : MonoBehaviour
                 case PlayerState.EgdeClimbingCorner:
 
                     onEdgeCornerImpact();
+
+                    break;
+
+                case PlayerState.Death:
+
+                    // TO DO STH WITH GAME & DEATH ANIMATION
 
                     break;
             }
