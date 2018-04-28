@@ -7,6 +7,9 @@ using UnityEngine.Events;
 
 public class PlayerControllerExperimental : MonoBehaviour
 {
+    public GameObject Enemy;
+    private int _animHash = Animator.StringToHash("PlayerPunch");
+
     public UnityEvent TubeStopperDestroy;
     public float JumpForce;
     public float WallReflectionForce;
@@ -15,12 +18,12 @@ public class PlayerControllerExperimental : MonoBehaviour
     public bool FacingRight = true;
     float _moveDirection = 0;
 
-
     private bool _wallImpact = false;
     private bool _tubeImpact = false;
     private bool _stoppedImpact = false;
     public bool _obstacleHasJumped = false;
     private bool _tubeIgnore = false;
+    private Animator _anim;
 
 
     public enum PlayerState
@@ -61,6 +64,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
         _rigidbody = gameObject.GetComponent<Rigidbody2D>();
         _collider = gameObject.GetComponent<Collider2D>();
+        _anim = GetComponent<Animator>();
     }
 
 
@@ -96,6 +100,18 @@ public class PlayerControllerExperimental : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
                 if (Input.GetKeyDown(KeyCode.Space)) Jump();
 
+                var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
+                
+                if ( Input.GetKeyDown( KeyCode.F ) && _animHash != stateInfo.fullPathHash )
+                {
+                    _anim.SetBool("playerattack", true);
+                    Enemy.GetComponent<EnemyController>().Defend();
+                }
+                else if (Input.GetKeyDown(KeyCode.F))
+                {
+                    Debug.Log("nie ma mowy, trwa animacja");
+                }
+             
                 resetImpacts();
                 _tubeIgnore = false;
 
@@ -293,10 +309,18 @@ public class PlayerControllerExperimental : MonoBehaviour
         _rigidbody.isKinematic = false;
         _obstacleHasJumped = false;
       //  _tubeIgnore = false;
-        transform.rotation = Quaternion.Euler(0, 0, 0);
+        //transform.rotation = Quaternion.Euler(0, 0, 0);
 
 
 
+    }
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.gameObject.tag == "EnemyLegs" && Time.timeScale == 0.3f)
+        {
+            Debug.Log("leg hit");
+        }
     }
 }
 
