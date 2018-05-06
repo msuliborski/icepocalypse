@@ -7,9 +7,6 @@ using UnityEngine.Events;
 
 public class PlayerControllerExperimental : MonoBehaviour
 {
-    public GameObject Enemy;
-    private int _animHash = Animator.StringToHash("PlayerPunch");
-
     public UnityEvent TubeStopperDestroy;
     public float JumpForce;
     public float WallReflectionForce;
@@ -23,7 +20,6 @@ public class PlayerControllerExperimental : MonoBehaviour
     private bool _stoppedImpact = false;
     public bool _obstacleHasJumped = false;
     private bool _tubeIgnore = false;
-    private Animator _anim;
 
 
     public enum PlayerState
@@ -64,12 +60,15 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
         _rigidbody = gameObject.GetComponent<Rigidbody2D>();
         _collider = gameObject.GetComponent<Collider2D>();
-        _anim = GetComponent<Animator>();
     }
-
 
     void Update()
     {   
+        if ( GetComponent<FightSystem>().IsFighting == true )
+        {
+            return;
+        }
+
         if (Physics2D.IsTouchingLayers(_collider, Ground)) CurrentState = PlayerState.Grounded;
         else if (Physics2D.IsTouchingLayers(_collider, Obstacle_R)) CurrentState = PlayerState.ObstacleClimbing_R;
         else if (Physics2D.IsTouchingLayers(_collider, Obstacle_L)) CurrentState = PlayerState.ObstacleClimbing_L;
@@ -83,10 +82,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         else if (Physics2D.IsTouchingLayers(_collider, HandBar)) CurrentState = PlayerState.HandBarring;
         else if (Physics2D.IsTouchingLayers(_collider, Slope)) CurrentState = PlayerState.Sloping;
         else CurrentState = PlayerState.Inert;
-
-
-
-
+        
         switch (CurrentState)
         {
 
@@ -99,18 +95,6 @@ public class PlayerControllerExperimental : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false);
                 if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
                 if (Input.GetKeyDown(KeyCode.Space)) Jump();
-
-                var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
-                
-                if ( Input.GetKeyDown( KeyCode.F ) && _animHash != stateInfo.fullPathHash )
-                {
-                    _anim.SetBool("playerattack", true);
-                    Enemy.GetComponent<EnemyController>().Defend();
-                }
-                else if (Input.GetKeyDown(KeyCode.F))
-                {
-                    Debug.Log("nie ma mowy, trwa animacja");
-                }
              
                 resetImpacts();
                 _tubeIgnore = false;
@@ -313,14 +297,6 @@ public class PlayerControllerExperimental : MonoBehaviour
 
 
 
-    }
-
-    void OnTriggerEnter2D(Collider2D col)
-    {
-        if (col.gameObject.tag == "EnemyLegs" && Time.timeScale == 0.3f)
-        {
-            Debug.Log("leg hit");
-        }
     }
 }
 

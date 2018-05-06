@@ -9,6 +9,7 @@ TagManager:
   - Ground
   - EnemyFist
   - EnemyLegs
+  - PlayerFist
   layers:
   - Default
   - TransparentFX

@@ -1,8 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour {
+    public Text EnemyHealthText;
+    public int EnemyHealthPoints = 100;
+    private int _enemyHealthPoints;
+
+    public bool _isUnderAttack = false;
+    public bool _isDefending = false;
+
+    private float _animatingTime = 0f;
+
     public float EnemyRunningSpeed = 5.0f;
     public float EnemyWalkingSpeed = 2.5f;
     public float FightingDeadZone = 0.5f;
@@ -47,7 +57,11 @@ public class EnemyController : MonoBehaviour {
 	
 	void Start ()
 	{
+        EnemyHealthText = GameObject.Find("Oponent life").GetComponent<Text>();
+
        _anim = GetComponent<Animator>();
+        EnemyHealthText.enabled = false;
+        _enemyHealthPoints = EnemyHealthPoints;
 
         //trig = GetComponentInChildren<Collider2D>();
         _rb = GetComponent<Rigidbody2D>();
@@ -69,6 +83,8 @@ public class EnemyController : MonoBehaviour {
         }
 
         _triggerRange = Mathf.Abs( ViewRangeTransform.position.x - transform.position.x );
+
+        EnemyHealthText.text = "Enemy: " + _enemyHealthPoints;
 	}
 	
 	
@@ -77,11 +93,11 @@ public class EnemyController : MonoBehaviour {
 	{
         if ( Input.GetKey(KeyCode.Space) )
         {
-            _anim.SetBool("attack", true);
+            //_anim.SetBool("attack", true);
         }
         else
         {
-            _anim.SetBool("attack", false);
+            //_anim.SetBool("attack", false);
         }
 
         _playerEnemyDistance = _playerObject.transform.position.x - transform.position.x;
@@ -100,22 +116,6 @@ public class EnemyController : MonoBehaviour {
         {
 	        _rb.velocity = new Vector2(0, _rb.velocity.y);
         }
-        if (col.gameObject.tag == "Ground")
-        {
-            _isGrounded = true;
-        }
-    }
-
-    void OnCollisionExit2D(Collision2D col)
-    {
-        if (col.gameObject.tag == "Player")
-        {
-            //_playerState = PlayerState.Attacking;
-        }
-        if (col.gameObject.tag == "Ground")
-        {
-            _isGrounded = false;
-        }
     }
 
     void OnTriggerEnter2D( Collider2D col )
@@ -124,7 +124,30 @@ public class EnemyController : MonoBehaviour {
         {
             ChangeFacingDirection();
         }
-    } 
+
+        if (col.gameObject.tag == "PlayerFist" && _isUnderAttack && !_isDefending )
+        {
+            SetHealth(-10);
+            _isUnderAttack = false;
+
+            if (_enemyHealthPoints <= 0)
+            {
+                EnemyHealthText.enabled = false;
+                Debug.Log("smierc przeciwnika");
+                _playerObject.GetComponent<FightSystem>().IsFighting = false;
+                gameObject.SetActive(false);
+                _enemyHealthPoints = EnemyHealthPoints;
+                EnemyHealthText.text = "Enemy: " + _enemyHealthPoints;
+                Time.timeScale = 1.0f;
+            }
+        }
+    }
+
+    void SetHealth(int value)
+    {
+        _enemyHealthPoints += value;
+        EnemyHealthText.text = "Enemy: " + _enemyHealthPoints;
+    }
 
     void ChangeFacingDirection()
     {
@@ -172,6 +195,7 @@ public class EnemyController : MonoBehaviour {
                 if (Mathf.Abs(_playerEnemyDistance) <= FightingDeadZone)
                 {
                     _playerState = PlayerState.Attacking;
+                    ProceedToFight();
                     Debug.Log("Attacking , distance: " + Mathf.Abs(_playerEnemyDistance));
                 }
 
@@ -225,11 +249,24 @@ public class EnemyController : MonoBehaviour {
         }
     }
 
-    void Attack()
+    void ProceedToFight()
     {
         Time.timeScale = 0.3f;
+        EnemyHealthText.enabled = true;
+        GameObject.Find("Player").GetComponent<FightSystem>().Enemy = gameObject;
+        GameObject.Find("Player").GetComponent<FightSystem>().IsFighting = true;
+        GameObject.Find("Player").GetComponent<FightSystem>().ProceedToFight();
         _rb.velocity = new Vector2(0, _rb.velocity.y);
         _rb.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX;
+    }
+
+    void Attack()
+    {
+        if ( _isDefending && (Time.time - _animatingTime) >= 1.333f )
+        {
+            _isDefending = false;
+            Debug.Log("wylaczam obrone");
+        }
 
         float x = Random.Range(0f, 3.0f);
 
@@ -239,18 +276,20 @@ public class EnemyController : MonoBehaviour {
         }
         else if ( x >= 1.0f && x < 2.0f )
         {
-            _anim.SetBool("legsAttack", true);
+            //
         }
-        //Debug.Log("Attacking");
     }
 
     public void Defend()
     {
+        _isUnderAttack = true;
         float x = Random.Range(0f, 2.0f);
 
         if ( x <= 1.0f && _isGrounded )
         {
-            _rb.AddForce(new Vector2(0f, 800.0f));
+            _anim.SetBool("defend", true);
+            _animatingTime = Time.time;
+            _isDefending = true;
             Debug.Log("defend");
         }
     }
