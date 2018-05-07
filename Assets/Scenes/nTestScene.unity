@@ -113,11 +113,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &272155179 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1607604548746906, guid: 74532ffb4dfd37747b381d056c922898,
-    type: 2}
-  m_PrefabInternal: {fileID: 435292833}
 --- !u!1001 &435292833
 Prefab:
   m_ObjectHideFlags: 0
@@ -166,6 +161,67 @@ Prefab:
       propertyPath: Slope.m_Bits
       value: 8192
       objectReference: {fileID: 0}
+    - target: {fileID: 1708490367957356, guid: 74532ffb4dfd37747b381d056c922898, type: 2}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
+    - target: {fileID: 1944092809648784, guid: 74532ffb4dfd37747b381d056c922898, type: 2}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
+    - target: {fileID: 1048534160195546, guid: 74532ffb4dfd37747b381d056c922898, type: 2}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
+    - target: {fileID: 1928039023018988, guid: 74532ffb4dfd37747b381d056c922898, type: 2}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
+    - target: {fileID: 1452416194295718, guid: 74532ffb4dfd37747b381d056c922898, type: 2}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
+    - target: {fileID: 1538458917674778, guid: 74532ffb4dfd37747b381d056c922898, type: 2}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701954775842250, guid: 74532ffb4dfd37747b381d056c922898, type: 2}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
+    - target: {fileID: 1824298292854048, guid: 74532ffb4dfd37747b381d056c922898, type: 2}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030298312273846, guid: 74532ffb4dfd37747b381d056c922898, type: 2}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
+    - target: {fileID: 1530798387554830, guid: 74532ffb4dfd37747b381d056c922898, type: 2}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
+    - target: {fileID: 4786127292438004, guid: 74532ffb4dfd37747b381d056c922898, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 7.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4979997678765074, guid: 74532ffb4dfd37747b381d056c922898, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 49.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4662609412865680, guid: 74532ffb4dfd37747b381d056c922898, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 32.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4662609412865680, guid: 74532ffb4dfd37747b381d056c922898, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -6.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 50314044612112042, guid: 74532ffb4dfd37747b381d056c922898,
+        type: 2}
+      propertyPath: m_Constraints
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 74532ffb4dfd37747b381d056c922898, type: 2}
   m_IsPrefabParent: 0
@@ -212,7 +268,7 @@ Prefab:
         type: 2}
       propertyPath: Player
       value: 
-      objectReference: {fileID: 272155179}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: cb94cf4dfdf604224a2643074a9db2e6, type: 2}
   m_IsPrefabParent: 0

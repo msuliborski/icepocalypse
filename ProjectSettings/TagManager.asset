@@ -7,8 +7,11 @@ TagManager:
   - Wall
   - Enemy
   - Ground
-  - EnemyFist
-  - EnemyLegs
+  - legs_collider
+  - body_collider
+  - corner_collider
+  - WallTube
+  - WallEdge
   layers:
   - Default
   - TransparentFX
@@ -21,14 +24,14 @@ TagManager:
   - Ground
   - Wall
   - Tube
-  - Obstacle_L
-  - Stopper
+  - TubeStopper
   - Slope
   - Handbar
   - Spikes
-  - Obstacle_R
-  - 
-  - 
+  - Edge
+  - Edge_TR
+  - Edge_BL
+  - Edge_BR
   - 
   - 
   - 

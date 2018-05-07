@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour {
+
     public float EnemyRunningSpeed = 5.0f;
     public float EnemyWalkingSpeed = 2.5f;
     public float FightingDeadZone = 0.5f;
@@ -21,10 +22,6 @@ public class EnemyController : MonoBehaviour {
     private float _playerEnemyDistance;
 
     private Collider2D trig;
-
-    private Animator _anim;
-
-    private bool _isGrounded;
 
     enum Facing
     {
@@ -47,8 +44,6 @@ public class EnemyController : MonoBehaviour {
 	
 	void Start ()
 	{
-       _anim = GetComponent<Animator>();
-
         //trig = GetComponentInChildren<Collider2D>();
         _rb = GetComponent<Rigidbody2D>();
         _playerObject = GameObject.FindGameObjectWithTag("Player");
@@ -61,7 +56,6 @@ public class EnemyController : MonoBehaviour {
         if (ViewRangeTransform.position.x > transform.position.x )
         {
             _facing = Facing.Right;
-            //ChangeFacingDirection();
         }
         else
         {
@@ -73,21 +67,12 @@ public class EnemyController : MonoBehaviour {
 	
 	
 
-	void Update () 
+	void FixedUpdate () 
 	{
-        if ( Input.GetKey(KeyCode.Space) )
-        {
-            _anim.SetBool("attack", true);
-        }
-        else
-        {
-            _anim.SetBool("attack", false);
-        }
-
         _playerEnemyDistance = _playerObject.transform.position.x - transform.position.x;
         GetState();
 
-        if(  _playerState == PlayerState.Walking && ( transform.position.x <= _patrolRangeA && _facing == Facing.Left ) ||  _playerState == PlayerState.Walking && ( transform.position.x >= _patrolRangeB && _facing == Facing.Right ) )
+        if(  _playerState != PlayerState.Running && ( transform.position.x <= _patrolRangeA && _facing == Facing.Left ) || ( transform.position.x >= _patrolRangeB && _facing == Facing.Right ) )
         {
             ChangeFacingDirection();
         }
@@ -99,10 +84,7 @@ public class EnemyController : MonoBehaviour {
         if ( col.gameObject.tag == "Player" )
         {
 	        _rb.velocity = new Vector2(0, _rb.velocity.y);
-        }
-        if (col.gameObject.tag == "Ground")
-        {
-            _isGrounded = true;
+            Debug.Log("hit player");
         }
     }
 
@@ -111,10 +93,6 @@ public class EnemyController : MonoBehaviour {
         if (col.gameObject.tag == "Player")
         {
             //_playerState = PlayerState.Attacking;
-        }
-        if (col.gameObject.tag == "Ground")
-        {
-            _isGrounded = false;
         }
     }
 
@@ -136,8 +114,6 @@ public class EnemyController : MonoBehaviour {
         {
             _facing = Facing.Right;
         }
-
-        transform.localScale = new Vector3(-1 * transform.localScale.x, transform.localScale.y, transform.localScale.z);
     }
 
     void GetState()
@@ -182,9 +158,6 @@ public class EnemyController : MonoBehaviour {
                 if (Mathf.Abs(_playerEnemyDistance) > FightingDeadZone)
                 {
                     _playerState = PlayerState.Running;
-                    _rb.constraints = RigidbodyConstraints2D.None;
-                    _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-                    Time.timeScale = 1.0f;
                     Debug.Log("Running");
                 }
                 break;
@@ -208,51 +181,19 @@ public class EnemyController : MonoBehaviour {
         if (_playerEnemyDistance>0)
         {
             _rb.velocity = new Vector2(speed, _rb.velocity.y);
-            if ( _facing == Facing.Left )
-            {
-                ChangeFacingDirection();
-            }
             //Debug.Log("Running left");
         }
         else if (_playerEnemyDistance<0)
         {
             _rb.velocity = new Vector2(-speed, _rb.velocity.y);
-            if ( _facing == Facing.Right )
-            {
-                ChangeFacingDirection();
-            }
             //Debug.Log("Running left");
         }
     }
 
     void Attack()
     {
-        Time.timeScale = 0.3f;
         _rb.velocity = new Vector2(0, _rb.velocity.y);
-        _rb.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX;
-
-        float x = Random.Range(0f, 3.0f);
-
-        if ( x < 1.0f )
-        {
-            _anim.SetBool("attack", true);
-        }
-        else if ( x >= 1.0f && x < 2.0f )
-        {
-            _anim.SetBool("legsAttack", true);
-        }
         //Debug.Log("Attacking");
-    }
-
-    public void Defend()
-    {
-        float x = Random.Range(0f, 2.0f);
-
-        if ( x <= 1.0f && _isGrounded )
-        {
-            _rb.AddForce(new Vector2(0f, 800.0f));
-            Debug.Log("defend");
-        }
     }
 
 }
