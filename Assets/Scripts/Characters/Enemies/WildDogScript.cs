@@ -102,7 +102,7 @@ public class WildDogScript : MonoBehaviour
     {
         if ( Time.time - _time >= 5.0f )
         {
-            Destroy(_playerObject);
+            Debug.Log("gracz umiera");
             _playerObject = null;
             //_rb.isKinematic = false;
             //this.GetComponent<BoxCollider2D>().isTrigger = false;
@@ -117,6 +117,7 @@ public class WildDogScript : MonoBehaviour
             //_rb.AddForce(new Vector2(0.5f, 0f));
             //_rb.isKinematic = false;
             //this.GetComponent<BoxCollider2D>().isTrigger = false;
+            Time.timeScale = 1.0f;
             Destroy(gameObject);
             _playerObject.transform.rotation = new Quaternion(0f, 0f, 0f, 0f);
             _playerObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
@@ -217,7 +218,8 @@ public class WildDogScript : MonoBehaviour
     {
         //Vector3 _jumpVector = new Vector3(_playerObject.transform.position.x - transform.position.x, 0.05f, transform.position.z);
         //_rb.AddForce( _jumpVector, ForceMode2D.Impulse);
-        _rb.velocity = new Vector2( (_playerObject.transform.position.x - transform.position.x)*5.0f, 10.0f );
+        Time.timeScale = 0.3f;
+        _rb.velocity = new Vector2( (_playerObject.transform.position.x - transform.position.x)*7.0f, ( _playerObject.transform.position.y + 1.0f - transform.position.y )*10.0f );
         _playerObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
         //_rb.velocity = new Vector2(0, _rb.velocity.y);
     }
