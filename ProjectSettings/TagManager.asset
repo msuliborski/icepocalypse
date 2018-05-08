@@ -10,6 +10,11 @@ TagManager:
   - EnemyFist
   - EnemyLegs
   - PlayerFist
+  - WallEdge
+  - WallTube
+  - corner_collider
+  - body_collider
+  - legs_collider
   layers:
   - Default
   - TransparentFX
@@ -26,7 +31,7 @@ TagManager:
   - Stopper
   - Slope
   - Handbar
-  - Spikes
+  - Edge
   - Obstacle_R
   - 
   - 
