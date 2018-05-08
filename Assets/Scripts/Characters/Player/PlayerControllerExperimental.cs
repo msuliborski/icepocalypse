@@ -98,11 +98,11 @@ public class PlayerControllerExperimental : MonoBehaviour
         {
             if (Hp > 0)
             {
-                if (Physics2D.IsTouchingLayers(_colliderLegs, Ground)) CurrentState = PlayerState.Grounded;
+                if (Physics2D.IsTouchingLayers(_colliderBody, Edge)) CurrentState = PlayerState.EgdeClimbingBody;
+                else if (Physics2D.IsTouchingLayers(_colliderCorner, Edge)) CurrentState = PlayerState.EgdeClimbingCorner;
+                else if (Physics2D.IsTouchingLayers(_colliderLegs, Ground)) CurrentState = PlayerState.Grounded;
                 else if (Physics2D.IsTouchingLayers(_colliderWhole, Tube)) CurrentState = PlayerState.TubeSliding;
                 else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
-                else if (Physics2D.IsTouchingLayers(_colliderBody, Edge)) CurrentState = PlayerState.EgdeClimbingBody;
-                else if (Physics2D.IsTouchingLayers(_colliderCorner, Edge)) CurrentState = PlayerState.EgdeClimbingCorner;
                 else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
                 else if (Physics2D.IsTouchingLayers(_colliderWhole, HandBar)) CurrentState = PlayerState.HandBarring;
                 else if (Physics2D.IsTouchingLayers(_colliderWhole, Slope)) CurrentState = PlayerState.Sloping;
@@ -264,11 +264,20 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void onEdgeCornerImpact()
     {
-       _scriptDestinations.Clear();
+        _scriptDestinations.Clear();
         GameObject go = findClosestObjectWithTag("Wall", 1);
-       _scriptDestinations.Add(go.transform.position + new Vector3(-1f, go.transform.localScale.y / 2 - 1f, 0f));
-        _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
-        _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(1f, 0, 0));
+        if (FacingRight)
+        {
+            _scriptDestinations.Add(go.transform.position + new Vector3(-1f, go.transform.localScale.y / 2 - 1f, 0f));
+            _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
+            _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(1f, 0, 0));
+        }
+        else
+        {
+            _scriptDestinations.Add(go.transform.position + new Vector3(1f, go.transform.localScale.y / 2 - 1f, 0f));
+            _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
+            _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(-1f, 0, 0));
+        }
         _scriptSpeed = 4.0f;
         _isScripting = true;
         _rigidbody.isKinematic = true;
@@ -280,11 +289,19 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void onEdgeBodyImpact()
     {
-        _scriptDestinations.Clear();
+         _scriptDestinations.Clear();
         GameObject go = findClosestObjectWithTag("Wall", 1);
-       _scriptDestinations.Add(go.transform.position + new Vector3(-1f, go.transform.localScale.y / 2 + playerHeight/2, 0f));
-       _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(1f, 0, 0));
-       _scriptSpeed = 4.0f;
+        if (FacingRight)
+        {
+            _scriptDestinations.Add(go.transform.position + new Vector3(-1f, go.transform.localScale.y / 2 + playerHeight / 2, 0f));
+            _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(1f, 0, 0));
+        }
+        else
+        {
+            _scriptDestinations.Add(go.transform.position + new Vector3(1f, go.transform.localScale.y / 2 + playerHeight / 2, 0f));
+            _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(-1f, 0, 0));
+        }
+        _scriptSpeed = 4.0f;
         _isScripting = true;
         _rigidbody.isKinematic = true;
         _rigidbody.velocity = new Vector3(0, 0, 0);
@@ -362,7 +379,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         List<GameObject> gos = new List<GameObject>(GameObject.FindGameObjectsWithTag(tag));
         GameObject closest = null;
         float distance = Mathf.Infinity;
-        Vector3 position = transform.position;
+        Vector3 position = _colliderCorner.transform.position;
         Vector2 diff;
         foreach (GameObject go in gos)
         {
