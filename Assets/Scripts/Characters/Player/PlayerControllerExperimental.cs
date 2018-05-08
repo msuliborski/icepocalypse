@@ -266,9 +266,18 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
        _scriptDestinations.Clear();
         GameObject go = findClosestObjectWithTag("Wall", 1);
-       _scriptDestinations.Add(go.transform.position + new Vector3(-1f, go.transform.localScale.y / 2 - 1f, 0f));
-        _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
-        _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(1f, 0, 0));
+        if (FacingRight)
+        {
+            _scriptDestinations.Add(go.transform.position + new Vector3(-1f, go.transform.localScale.y / 2 - 1f, 0f));
+            _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
+            _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(1f, 0, 0));
+        }
+        else
+        {
+            _scriptDestinations.Add(go.transform.position + new Vector3(1f, go.transform.localScale.y / 2 - 1f, 0f));
+            _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
+            _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(-1f, 0, 0));
+        }
         _scriptSpeed = 4.0f;
         _isScripting = true;
         _rigidbody.isKinematic = true;
@@ -282,9 +291,17 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
         _scriptDestinations.Clear();
         GameObject go = findClosestObjectWithTag("Wall", 1);
-       _scriptDestinations.Add(go.transform.position + new Vector3(-1f, go.transform.localScale.y / 2 + playerHeight/2, 0f));
-       _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(1f, 0, 0));
-       _scriptSpeed = 4.0f;
+        if (FacingRight)
+        {
+            _scriptDestinations.Add(go.transform.position + new Vector3(-1f, go.transform.localScale.y / 2 + playerHeight / 2, 0f));
+            _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(1f, 0, 0));
+        }
+        else
+        {
+            _scriptDestinations.Add(go.transform.position + new Vector3(1f, go.transform.localScale.y / 2 + playerHeight / 2, 0f));
+            _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(-1f, 0, 0));
+        }
+        _scriptSpeed = 4.0f;
         _isScripting = true;
         _rigidbody.isKinematic = true;
         _rigidbody.velocity = new Vector3(0, 0, 0);
@@ -362,7 +379,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         List<GameObject> gos = new List<GameObject>(GameObject.FindGameObjectsWithTag(tag));
         GameObject closest = null;
         float distance = Mathf.Infinity;
-        Vector3 position = transform.position;
+        Vector3 position = _colliderCorner.transform.position;
         Vector2 diff;
         foreach (GameObject go in gos)
         {
