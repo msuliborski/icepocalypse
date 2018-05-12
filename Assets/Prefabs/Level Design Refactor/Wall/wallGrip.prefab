@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 212227139943286364}
   m_Layer: 0
   m_Name: wallGrip
-  m_TagString: Untagged
+  m_TagString: WallEdge
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
