@@ -26,7 +26,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     
     private List<Vector3> _scriptDestinations;
     private float _scriptSpeed;
-    private bool _isScripting = false;
+    public bool _isScripting = false;
     private int _index;
     private int _indexToReact = -1;
     private KeyCode _keyToReact;
@@ -249,10 +249,9 @@ public class PlayerControllerExperimental : MonoBehaviour
     private void onTubeImpact()
     {
         _scriptDestinations.Clear();
-        GameObject go = findClosestObjectWithTag("WallTube", 1);
-        tubeHeight = go.GetComponent<SpriteRenderer>().bounds.size.y;
-        _scriptDestinations.Add(go.transform.position + new Vector3(playerWidth, tubeHeight / 2 + playerHeight / 2, 0f));
-        _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0f, -tubeHeight, 0f));
+        GameObject go = findClosestObjectWithTag("tubeEnd", 1);
+        _scriptDestinations.Add(new Vector3(go.transform.position.x + playerWidth, transform.position.y, 0f));
+        _scriptDestinations.Add(new Vector3(go.transform.position.x + playerWidth, go.transform.position.y + playerHeight/4, 0f));
         _scriptSpeed = 3.0f;
         _isScripting = true;
         _rigidbody.isKinematic = true;
@@ -265,7 +264,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     void onEdgeCornerImpact()
     {
         _scriptDestinations.Clear();
-        GameObject go = findClosestObjectWithTag("Wall", 1);
+        GameObject go = findClosestObjectWithTag("WallEdge", 1);
         if (FacingRight)
         {
             _scriptDestinations.Add(go.transform.position + new Vector3(-1f, go.transform.localScale.y / 2 - 1f, 0f));
@@ -290,7 +289,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     void onEdgeBodyImpact()
     {
          _scriptDestinations.Clear();
-        GameObject go = findClosestObjectWithTag("Wall", 1);
+        GameObject go = findClosestObjectWithTag("WallEdge", 1);
         if (FacingRight)
         {
             _scriptDestinations.Add(go.transform.position + new Vector3(-1f, go.transform.localScale.y / 2 + playerHeight / 2, 0f));
