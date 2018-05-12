@@ -79,6 +79,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Explosion: {fileID: 1629443127728368, guid: 18411648bb4f3614384189e110af0754, type: 2}
+  BarrelExplosionEvent: {fileID: 11400000, guid: f0b9bfb99798f4af2948781176fc357b,
+    type: 2}
 --- !u!212 &212138622091537362
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -92,6 +94,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
