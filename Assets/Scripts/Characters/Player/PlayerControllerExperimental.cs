@@ -69,6 +69,8 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     #endregion
 
+    public LineRenderer line;
+
     #region Start&Update
     void Start()
      {
@@ -90,7 +92,6 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void Update()
     {
-        
         if (Input.GetKeyDown(KeyCode.P)) Debug.Break();
 
         if (_isScripting) script();
