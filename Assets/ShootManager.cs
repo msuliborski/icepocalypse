@@ -45,7 +45,7 @@ public class ShootManager : MonoBehaviour {
             _shootLine.SetPositions(_vectors);
             Debug.Log("afwawf");
             RaycastHit2D hit = Physics2D.Raycast(_start, new Vector2(1.0f, 0f), LineLength);
-            if (hit.collider != null && hit.collider.tag == "Wall")
+            if (hit.collider != null)
             {
                 Debug.Log("hit");
             }
