@@ -16,6 +16,7 @@ TagManager:
   - body_collider
   - legs_collider
   - tubeEnd
+  - ladderEdge
   layers:
   - Default
   - TransparentFX
@@ -34,7 +35,7 @@ TagManager:
   - Handbar
   - Edge
   - Obstacle_R
-  - 
+  - Ladder
   - 
   - 
   - 
