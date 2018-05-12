@@ -385,6 +385,12 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
         return closest;
     }
+
+    public void OnBarrelExplode()
+    {
+        Hp -= 5;
+    }
+
     #endregion
 }
 

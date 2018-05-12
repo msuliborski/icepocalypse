@@ -4,7 +4,7 @@ using UnityEngine;
 [AddComponentMenu("Image Effects/Frost")]
 public class FrostEffect : MonoBehaviour
 {
-    public float FrostAmount = 0f; //0-1 (0=minimum Frost, 1=maximum frost)
+    public float FrostAmount = 0.5f; //0-1 (0=minimum Frost, 1=maximum frost)
     public float EdgeSharpness = 1; //>=1
     public float minFrost = 0; //0-1
     public float maxFrost = 1; //0-1
@@ -15,8 +15,6 @@ public class FrostEffect : MonoBehaviour
     public Shader Shader; //ImageBlendEffect.shader
 	
 	private Material material;
-
-    private int a = 1;
 
 	private void Awake()
 	{
@@ -37,26 +35,7 @@ public class FrostEffect : MonoBehaviour
         material.SetFloat("_EdgeSharpness", EdgeSharpness);
         material.SetFloat("_SeeThroughness", seethroughness);
         material.SetFloat("_Distortion", distortion);
-        Debug.Log("_Distortion: "+ distortion);
 
 		Graphics.Blit(source, destination, material);
 	}
-
-    void Update()
-    {
-        if ( Input.GetKeyDown(KeyCode.UpArrow) )
-        {
-            FrostAmount += 0.05f;
-        }
-        else if ( Input.GetKeyDown(KeyCode.DownArrow) )
-        {
-            FrostAmount -= 0.05f;
-        }
-
-        if ( Time.time >= a )
-        {
-            FrostAmount += 0.03f;
-            a++;
-        }
-    }
 }
