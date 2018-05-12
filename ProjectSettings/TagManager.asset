@@ -10,6 +10,11 @@ TagManager:
   - EnemyFist
   - EnemyLegs
   - PlayerFist
+  - corner_collider
+  - body_collider
+  - legs_collider
+  - WallTube
+  - WallEdge
   layers:
   - Default
   - TransparentFX
