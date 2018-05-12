@@ -15,6 +15,7 @@ TagManager:
   - corner_collider
   - body_collider
   - legs_collider
+  - tubeEnd
   layers:
   - Default
   - TransparentFX
