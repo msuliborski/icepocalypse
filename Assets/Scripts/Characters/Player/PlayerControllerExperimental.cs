@@ -92,6 +92,9 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void Update()
     {
+        if (GetComponent<FightSystem>().IsFighting)
+            return;
+
         if (Input.GetKeyDown(KeyCode.P)) Debug.Break();
 
         if (_isScripting) script();

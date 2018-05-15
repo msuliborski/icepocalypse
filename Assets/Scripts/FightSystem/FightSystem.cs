@@ -8,13 +8,13 @@ public class FightSystem : MonoBehaviour {
     public GameObject Enemy;
     private int _animHash = Animator.StringToHash("Base Layer.PlayerPunch");
 
-    public Text StaminaText;
+    //public Text StaminaText;
     public int MaxStaminaPoints = 100;
     private int _staminaPoints;
     private float _staminaRegenerationTime = 2.0f;
     private float _timeStamp;
 
-    public Text PlayerHealth;
+    //public Text PlayerHealth;
     public int MaxHealthPoints = 100;
     private int _healthPoints;
 
@@ -29,9 +29,9 @@ public class FightSystem : MonoBehaviour {
     {
         _anim = GetComponent<Animator>();
         _staminaPoints = 20;
-        StaminaText.text = "Stamina: " + _staminaPoints;
+        //StaminaText.text = "Stamina: " + _staminaPoints;
         _healthPoints = MaxHealthPoints;
-        PlayerHealth.text = "Health: " + _healthPoints;
+        //PlayerHealth.text = "Health: " + _healthPoints;
         _timeStamp = Time.time;
         Debug.Log("time stamp: " + _timeStamp);
     }
@@ -78,7 +78,7 @@ public class FightSystem : MonoBehaviour {
                     //Debug.Log("animacja uruchomiona");
                     _anim.SetBool("playerattack", true);
                     Enemy.GetComponent<EnemyController>().Defend();
-                    SetStamina(-10);
+                    //SetStamina(-10);
                 }
                 else if ( Input.GetKeyDown(KeyCode.G) )
                 {
@@ -119,7 +119,7 @@ public class FightSystem : MonoBehaviour {
             _staminaPoints = 0;
         }
 
-        StaminaText.text = "Stamina: " + _staminaPoints;
+        //StaminaText.text = "Stamina: " + _staminaPoints;
     }
 
     void LetThemFight()
@@ -132,12 +132,12 @@ public class FightSystem : MonoBehaviour {
     {
         if ( col.gameObject.tag == "EnemyFist" && !_isDefending )
         {
-            SetHealth(-10);
+            //SetHealth(-10);
 
             if ( _healthPoints <= 0 )
             {
                 Debug.Log("umrales");
-                PlayerHealth.enabled = false;
+                //PlayerHealth.enabled = false;
             }
         }
         else if (col.gameObject.tag == "EnemyFist" && _isDefending)
@@ -160,7 +160,7 @@ public class FightSystem : MonoBehaviour {
             _healthPoints = 0;
         }
 
-        PlayerHealth.text = "Health: " + _healthPoints;
+        //PlayerHealth.text = "Health: " + _healthPoints;
     }
 
 }

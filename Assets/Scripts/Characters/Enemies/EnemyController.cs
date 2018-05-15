@@ -253,9 +253,9 @@ public class EnemyController : MonoBehaviour {
     {
         Time.timeScale = 0.3f;
         EnemyHealthText.enabled = true;
-        GameObject.Find("Player").GetComponent<FightSystem>().Enemy = gameObject;
-        GameObject.Find("Player").GetComponent<FightSystem>().IsFighting = true;
-        GameObject.Find("Player").GetComponent<FightSystem>().ProceedToFight();
+        GameObject.Find("Player 1").GetComponent<FightSystem>().Enemy = gameObject;
+        GameObject.Find("Player 1").GetComponent<FightSystem>().IsFighting = true;
+        GameObject.Find("Player 1").GetComponent<FightSystem>().ProceedToFight();
         _rb.velocity = new Vector2(0, _rb.velocity.y);
         _rb.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX;
     }
@@ -285,7 +285,7 @@ public class EnemyController : MonoBehaviour {
         _isUnderAttack = true;
         float x = Random.Range(0f, 2.0f);
 
-        if ( x <= 1.0f && _isGrounded )
+        if ( x <= 1.0f )
         {
             _anim.SetBool("defend", true);
             _animatingTime = Time.time;
