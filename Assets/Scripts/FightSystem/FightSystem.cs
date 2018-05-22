@@ -44,7 +44,7 @@ public class FightSystem : MonoBehaviour {
             _timeStamp = Time.time;
         }
 
-        if ( IsFighting )
+        if ( true )
         {
             var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
@@ -67,7 +67,7 @@ public class FightSystem : MonoBehaviour {
                 _sideFlag = false;
                 _isDefending = false;
                 _canIFight = true;
-                Enemy.GetComponent<EnemyController>()._isUnderAttack = false;
+                //Enemy.GetComponent<EnemyController>()._isUnderAttack = false;
             }
 
             if (_canIFight)
@@ -77,7 +77,7 @@ public class FightSystem : MonoBehaviour {
                     _canIFight = false;
                     //Debug.Log("animacja uruchomiona");
                     _anim.SetBool("playerattack", true);
-                    Enemy.GetComponent<EnemyController>().Defend();
+                    //Enemy.GetComponent<EnemyController>().Defend();
                     //SetStamina(-10);
                 }
                 else if ( Input.GetKeyDown(KeyCode.G) )

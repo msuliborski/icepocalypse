@@ -127,7 +127,7 @@ public class EnemyController : MonoBehaviour {
             ChangeFacingDirection();
         }
 
-        if (col.gameObject.tag == "PlayerFist" && _isUnderAttack && !_isDefending )
+        if (col.gameObject.tag == "PlayerFist" )//&& _isUnderAttack && !_isDefending )
         {
             Debug.Log("enemy health: " + _enemyHealthPoints);
             SetHealth(-10);
@@ -263,7 +263,7 @@ public class EnemyController : MonoBehaviour {
         EnemyHealthText.enabled = true;
         GameObject.Find("Player 1").GetComponent<FightSystem>().Enemy = gameObject;
         GameObject.Find("Player 1").GetComponent<FightSystem>().IsFighting = true;
-        GameObject.Find("Player 1").GetComponent<FightSystem>().ProceedToFight();
+        //GameObject.Find("Player 1").GetComponent<FightSystem>().ProceedToFight();
         _rb.velocity = new Vector2(0, _rb.velocity.y);
         _rb.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX;
     }

@@ -97,47 +97,6 @@ public class PlayerControllerExperimental : MonoBehaviour
     void Update()
     {
         var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
-        if (stateInfo.IsName("Base Layer.PlayerPunch"))
-        {
-            _sideFlag = true;
-            //Debug.Log("gram animacje");
-        }
-        else if (stateInfo.IsName("Base Layer.PlayerDefend"))
-        {
-            _sideFlag = true;
-        }
-
-        if (_sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunch") && !stateInfo.IsName("Base Layer.PlayerDefend"))
-        {
-            //Debug.Log("nie ma animacji");
-        }
-
-        if (_sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunch") && !stateInfo.IsName("Base Layer.PlayerDefend"))
-        {
-            _sideFlag = false;
-            //_isDefending = false;
-            _canIFight = true;
-            //Enemy.GetComponent<EnemyController>()._isUnderAttack = false;
-        }
-
-        if (_canIFight)
-        {
-            if (Input.GetKeyDown(KeyCode.F) )//&& _staminaPoints >= 10)
-            {
-                _canIFight = false;
-                //Debug.Log("animacja uruchomiona");
-                _anim.SetBool("playerattack", true);
-                //Enemy.GetComponent<EnemyController>().Defend();
-                //SetStamina(-10);
-            }
-            else if (Input.GetKeyDown(KeyCode.G))
-            {
-                _canIFight = false;
-                //_isDefending = true;
-                //Debug.Log("animacja uruchomiona");
-                _anim.SetBool("playerdefend", true);
-            }
-        }
         if (Input.GetKeyDown(KeyCode.P)) Debug.Break();
 
         if (_isScripting) script();
