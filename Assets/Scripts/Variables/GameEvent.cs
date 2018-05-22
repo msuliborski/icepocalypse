@@ -26,7 +26,6 @@ namespace Scripts.Variables
         
         public void Raise()
         {
-            Debug.Log("ty kurwo");
             for (var i = _eventListeners.Count - 1; i >= 0; i--)
             {
                 _eventListeners[i].OnEventRaised();
