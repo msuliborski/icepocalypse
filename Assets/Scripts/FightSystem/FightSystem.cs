@@ -33,7 +33,7 @@ public class FightSystem : MonoBehaviour {
         _healthPoints = MaxHealthPoints;
         //PlayerHealth.text = "Health: " + _healthPoints;
         _timeStamp = Time.time;
-        Debug.Log("time stamp: " + _timeStamp);
+       // Debug.Log("time stamp: " + _timeStamp);
     }
 
     void Update()
@@ -59,7 +59,7 @@ public class FightSystem : MonoBehaviour {
 
             if (_sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunch") && !stateInfo.IsName("Base Layer.PlayerDefend"))
             {
-                Debug.Log("nie ma animacji");
+                //Debug.Log("nie ma animacji");
             }
 
             if ( _sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunch") && !stateInfo.IsName("Base Layer.PlayerDefend"))
@@ -109,7 +109,7 @@ public class FightSystem : MonoBehaviour {
     void SetStamina( int value )
     {
         _staminaPoints += value;
-        Debug.Log("stamina: " + _staminaPoints);
+        //Debug.Log("stamina: " + _staminaPoints);
         if ( _staminaPoints > MaxStaminaPoints )
         {
             _staminaPoints = MaxStaminaPoints;
@@ -136,13 +136,13 @@ public class FightSystem : MonoBehaviour {
 
             if ( _healthPoints <= 0 )
             {
-                Debug.Log("umrales");
+                //Debug.Log("umrales");
                 //PlayerHealth.enabled = false;
             }
         }
         else if (col.gameObject.tag == "EnemyFist" && _isDefending)
         {
-            Debug.Log("obrona");
+            //Debug.Log("obrona");
         }
 
     }

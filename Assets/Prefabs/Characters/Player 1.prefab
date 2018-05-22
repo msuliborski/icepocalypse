@@ -66,7 +66,7 @@ GameObject:
   - component: {fileID: 50747261218310500}
   m_Layer: 0
   m_Name: RightHand
-  m_TagString: EnemyFist
+  m_TagString: PlayerFist
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -610,6 +610,7 @@ MonoBehaviour:
   MoveSpeed: 10
   Hp: 100
   FacingRight: 1
+  _anim: {fileID: 95300208870847146}
   CurrentState: 0
   line: {fileID: 120842356028553122}
 --- !u!120 &120842356028553122

@@ -286,26 +286,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6d2cf71c49a0c47bc8b4d72604da58fa, type: 2}
   m_IsPrefabParent: 0
---- !u!1 &375610031 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1638983339565842, guid: d6024747a626f1a44ac903c86fd99251,
-    type: 2}
-  m_PrefabInternal: {fileID: 1580525263}
---- !u!114 &375610038
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 375610031}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0b51bf3fb7cc81498bfdf423771a67e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Enemy: {fileID: 0}
-  MaxStaminaPoints: 100
-  MaxHealthPoints: 100
-  IsFighting: 0
 --- !u!1001 &502143753
 Prefab:
   m_ObjectHideFlags: 0
@@ -1028,6 +1008,11 @@ Prefab:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114093462152338296, guid: 32ad8cbb2debb6345a1cdf8201a11561,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 32ad8cbb2debb6345a1cdf8201a11561, type: 2}
   m_IsPrefabParent: 0
@@ -1061,7 +1046,7 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 1962463528}
   m_GameObject: {fileID: 2000973125}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
   m_Name: 
@@ -1206,7 +1191,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2000973125}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0b51bf3fb7cc81498bfdf423771a67e, type: 3}
   m_Name: 

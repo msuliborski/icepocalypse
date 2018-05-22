@@ -4,6 +4,8 @@ using UnityEngine.UI;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour {
+    public GameObject QteButton;
+
     public Text EnemyHealthText;
     public int EnemyHealthPoints = 100;
     private int _enemyHealthPoints;
@@ -127,6 +129,7 @@ public class EnemyController : MonoBehaviour {
 
         if (col.gameObject.tag == "PlayerFist" && _isUnderAttack && !_isDefending )
         {
+            Debug.Log("enemy health: " + _enemyHealthPoints);
             SetHealth(-10);
             _isUnderAttack = false;
 
@@ -139,6 +142,11 @@ public class EnemyController : MonoBehaviour {
                 _enemyHealthPoints = EnemyHealthPoints;
                 EnemyHealthText.text = "Enemy: " + _enemyHealthPoints;
                 Time.timeScale = 1.0f;
+            }
+
+            if ( _enemyHealthPoints <= 20 )
+            {
+                PutCircle();
             }
         }
     }
@@ -177,13 +185,13 @@ public class EnemyController : MonoBehaviour {
                         if (_playerEnemyDistance < 0 )
                         {
                             _playerState = PlayerState.Running;
-                            Debug.Log("Running");
+                            //Debug.Log("Running");
                         }
                     }
                     else if (_playerEnemyDistance > 0 )
                     {
                         _playerState = PlayerState.Running;
-                        Debug.Log("Running");
+                        //Debug.Log("Running");
                     }
                 }
 
@@ -196,7 +204,7 @@ public class EnemyController : MonoBehaviour {
                 {
                     _playerState = PlayerState.Attacking;
                     ProceedToFight();
-                    Debug.Log("Attacking , distance: " + Mathf.Abs(_playerEnemyDistance));
+                    //Debug.Log("Attacking , distance: " + Mathf.Abs(_playerEnemyDistance));
                 }
 
                 break;
@@ -209,7 +217,7 @@ public class EnemyController : MonoBehaviour {
                     _rb.constraints = RigidbodyConstraints2D.None;
                     _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
                     Time.timeScale = 1.0f;
-                    Debug.Log("Running");
+                    //Debug.Log("Running");
                 }
                 break;
         }
@@ -251,7 +259,7 @@ public class EnemyController : MonoBehaviour {
 
     void ProceedToFight()
     {
-        Time.timeScale = 0.3f;
+        //Time.timeScale = 0.3f;
         EnemyHealthText.enabled = true;
         GameObject.Find("Player 1").GetComponent<FightSystem>().Enemy = gameObject;
         GameObject.Find("Player 1").GetComponent<FightSystem>().IsFighting = true;
@@ -260,12 +268,21 @@ public class EnemyController : MonoBehaviour {
         _rb.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX;
     }
 
+    void PutCircle()
+    {
+        var circle = Instantiate(QteButton, new Vector3(transform.position.x, transform.position.y+1.0f, transform.position.z), Quaternion.identity);
+    }
+
     void Attack()
     {
+        //if ( Input.GetKeyDown(KeyCode.F) )
+        //PutCircle();
+
+       
         if ( _isDefending && (Time.time - _animatingTime) >= 1.333f )
         {
             _isDefending = false;
-            Debug.Log("wylaczam obrone");
+            //Debug.Log("wylaczam obrone");
         }
 
         float x = Random.Range(0f, 3.0f);
@@ -278,10 +295,12 @@ public class EnemyController : MonoBehaviour {
         {
             //
         }
+        
     }
 
     public void Defend()
     {
+        
         _isUnderAttack = true;
         float x = Random.Range(0f, 2.0f);
 
@@ -289,9 +308,10 @@ public class EnemyController : MonoBehaviour {
         {
             _anim.SetBool("defend", true);
             _animatingTime = Time.time;
-            _isDefending = true;
-            Debug.Log("defend");
+            _isDefending = false;
+            //Debug.Log("defend");
         }
+        
     }
 
 }
