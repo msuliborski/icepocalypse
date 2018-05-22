@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
@@ -19,14 +19,22 @@ public class PlayerControllerExperimental : MonoBehaviour
     private float _moveDirection = 0;
 
     private bool _wallImpact = false;
-    private bool _slopeImpact = false;
+    private bool _ladderImpact = false;
+
+    private bool _ignoreLedderEdge = false;
     
     private List<Vector3> _scriptDestinations;
     private float _scriptSpeed;
     public bool _isScripting = false;
+    private bool _scriptSpeedAccelarated = false;
+    private float _scriptAcceleration = 0;
     private int _index;
+    private int _indexToRotate = -1;
+    private Quaternion _scriptRotation;
+
     private int _indexToReact = -1;
     private KeyCode _keyToReact;
+    private List<KeyCode> _keysToReact;
 
     public enum PlayerState
     {
@@ -40,6 +48,9 @@ public class PlayerControllerExperimental : MonoBehaviour
         EgdeClimbingCorner,
         TubeSliding,
         Sloping,
+        Laddering,
+        EdgeLaddering, // moving up
+        EdgeLaddering1, // moving down
         Death
     }
 
@@ -54,6 +65,9 @@ public class PlayerControllerExperimental : MonoBehaviour
     private LayerMask HandBar;
     private LayerMask Slope;
     private LayerMask Edge;
+    private LayerMask Ladder;
+    private LayerMask LadderEdge;
+    private LayerMask LadderEdge1;
 
     private Rigidbody2D _rigidbody;
     private Collider2D _colliderWhole;
@@ -66,8 +80,6 @@ public class PlayerControllerExperimental : MonoBehaviour
     private float playerHeight;
 
     #endregion
-
-    public LineRenderer line;
 
     #region Start&Update
     void Start()
@@ -83,13 +95,18 @@ public class PlayerControllerExperimental : MonoBehaviour
         HandBar = LayerMask.GetMask("Handbar");
         Slope = LayerMask.GetMask("Slope");
         Edge = LayerMask.GetMask("Edge");
-        playerWidth = _rigidbody.transform.localScale.x;
-        playerHeight = _rigidbody.transform.localScale.y;
+        Ladder = LayerMask.GetMask("Ladder");
+        LadderEdge = LayerMask.GetMask("LadderEdge");
+        LadderEdge1 = LayerMask.GetMask("LadderEdge1");
+        playerWidth = 1f;
+        playerHeight = 2f;
         _scriptDestinations = new List<Vector3>();
+        _keysToReact = new List<KeyCode>();
     }
 
     void Update()
     {
+        
         if (Input.GetKeyDown(KeyCode.P)) Debug.Break();
 
         if (_isScripting) script();
@@ -106,6 +123,21 @@ public class PlayerControllerExperimental : MonoBehaviour
                 {
                     if (CurrentState != PlayerState.EgdeClimbingCorner) PreviousState = CurrentState;
                     CurrentState = PlayerState.EgdeClimbingCorner;
+                }
+                else if ((Physics2D.IsTouchingLayers(_colliderCorner, LadderEdge) || Physics2D.IsTouchingLayers(_colliderBody, LadderEdge)) && !_ignoreLedderEdge)
+                {
+                    if (CurrentState != PlayerState.EdgeLaddering) PreviousState = CurrentState;
+                    CurrentState = PlayerState.EdgeLaddering;
+                }
+                else if (Physics2D.IsTouchingLayers(_colliderLegs, LadderEdge1))
+                {
+                    if (CurrentState != PlayerState.EdgeLaddering1) PreviousState = CurrentState;
+                    CurrentState = PlayerState.EdgeLaddering1;
+                }
+                else if (Physics2D.IsTouchingLayers(_colliderBody, Ladder))
+                {
+                    if (CurrentState != PlayerState.Laddering) PreviousState = CurrentState;
+                    CurrentState = PlayerState.Laddering;
                 }
                 else if (Physics2D.IsTouchingLayers(_colliderLegs, Ground))
                 {
@@ -150,18 +182,20 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                     movement();
 
-                    if (Input.GetKeyDown(KeyCode.RightArrow)) SetFacingRight(true);
-                    if (Input.GetKeyDown(KeyCode.LeftArrow)) SetFacingRight(false);
+                    if (Input.GetKeyDown(KeyCode.RightArrow)) OnKeyRight();
+                    if (Input.GetKeyDown(KeyCode.LeftArrow)) OnKeyLeft();
                     if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
                     if (Input.GetKeyDown(KeyCode.Space)) OnKeySpace();
+
                     resetImpacts();
+                    _ignoreLedderEdge = false;
 
                     break;
 
                 case PlayerState.Inert:
 
                     resetImpacts();
-
+                     
                     break;
 
                 case PlayerState.WallHugging:
@@ -173,11 +207,19 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                     break;
 
+                case PlayerState.Laddering:
+                     
+                    onLadderImpact();
+                    if (Input.GetKeyDown(KeyCode.Space)) OnKeySpace();
+                    if (Input.GetKeyDown(KeyCode.DownArrow)) OnKeyDown();
+                    if (Input.GetKeyDown(KeyCode.RightArrow) && !FacingRight) OnKeyRight();
+                    if (Input.GetKeyDown(KeyCode.LeftArrow) && FacingRight) OnKeyLeft();
+
+                    break;
+                
                 case PlayerState.Sloping:
 
                     onSlopeImpact();
-
-                    transform.rotation = Quaternion.Euler(0, 0, -30);
 
                     if ((Input.GetKeyDown(KeyCode.Space))) OnKeySpace();
 
@@ -201,6 +243,19 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                     break;
 
+
+                case PlayerState.EdgeLaddering:
+
+                    onLadderEdgeImpact();
+
+                    break;
+
+                case PlayerState.EdgeLaddering1:
+
+                    onLadderEdge1Impact();
+
+                    break;
+
                 case PlayerState.Death:
 
                     // TO DO STH WITH GAME & DEATH ANIMATION
@@ -214,25 +269,119 @@ public class PlayerControllerExperimental : MonoBehaviour
     #region Input
     public void OnKeyDown()
     {
-        if (_isScripting) _index++;
+        if (_isScripting)
+        {
+            switch (CurrentState)
+            {
+                case PlayerState.EdgeLaddering:
+                    _isScripting = false;
+                    _rigidbody.isKinematic = false;
+                    if (FacingRight) _rigidbody.velocity = new Vector2(0.5f, -3f);
+                    else _rigidbody.velocity = new Vector2(-0.5f, -3f);
+                    _ignoreLedderEdge = true;
+                    _ladderImpact = false;
+                    break;
+
+                default:
+                    _index++;
+                    break;
+            }
+        }
         else
         {
             switch (CurrentState)
             {
-               default:
+                case PlayerState.Laddering:
+                    MoveDownOnLadder();
+                    break;
+                default:
                     StopMovement();
                     break;
             }
         }
     }
-    private void movement()
+
+
+    public void OnKeyRight()
     {
-        _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);
+        if (_isScripting)
+        {
+            switch (CurrentState)
+            {
+                case PlayerState.EdgeLaddering:
+                    _isScripting = false;
+                    _rigidbody.isKinematic = false;
+                    _rigidbody.velocity = new Vector2(3f, 0);
+                    SetFacingRight(true);
+                    _ignoreLedderEdge = true;
+                    _ladderImpact = false;
+                    break;
+
+                case PlayerState.EgdeClimbingCorner:
+                    _isScripting = false;
+                    _rigidbody.isKinematic = false;
+                    _rigidbody.velocity = new Vector2(-_moveDirection * WallReflectionForce, JumpForce);
+                    SetFacingRight(true);
+                    break;
+
+                default:
+                    _index++;
+                    break;
+            }
+        }
+        else
+        {
+            switch (CurrentState)
+            {
+                case PlayerState.Laddering:
+                    MoveRightOnLadder();
+                    break;
+                default:
+                    SetFacingRight(true);
+                    break;
+            }
+        }
     }
 
-    public void StopMovement()
+    public void OnKeyLeft()
     {
-        _moveDirection = 0;
+        if (_isScripting)
+        {
+            switch (CurrentState)
+            {
+                case PlayerState.EdgeLaddering:
+                    _isScripting = false;
+                    _rigidbody.isKinematic = false;
+                    _rigidbody.velocity = new Vector2(-3f, 0);
+                    SetFacingRight(false);
+                    _ignoreLedderEdge = true;
+                    _ladderImpact = false;
+                    break;
+
+                case PlayerState.EgdeClimbingCorner:
+                    _isScripting = false;
+                    _rigidbody.isKinematic = false;
+                    _rigidbody.velocity = new Vector2(-_moveDirection * WallReflectionForce, JumpForce);
+                    SetFacingRight(false);
+                    break;
+
+                default:
+                    _index++;
+                    break;
+            }
+        }
+        else
+        {
+            switch (CurrentState)
+            {
+                case PlayerState.Laddering:
+                    MoveLeftOnLadder();
+                    break;
+                default:
+                    SetFacingRight(false);
+                    break;
+            }
+        }
     }
 
     public void OnKeySpace()
@@ -244,18 +393,19 @@ public class PlayerControllerExperimental : MonoBehaviour
             else if (CurrentState == PlayerState.WallHugging)
             {
                 _rigidbody.velocity = new Vector2(_rigidbody.velocity.x - _moveDirection * WallReflectionForce, JumpForce);
-
-                if (FacingRight)
-                    SetFacingRight(false);
-                else
-                    SetFacingRight(true);
+                if (FacingRight) SetFacingRight(false);
+                else SetFacingRight(true);
+            }
+            else if (CurrentState == PlayerState.Laddering)
+            {
+                MoveUpOnLadder();
             }
         }
     }
 
-    public void SetFacingRight(bool _facingRight)
+    public void SetFacingRight(bool facingRight)
     {
-        if (_facingRight)
+        if (facingRight)
         {
             FacingRight = true;
             if (transform.localScale.x < 0) transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
@@ -268,21 +418,83 @@ public class PlayerControllerExperimental : MonoBehaviour
             _moveDirection = -1;
         }
     }
+
+    private void movement()
+    {
+        _rigidbody.velocity = new Vector2(MoveSpeed * _moveDirection, _rigidbody.velocity.y);
+    }
+
+    public void StopMovement()
+    {
+        _moveDirection = 0;
+    }
+
+    public void MoveLeftOnLadder()
+    {
+        _rigidbody.velocity = new Vector2(-3f, _rigidbody.velocity.y);
+        SetFacingRight(false);
+    }
+
+    public void MoveRightOnLadder()
+    {
+        _rigidbody.velocity = new Vector2(3f, _rigidbody.velocity.y);
+        SetFacingRight(true);
+    }
+
+    public void MoveDownOnLadder()
+    {
+        _rigidbody.velocity = new Vector2(0f, -3f);
+    }
+
+    public void MoveUpOnLadder()
+    {
+        _rigidbody.velocity = new Vector2(0f, 3f);
+    }
+
+    
     #endregion
 
     #region Impacts
-    private void onSlopeImpact()
-    {
-       // _scriptDestinations.Clear();
-        //GameObject go = findClosestObjectWithTag("slopeEnd", 1);
 
-        if (!_slopeImpact)
+
+    private void onLadderImpact()
+    {
+        if (!_ladderImpact)
         {
-            _slopeImpact = true;
-            SetFacingRight(true);
-            _rigidbody.gravityScale = 2;
+            _ladderImpact = true;
+            _rigidbody.gravityScale = 0;
+            if (!_ignoreLedderEdge) _rigidbody.velocity = new Vector2(0f, 0f);
+            else
+            {
+                _ignoreLedderEdge = false;
+                _rigidbody.velocity = new Vector2(0f, -3f);
+            }
         }
     }
+
+    private void onSlopeImpact()
+    {
+        _scriptDestinations.Clear();
+        GameObject go = findClosestObjectWithTag("slopeEnd", 5);
+        _scriptDestinations.Add(new Vector3(go.transform.position.x + go.GetComponent<SpriteRenderer>().bounds.size.x/2 + playerWidth/2 , go.transform.position.y - go.GetComponent<SpriteRenderer>().bounds.size.y / 2 + playerHeight/2));
+        _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(2f, 0f));
+        if (go.transform.localScale.x > 0) SetFacingRight(true);
+        else SetFacingRight(false);
+        _scriptSpeed = 10.0f;
+        transform.rotation = Quaternion.Euler(0, 0, -30);
+        _isScripting = true;
+        _scriptSpeedAccelarated = true;
+        _scriptAcceleration = 0.2f;
+        _rigidbody.isKinematic = true;
+        _rigidbody.velocity = new Vector3(0, 0, 0);
+        _index = 0;
+        _indexToReact = -1;
+        _indexToRotate = 0;
+        _scriptRotation = Quaternion.Euler(0, 0, 0);
+        _keysToReact.Clear();
+    }
+
+
     private void onTubeImpact()
     {
         _scriptDestinations.Clear();
@@ -291,11 +503,14 @@ public class PlayerControllerExperimental : MonoBehaviour
         _scriptDestinations.Add(new Vector3(go.transform.position.x + playerWidth, go.transform.position.y + playerHeight/4, 0f));
         _scriptSpeed = 3.0f;
         _isScripting = true;
+        _scriptSpeedAccelarated = false;
         _rigidbody.isKinematic = true;
         _rigidbody.velocity = new Vector3(0, 0, 0);
         _index = 0;
         _indexToReact = 1;
-        _keyToReact = KeyCode.DownArrow;
+        _indexToRotate = -1;
+        _keysToReact.Clear();
+        _keysToReact.Add(KeyCode.DownArrow);
     }
 
     void onEdgeCornerImpact()
@@ -316,11 +531,75 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
         _scriptSpeed = 4.0f;
         _isScripting = true;
+        _scriptSpeedAccelarated = false;
         _rigidbody.isKinematic = true;
         _rigidbody.velocity = new Vector3(0, 0, 0);
         _index = 0;
         _indexToReact = 0;
-        _keyToReact = KeyCode.Space;
+        _indexToRotate = -1;
+        _keysToReact.Clear();
+        _keysToReact.Add(KeyCode.Space);
+        if (FacingRight) _keysToReact.Add(KeyCode.LeftArrow);
+        else _keysToReact.Add(KeyCode.RightArrow);
+    }
+
+    void onLadderEdgeImpact()
+    {
+        _scriptDestinations.Clear();
+        GameObject go = findClosestObjectWithTag("ladderEdge", 1);
+        if (FacingRight)
+        {
+            _scriptDestinations.Add(go.transform.position + new Vector3(-1f, go.transform.localScale.y / 2 - 1f, 0f));
+            _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
+            _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(1f, 0, 0));
+        }
+        else
+        {
+            _scriptDestinations.Add(go.transform.position + new Vector3(1f, go.transform.localScale.y / 2 - 1f, 0f));
+            _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0, playerHeight, 0));
+            _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(-1f, 0, 0));
+        }
+        _scriptSpeed = 4.0f;
+        _isScripting = true;
+        _rigidbody.isKinematic = true;
+        _scriptSpeedAccelarated = false;
+        _rigidbody.velocity = new Vector3(0, 0, 0);
+        _index = 0;
+        _indexToReact = 0;
+        _indexToRotate = -1;
+        _keysToReact.Clear();
+        _keysToReact.Add(KeyCode.Space);
+        _keysToReact.Add(KeyCode.DownArrow);
+        if (FacingRight)_keysToReact.Add(KeyCode.LeftArrow);
+        else _keysToReact.Add(KeyCode.RightArrow);
+    }
+
+
+    void onLadderEdge1Impact()
+    {
+        _scriptDestinations.Clear();
+        GameObject go = findClosestObjectWithTag("ladderEdge", 1);
+        if (FacingRight)
+        {
+            SetFacingRight(false);
+            _scriptDestinations.Add(go.transform.position + new Vector3(1f, go.GetComponent<SpriteRenderer>().bounds.size.y / 2 + playerHeight / 2));
+            _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0f, -playerWidth));
+        }
+        else
+        {
+            SetFacingRight(true);
+            _scriptDestinations.Add(go.transform.position + new Vector3(-1f, go.GetComponent<SpriteRenderer>().bounds.size.y / 2 + playerHeight/2));
+            _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0f, -playerWidth));
+        }
+        _scriptSpeed = 4.0f;
+        _isScripting = true;
+        _rigidbody.isKinematic = true;
+        _scriptSpeedAccelarated = false;
+        _rigidbody.velocity = new Vector3(0, 0, 0);
+        _index = 0;
+        _indexToReact = -1;
+        _indexToRotate = -1;
+        _keysToReact.Clear();
     }
 
     void onEdgeBodyImpact()
@@ -339,10 +618,12 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
         _scriptSpeed = 4.0f;
         _isScripting = true;
+        _scriptSpeedAccelarated = false;
         _rigidbody.isKinematic = true; 
         _rigidbody.velocity = new Vector3(0, 0, 0);
         _index = 0;
         _indexToReact = -1;
+        _indexToRotate = -1;
     }
 
     private void onWallImpact()
@@ -361,8 +642,8 @@ public class PlayerControllerExperimental : MonoBehaviour
         _wallTimer = 0;
         _rigidbody.gravityScale = 10;
         _wallImpact = false;
-        _slopeImpact = false;
-        transform.rotation = Quaternion.Euler(0, 0, 0);
+        _ladderImpact = false;
+        
     }
     #endregion
 
@@ -386,26 +667,42 @@ public class PlayerControllerExperimental : MonoBehaviour
             _isScripting = false;
             return;
         }
+        if (_scriptSpeedAccelarated) _scriptSpeed += _scriptAcceleration;
         transform.position = Vector2.MoveTowards(_rigidbody.transform.position, _scriptDestinations[_index], _scriptSpeed * Time.deltaTime);
         if (_rigidbody.transform.position == _scriptDestinations[_index])
         {
             if (_indexToReact == _index)
             {
-                if (Input.GetKeyDown(_keyToReact))
+                for (int i = 0; i < _keysToReact.Count; i++)
                 {
-                    switch (_keyToReact)
+                    if (Input.GetKeyDown(_keysToReact[i]))
                     {
-                        case KeyCode.Space:
-                            OnKeySpace();
-                            break;
-                        case KeyCode.DownArrow:
-                            OnKeyDown();
-                            break;
+                        switch (_keysToReact[i])
+                        {
+                            case KeyCode.Space:
+                                OnKeySpace();
+                                break;
+                            case KeyCode.DownArrow:
+                                OnKeyDown();
+                                break;
+                            case KeyCode.LeftArrow:
+                                OnKeyLeft();
+                                break;
+                            case KeyCode.RightArrow:
+                                OnKeyRight();
+                                break;
+                        }
                     }
                 }
             }
-            else _index++;
+            else
+            {
+                if (_index == _indexToRotate) transform.rotation = _scriptRotation;
+                _index++;
+            }
+            
         }
+
     }
 
     private GameObject findClosestObjectWithTag(string tag, int side)
@@ -436,14 +733,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
         return closest;
     }
-
-    public void OnBarrelExplode()
-    {
-        Hp -= 5;
-    }
-
     #endregion
 }
-
 
 
