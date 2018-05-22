@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
@@ -98,8 +98,8 @@ public class PlayerControllerExperimental : MonoBehaviour
         Ladder = LayerMask.GetMask("Ladder");
         LadderEdge = LayerMask.GetMask("LadderEdge");
         LadderEdge1 = LayerMask.GetMask("LadderEdge1");
-        playerWidth = _rigidbody.transform.localScale.x;
-        playerHeight = _rigidbody.transform.localScale.y;
+        playerWidth = 1f;
+        playerHeight = 2f;
         _scriptDestinations = new List<Vector3>();
         _keysToReact = new List<KeyCode>();
     }
@@ -735,6 +735,5 @@ public class PlayerControllerExperimental : MonoBehaviour
     }
     #endregion
 }
-
 
 

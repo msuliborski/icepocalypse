@@ -8,7 +8,8 @@ public class BackgroundController : MonoBehaviour
     #region Variables
     public GameObject Player;
     private Vector2 playerPos;
-    public float scrollRate;
+    public float scrollRateX;
+    public float scrollRateY;
     private float differenceX;
     private float differenceY;
     #endregion
@@ -26,10 +27,9 @@ public class BackgroundController : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-        differenceX += -scrollRate * (Player.transform.position.x - playerPos.x);
-        differenceY += -scrollRate * (Player.transform.position.y - playerPos.y);
-        if (Player.transform.position.y > 17f) transform.position = new Vector3(Player.transform.position.x + differenceX, Player.transform.position.y + differenceY, transform.position.z);
-       //transform.position = new Vector3(Player.transform.position.x + differenceX, Player.transform.position.y + differenceY, transform.position.z);
+        differenceX += -scrollRateX * (Player.transform.position.x - playerPos.x);
+        differenceY += -scrollRateY * (Player.transform.position.y - playerPos.y);
+        if (Player.transform.position.y > 1) transform.position = new Vector3(Player.transform.position.x + differenceX, Player.transform.position.y + differenceY, transform.position.z);
         else transform.position = new Vector3(Player.transform.position.x + differenceX, transform.position.y, transform.position.z);
         playerPos = Player.transform.position;
     }
