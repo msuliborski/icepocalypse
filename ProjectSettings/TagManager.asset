@@ -17,6 +17,9 @@ TagManager:
   - legs_collider
   - tubeEnd
   - ladderEdge
+  - slopeEnd
+  - hook
+  - hole
   layers:
   - Default
   - TransparentFX
@@ -36,7 +39,7 @@ TagManager:
   - Edge
   - Obstacle_R
   - Ladder
-  - 
+  - LadderEdge
   - 
   - 
   - 

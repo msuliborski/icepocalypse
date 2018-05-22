@@ -19,14 +19,11 @@ public class PlayerControllerExperimental : MonoBehaviour
     private float _moveDirection = 0;
 
     private bool _wallImpact = false;
-    private bool _tubeImpact = false;
-    private bool _stoppedImpact = false;
     private bool _slopeImpact = false;
-    
     
     private List<Vector3> _scriptDestinations;
     private float _scriptSpeed;
-    private bool _isScripting = false;
+    public bool _isScripting = false;
     private int _index;
     private int _indexToReact = -1;
     private KeyCode _keyToReact;
@@ -46,7 +43,8 @@ public class PlayerControllerExperimental : MonoBehaviour
         Death
     }
 
-	public PlayerState CurrentState = PlayerState.Inert;
+    public PlayerState PreviousState = PlayerState.Inert;
+    public PlayerState CurrentState = PlayerState.Inert;
 
     private LayerMask Ground;
     private LayerMask Wall;
@@ -98,17 +96,52 @@ public class PlayerControllerExperimental : MonoBehaviour
         {
             if (Hp > 0)
             {
-                if (Physics2D.IsTouchingLayers(_colliderBody, Edge)) CurrentState = PlayerState.EgdeClimbingBody;
-                else if (Physics2D.IsTouchingLayers(_colliderCorner, Edge)) CurrentState = PlayerState.EgdeClimbingCorner;
-                else if (Physics2D.IsTouchingLayers(_colliderLegs, Ground)) CurrentState = PlayerState.Grounded;
-                else if (Physics2D.IsTouchingLayers(_colliderWhole, Tube)) CurrentState = PlayerState.TubeSliding;
-                else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
-                else if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) CurrentState = PlayerState.WallHugging;
-                else if (Physics2D.IsTouchingLayers(_colliderWhole, HandBar)) CurrentState = PlayerState.HandBarring;
-                else if (Physics2D.IsTouchingLayers(_colliderWhole, Slope)) CurrentState = PlayerState.Sloping;
-                else CurrentState = PlayerState.Inert;
+                if (Physics2D.IsTouchingLayers(_colliderBody, Edge))
+                {
+                    if (CurrentState != PlayerState.EgdeClimbingBody) PreviousState = CurrentState;
+                    CurrentState = PlayerState.EgdeClimbingBody;
+                }
+                else if (Physics2D.IsTouchingLayers(_colliderCorner, Edge))
+                {
+                    if (CurrentState != PlayerState.EgdeClimbingCorner) PreviousState = CurrentState;
+                    CurrentState = PlayerState.EgdeClimbingCorner;
+                }
+                else if (Physics2D.IsTouchingLayers(_colliderLegs, Ground))
+                {
+                    if (CurrentState != PlayerState.Grounded) PreviousState = CurrentState;
+                    CurrentState = PlayerState.Grounded;
+                }
+                else if (Physics2D.IsTouchingLayers(_colliderWhole, Tube))
+                {
+                    if (CurrentState != PlayerState.TubeSliding) PreviousState = CurrentState;
+                    CurrentState = PlayerState.TubeSliding;
+                }
+                else if (Physics2D.IsTouchingLayers(_colliderBody, Wall))
+                {
+                    if (CurrentState != PlayerState.WallHugging) PreviousState = CurrentState;
+                    CurrentState = PlayerState.WallHugging;
+                }
+                else if (Physics2D.IsTouchingLayers(_colliderWhole, HandBar))
+                {
+                    if (CurrentState != PlayerState.HandBarring) PreviousState = CurrentState;
+                    CurrentState = PlayerState.HandBarring;
+                }
+                else if (Physics2D.IsTouchingLayers(_colliderWhole, Slope))
+                {
+                    if (CurrentState != PlayerState.Sloping) PreviousState = CurrentState;
+                    CurrentState = PlayerState.Sloping;
+                }
+                else
+                {
+                    if (CurrentState != PlayerState.Inert) PreviousState = CurrentState;
+                    CurrentState = PlayerState.Inert;
+                }
             }
-            else CurrentState = PlayerState.Death;
+            else
+            {
+                if (CurrentState != PlayerState.Death) PreviousState = CurrentState;
+                CurrentState = PlayerState.Death;
+            }
 
             switch (CurrentState)
             {
@@ -239,6 +272,9 @@ public class PlayerControllerExperimental : MonoBehaviour
     #region Impacts
     private void onSlopeImpact()
     {
+       // _scriptDestinations.Clear();
+        //GameObject go = findClosestObjectWithTag("slopeEnd", 1);
+
         if (!_slopeImpact)
         {
             _slopeImpact = true;
@@ -249,10 +285,9 @@ public class PlayerControllerExperimental : MonoBehaviour
     private void onTubeImpact()
     {
         _scriptDestinations.Clear();
-        GameObject go = findClosestObjectWithTag("WallTube", 1);
-        tubeHeight = go.GetComponent<SpriteRenderer>().bounds.size.y;
-        _scriptDestinations.Add(go.transform.position + new Vector3(playerWidth, tubeHeight / 2 + playerHeight / 2, 0f));
-        _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0f, -tubeHeight, 0f));
+        GameObject go = findClosestObjectWithTag("tubeEnd", 1);
+        _scriptDestinations.Add(new Vector3(go.transform.position.x + playerWidth, transform.position.y, 0f));
+        _scriptDestinations.Add(new Vector3(go.transform.position.x + playerWidth, go.transform.position.y + playerHeight/4, 0f));
         _scriptSpeed = 3.0f;
         _isScripting = true;
         _rigidbody.isKinematic = true;
@@ -265,7 +300,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     void onEdgeCornerImpact()
     {
         _scriptDestinations.Clear();
-        GameObject go = findClosestObjectWithTag("Wall", 1);
+        GameObject go = findClosestObjectWithTag("WallEdge", 1);
         if (FacingRight)
         {
             _scriptDestinations.Add(go.transform.position + new Vector3(-1f, go.transform.localScale.y / 2 - 1f, 0f));
@@ -290,7 +325,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     void onEdgeBodyImpact()
     {
          _scriptDestinations.Clear();
-        GameObject go = findClosestObjectWithTag("Wall", 1);
+        GameObject go = findClosestObjectWithTag("WallEdge", 1);
         if (FacingRight)
         {
             _scriptDestinations.Add(go.transform.position + new Vector3(-1f, go.transform.localScale.y / 2 + playerHeight / 2, 0f));
@@ -303,7 +338,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
         _scriptSpeed = 4.0f;
         _isScripting = true;
-        _rigidbody.isKinematic = true;
+        _rigidbody.isKinematic = true; 
         _rigidbody.velocity = new Vector3(0, 0, 0);
         _index = 0;
         _indexToReact = -1;
@@ -314,7 +349,8 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (!_wallImpact)
         {
             _wallImpact = true;
-            _rigidbody.velocity = new Vector2(0, 0);
+            if (PreviousState == PlayerState.Grounded) _rigidbody.velocity = new Vector2(0, 6); 
+            else _rigidbody.velocity = new Vector2(0, 0);
             _rigidbody.gravityScale = 0;
         }
     }
@@ -324,8 +360,6 @@ public class PlayerControllerExperimental : MonoBehaviour
         _wallTimer = 0;
         _rigidbody.gravityScale = 10;
         _wallImpact = false;
-        _tubeImpact = false;
-        _stoppedImpact = false;
         _slopeImpact = false;
         transform.rotation = Quaternion.Euler(0, 0, 0);
     }
