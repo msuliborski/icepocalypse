@@ -8,13 +8,13 @@ public class FightSystem : MonoBehaviour {
     public GameObject Enemy;
     private int _animHash = Animator.StringToHash("Base Layer.PlayerPunch");
 
-    public Text StaminaText;
+    //public Text StaminaText;
     public int MaxStaminaPoints = 100;
     private int _staminaPoints;
     private float _staminaRegenerationTime = 2.0f;
     private float _timeStamp;
 
-    public Text PlayerHealth;
+    //public Text PlayerHealth;
     public int MaxHealthPoints = 100;
     private int _healthPoints;
 
@@ -25,26 +25,44 @@ public class FightSystem : MonoBehaviour {
     public bool IsFighting = false;
     private bool _isDefending = false;
 
+    [HideInInspector]
+    public bool IsQTE;
+    [HideInInspector]
+    public bool ClickedTheCircle;
+
     void Start()
     {
+        IsQTE = false;
         _anim = GetComponent<Animator>();
         _staminaPoints = 20;
-        StaminaText.text = "Stamina: " + _staminaPoints;
+        //StaminaText.text = "Stamina: " + _staminaPoints;
         _healthPoints = MaxHealthPoints;
-        PlayerHealth.text = "Health: " + _healthPoints;
+        //PlayerHealth.text = "Health: " + _healthPoints;
         _timeStamp = Time.time;
-        Debug.Log("time stamp: " + _timeStamp);
+       // Debug.Log("time stamp: " + _timeStamp);
     }
 
     void Update()
     {
+        if ( IsQTE )
+        {
+            if ( ClickedTheCircle )
+            {
+                Debug.Log("super atak");
+                ClickedTheCircle = false;
+                _anim.SetBool("playersuperatt", true);
+            }
+
+            return;
+        }
+
         if ( (Time.time - _timeStamp > _staminaRegenerationTime) )
         {
             SetStamina(5);
             _timeStamp = Time.time;
         }
 
-        if ( IsFighting )
+        if ( true )
         {
             var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
@@ -59,7 +77,7 @@ public class FightSystem : MonoBehaviour {
 
             if (_sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunch") && !stateInfo.IsName("Base Layer.PlayerDefend"))
             {
-                Debug.Log("nie ma animacji");
+                //Debug.Log("nie ma animacji");
             }
 
             if ( _sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunch") && !stateInfo.IsName("Base Layer.PlayerDefend"))
@@ -67,7 +85,7 @@ public class FightSystem : MonoBehaviour {
                 _sideFlag = false;
                 _isDefending = false;
                 _canIFight = true;
-                Enemy.GetComponent<EnemyController>()._isUnderAttack = false;
+                //Enemy.GetComponent<EnemyController>()._isUnderAttack = false;
             }
 
             if (_canIFight)
@@ -77,8 +95,11 @@ public class FightSystem : MonoBehaviour {
                     _canIFight = false;
                     //Debug.Log("animacja uruchomiona");
                     _anim.SetBool("playerattack", true);
-                    Enemy.GetComponent<EnemyController>().Defend();
-                    SetStamina(-10);
+                    if ( Enemy != null )
+                    Enemy.GetComponent<EnemyController>()._isUnderAttack = true;
+
+                    //Enemy.GetComponent<EnemyController>().Defend();
+                    //SetStamina(-10);
                 }
                 else if ( Input.GetKeyDown(KeyCode.G) )
                 {
@@ -109,7 +130,7 @@ public class FightSystem : MonoBehaviour {
     void SetStamina( int value )
     {
         _staminaPoints += value;
-        Debug.Log("stamina: " + _staminaPoints);
+        //Debug.Log("stamina: " + _staminaPoints);
         if ( _staminaPoints > MaxStaminaPoints )
         {
             _staminaPoints = MaxStaminaPoints;
@@ -119,7 +140,7 @@ public class FightSystem : MonoBehaviour {
             _staminaPoints = 0;
         }
 
-        StaminaText.text = "Stamina: " + _staminaPoints;
+        //StaminaText.text = "Stamina: " + _staminaPoints;
     }
 
     void LetThemFight()
@@ -132,17 +153,17 @@ public class FightSystem : MonoBehaviour {
     {
         if ( col.gameObject.tag == "EnemyFist" && !_isDefending )
         {
-            SetHealth(-10);
+            //SetHealth(-10);
 
             if ( _healthPoints <= 0 )
             {
-                Debug.Log("umrales");
-                PlayerHealth.enabled = false;
+                //Debug.Log("umrales");
+                //PlayerHealth.enabled = false;
             }
         }
         else if (col.gameObject.tag == "EnemyFist" && _isDefending)
         {
-            Debug.Log("obrona");
+            //Debug.Log("obrona");
         }
 
     }
@@ -160,7 +181,7 @@ public class FightSystem : MonoBehaviour {
             _healthPoints = 0;
         }
 
-        PlayerHealth.text = "Health: " + _healthPoints;
+        //PlayerHealth.text = "Health: " + _healthPoints;
     }
 
 }
