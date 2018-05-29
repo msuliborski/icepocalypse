@@ -4,24 +4,34 @@ using UnityEngine;
 
 public class QTECircleScript : MonoBehaviour {
 
+    public float LifeTime = 1.0f;
+    private float _startTime;
+
+    [SerializeField]
+    public GameObject FatherObject;
+
 	// Use this for initialization
 	void Start ()
     {
-        Debug.Log("uwaga podaje pozycje x: " + transform.position.x + " y:" + transform.position.y + " z: " + transform.position.z);
-	}
+        _startTime = Time.time;
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
-		
+
+        if ( Time.time - _startTime >= LifeTime )
+        {
+            Debug.Log("kolko znika.");
+            FatherObject.GetComponent<EnemyController>().CancelQTE();
+            Destroy(gameObject);
+        }
 	}
 
     void OnMouseDown()
     {
-        Debug.Log("FINISHER!!!!!!");
-        gameObject.GetComponent<SpriteRenderer>().enabled = false;
-        GameObject.Find("Enemy 1").GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
-        GameObject.Find("Enemy 1").GetComponent<Rigidbody2D>().AddForce(new Vector2(0f, 100.0f));
-        GameObject.Find("Enemy 1").transform.Rotate(new Vector3(0f, 0f, 100.0f));
+        GameObject.FindGameObjectWithTag("Player").GetComponent<FightSystem>().ClickedTheCircle = true;
+        FatherObject.GetComponent<EnemyController>().SetQTETimeStamp();
+        Destroy(gameObject);
     }
 }

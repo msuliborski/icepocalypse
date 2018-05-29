@@ -25,8 +25,14 @@ public class FightSystem : MonoBehaviour {
     public bool IsFighting = false;
     private bool _isDefending = false;
 
+    [HideInInspector]
+    public bool IsQTE;
+    [HideInInspector]
+    public bool ClickedTheCircle;
+
     void Start()
     {
+        IsQTE = false;
         _anim = GetComponent<Animator>();
         _staminaPoints = 20;
         //StaminaText.text = "Stamina: " + _staminaPoints;
@@ -38,6 +44,18 @@ public class FightSystem : MonoBehaviour {
 
     void Update()
     {
+        if ( IsQTE )
+        {
+            if ( ClickedTheCircle )
+            {
+                Debug.Log("super atak");
+                ClickedTheCircle = false;
+                _anim.SetBool("playersuperatt", true);
+            }
+
+            return;
+        }
+
         if ( (Time.time - _timeStamp > _staminaRegenerationTime) )
         {
             SetStamina(5);
@@ -77,6 +95,9 @@ public class FightSystem : MonoBehaviour {
                     _canIFight = false;
                     //Debug.Log("animacja uruchomiona");
                     _anim.SetBool("playerattack", true);
+                    if ( Enemy != null )
+                    Enemy.GetComponent<EnemyController>()._isUnderAttack = true;
+
                     //Enemy.GetComponent<EnemyController>().Defend();
                     //SetStamina(-10);
                 }

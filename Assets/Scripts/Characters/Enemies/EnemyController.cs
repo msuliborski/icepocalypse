@@ -6,7 +6,6 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour {
     public GameObject QteButton;
 
-    public Text EnemyHealthText;
     public int EnemyHealthPoints = 100;
     private int _enemyHealthPoints;
 
@@ -38,6 +37,14 @@ public class EnemyController : MonoBehaviour {
 
     private bool _isGrounded;
 
+    private bool _isHurt;
+    private GameObject _qteCircle = null;
+
+    public float[] QTECirclePositionsArray;
+    public float QTECircleInterval;
+    private int _qteCircleIterator = 0;
+    private float _timeStamp;
+
     enum Facing
     {
         Right,
@@ -59,10 +66,12 @@ public class EnemyController : MonoBehaviour {
 	
 	void Start ()
 	{
-        EnemyHealthText = GameObject.Find("Oponent life").GetComponent<Text>();
+
+        _timeStamp = 0f;
+
+        _isHurt = false;
 
        _anim = GetComponent<Animator>();
-        EnemyHealthText.enabled = false;
         _enemyHealthPoints = EnemyHealthPoints;
 
         //trig = GetComponentInChildren<Collider2D>();
@@ -86,13 +95,44 @@ public class EnemyController : MonoBehaviour {
 
         _triggerRange = Mathf.Abs( ViewRangeTransform.position.x - transform.position.x );
 
-        EnemyHealthText.text = "Enemy: " + _enemyHealthPoints;
 	}
-	
-	
+
+    public void SetQTETimeStamp()
+    {
+        _timeStamp = Time.time;
+    }
 
 	void Update () 
 	{
+        if (_isHurt)
+        {
+            //Time.timeScale = 0.3f;
+
+            if (_qteCircle == null)
+            {
+                //Debug.Log("czas: "+ (Time.time - _timeStamp));
+                if ( Time.time - _timeStamp < QTECircleInterval )
+                {
+                    return;
+                }
+
+                Debug.Log("nowe kolko");
+
+                if (_qteCircleIterator < QTECirclePositionsArray.Length)
+                {
+                    _qteCircle = PutCircle(new Vector3(transform.position.x, transform.position.y + QTECirclePositionsArray[_qteCircleIterator], transform.position.z));
+                    _qteCircleIterator++;
+                }
+                else
+                {
+                    Debug.Log("osiagnieto max kolek.");
+                }
+            }
+
+            return;
+
+        }
+
         if ( Input.GetKey(KeyCode.Space) )
         {
             //_anim.SetBool("attack", true);
@@ -103,6 +143,7 @@ public class EnemyController : MonoBehaviour {
         }
 
         _playerEnemyDistance = _playerObject.transform.position.x - transform.position.x;
+
         GetState();
 
         if(  _playerState == PlayerState.Walking && ( transform.position.x <= _patrolRangeA && _facing == Facing.Left ) ||  _playerState == PlayerState.Walking && ( transform.position.x >= _patrolRangeB && _facing == Facing.Right ) )
@@ -127,7 +168,7 @@ public class EnemyController : MonoBehaviour {
             ChangeFacingDirection();
         }
 
-        if (col.gameObject.tag == "PlayerFist" )//&& _isUnderAttack && !_isDefending )
+        if (col.gameObject.tag == "PlayerFist" && _isUnderAttack )//&& _isUnderAttack && !_isDefending )
         {
             Debug.Log("enemy health: " + _enemyHealthPoints);
             SetHealth(-10);
@@ -135,18 +176,20 @@ public class EnemyController : MonoBehaviour {
 
             if (_enemyHealthPoints <= 0)
             {
-                EnemyHealthText.enabled = false;
                 Debug.Log("smierc przeciwnika");
                 _playerObject.GetComponent<FightSystem>().IsFighting = false;
                 gameObject.SetActive(false);
                 _enemyHealthPoints = EnemyHealthPoints;
-                EnemyHealthText.text = "Enemy: " + _enemyHealthPoints;
                 Time.timeScale = 1.0f;
             }
 
-            if ( _enemyHealthPoints <= 20 )
+            if ( _enemyHealthPoints <= 20 && !_isHurt)
             {
-                PutCircle();
+                _isHurt = true;
+                _playerObject.GetComponent<FightSystem>().IsQTE = true;
+                _qteCircle = PutCircle(new Vector3(transform.position.x, transform.position.y + QTECirclePositionsArray[_qteCircleIterator], transform.position.z));
+                _qteCircleIterator++;
+                _timeStamp = Time.time;
             }
         }
     }
@@ -154,7 +197,6 @@ public class EnemyController : MonoBehaviour {
     void SetHealth(int value)
     {
         _enemyHealthPoints += value;
-        EnemyHealthText.text = "Enemy: " + _enemyHealthPoints;
     }
 
     void ChangeFacingDirection()
@@ -260,7 +302,6 @@ public class EnemyController : MonoBehaviour {
     void ProceedToFight()
     {
         //Time.timeScale = 0.3f;
-        EnemyHealthText.enabled = true;
         GameObject.Find("Player 1").GetComponent<FightSystem>().Enemy = gameObject;
         GameObject.Find("Player 1").GetComponent<FightSystem>().IsFighting = true;
         //GameObject.Find("Player 1").GetComponent<FightSystem>().ProceedToFight();
@@ -268,17 +309,24 @@ public class EnemyController : MonoBehaviour {
         _rb.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX;
     }
 
-    void PutCircle()
+    GameObject PutCircle( Vector3 vector )
     {
-        var circle = Instantiate(QteButton, new Vector3(transform.position.x, transform.position.y+1.0f, transform.position.z), Quaternion.identity);
+        GameObject circle = Instantiate(QteButton, vector, Quaternion.identity) as GameObject;
+        circle.GetComponent<QTECircleScript>().FatherObject = gameObject;
+        //circle.transform.parent = gameObject.transform;
+        return circle;
+    }
+
+    public void CancelQTE()
+    {
+        _isHurt = false;
+        _playerObject.GetComponent<FightSystem>().IsQTE = false;
+        //_qteCircleIterator = 0;
     }
 
     void Attack()
     {
-        //if ( Input.GetKeyDown(KeyCode.F) )
-        //PutCircle();
-
-       
+               
         if ( _isDefending && (Time.time - _animatingTime) >= 1.333f )
         {
             _isDefending = false;

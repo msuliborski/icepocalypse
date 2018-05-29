@@ -31,10 +31,6 @@ public class PlayerControllerExperimental : MonoBehaviour
     private int _indexToReact = -1;
     private KeyCode _keyToReact;
 
-    private bool _canIFight = true;
-    private bool _sideFlag = false;
-    public Animator _anim;
-
     public enum PlayerState
     {
         Inert,
@@ -96,7 +92,6 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void Update()
     {
-        var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
         if (Input.GetKeyDown(KeyCode.P)) Debug.Break();
 
         if (_isScripting) script();

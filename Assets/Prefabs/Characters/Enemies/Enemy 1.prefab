@@ -365,6 +365,8 @@ MonoBehaviour:
   MaxStaminaPoints: 100
   MaxHealthPoints: 100
   IsFighting: 0
+  IsQTE: 0
+  ClickedTheCircle: 0
 --- !u!114 &114809755364476554
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -377,8 +379,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   QteButton: {fileID: 1962483241360684, guid: 9efc0730f63eaab4da4d9c98915d04e5, type: 2}
-  EnemyHealthText: {fileID: 0}
-  EnemyHealthPoints: 50
+  EnemyHealthPoints: 100
   _isUnderAttack: 0
   _isDefending: 0
   EnemyRunningSpeed: 5
@@ -386,6 +387,10 @@ MonoBehaviour:
   FightingDeadZone: 2
   ViewRangeTransform: {fileID: 4491613415389612}
   PatrolDistanceTransform: {fileID: 4242271388446544}
+  QTECirclePositionsArray:
+  - 1.5
+  - 3
+  QTECircleInterval: 3
 --- !u!212 &212240507466390610
 SpriteRenderer:
   m_ObjectHideFlags: 1
