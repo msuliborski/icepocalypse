@@ -29,9 +29,15 @@ public class FightSystem : MonoBehaviour {
     public bool IsQTE;
     [HideInInspector]
     public bool ClickedTheCircle;
+    [HideInInspector]
+    public bool ClickedAttack;
+
+    public BoxCollider2D FistCollider;
 
     void Start()
     {
+        FistCollider.enabled = false;
+
         IsQTE = false;
         _anim = GetComponent<Animator>();
         _staminaPoints = 20;
@@ -42,12 +48,24 @@ public class FightSystem : MonoBehaviour {
        // Debug.Log("time stamp: " + _timeStamp);
     }
 
+    public void CancelQTE()
+    {
+        _canIFight = true;
+        IsQTE = false;
+    }
+
     void Update()
     {
+        if (Enemy == null)
+            Debug.Log("enemy null");
+
         if ( IsQTE )
         {
             if ( ClickedTheCircle )
             {
+                if (Enemy != null)
+                    Enemy.GetComponent<EnemyController>()._isUnderAttack = true;
+
                 Debug.Log("super atak");
                 ClickedTheCircle = false;
                 _anim.SetBool("playersuperatt", true);
@@ -66,33 +84,33 @@ public class FightSystem : MonoBehaviour {
         {
             var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
-            if (stateInfo.IsName("Base Layer.PlayerPunch"))
-            {
-                _sideFlag = true;
-            }
-            else if (stateInfo.IsName("Base Layer.PlayerDefend"))
+            if (stateInfo.IsName("Base Layer.PlayerPunch") || stateInfo.IsName("Base Layer.PlayerDefend") || stateInfo.IsName("Base Layer.PlayerSuperPunch"))
             {
                 _sideFlag = true;
             }
 
-            if (_sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunch") && !stateInfo.IsName("Base Layer.PlayerDefend"))
+            if (_sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunch") && !stateInfo.IsName("Base Layer.PlayerDefend") && !stateInfo.IsName("Base Layer.PlayerSuperPunch"))
             {
                 //Debug.Log("nie ma animacji");
             }
 
-            if ( _sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunch") && !stateInfo.IsName("Base Layer.PlayerDefend"))
+            if ( _sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunch") && !stateInfo.IsName("Base Layer.PlayerDefend") && !stateInfo.IsName("Base Layer.PlayerSuperPunch"))
             {
                 _sideFlag = false;
                 _isDefending = false;
                 _canIFight = true;
+                FistCollider.enabled = false;
                 //Enemy.GetComponent<EnemyController>()._isUnderAttack = false;
             }
 
             if (_canIFight)
             {
-                if (Input.GetKeyDown(KeyCode.F) && _staminaPoints >= 10 )
+ 
+                if (ClickedAttack)
                 {
+                    ClickedAttack = false;
                     _canIFight = false;
+                    FistCollider.enabled = true;
                     //Debug.Log("animacja uruchomiona");
                     _anim.SetBool("playerattack", true);
                     if ( Enemy != null )

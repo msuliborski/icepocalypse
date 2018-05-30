@@ -125,7 +125,8 @@ public class EnemyController : MonoBehaviour {
                 }
                 else
                 {
-                    Debug.Log("osiagnieto max kolek.");
+                    CancelQTE();
+                    Debug.Log("FINISZER.");
                 }
             }
 
@@ -178,9 +179,10 @@ public class EnemyController : MonoBehaviour {
             {
                 Debug.Log("smierc przeciwnika");
                 _playerObject.GetComponent<FightSystem>().IsFighting = false;
-                gameObject.SetActive(false);
+                //gameObject.SetActive(false);
                 _enemyHealthPoints = EnemyHealthPoints;
                 Time.timeScale = 1.0f;
+                Destroy(gameObject);
             }
 
             if ( _enemyHealthPoints <= 20 && !_isHurt)
@@ -320,8 +322,8 @@ public class EnemyController : MonoBehaviour {
     public void CancelQTE()
     {
         _isHurt = false;
-        _playerObject.GetComponent<FightSystem>().IsQTE = false;
-        //_qteCircleIterator = 0;
+        _playerObject.GetComponent<FightSystem>().CancelQTE();
+        _qteCircleIterator = 0;
     }
 
     void Attack()
