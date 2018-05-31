@@ -36,6 +36,8 @@ public class PlayerControllerExperimental : MonoBehaviour
     private int _indexToReact = -1;
     private KeyCode _keyToReact;
     private List<KeyCode> _keysToReact;
+
+    private List<Vector3> _rendererPosDif;
     
 
     private enum animScriptCommands
@@ -49,8 +51,12 @@ public class PlayerControllerExperimental : MonoBehaviour
         MovementFalse,
         TubeTrue,
         TubeFalse,
+        TubeIdleTrue,
+        TubeIdleFalse,
         InertDownTrue,
-        InertDownFalse
+        InertDownFalse,
+        SlopeTrue,
+        SlopeFalse
     }
 
     private List<List<animScriptCommands>> _animScriptCommands;
@@ -88,6 +94,9 @@ public class PlayerControllerExperimental : MonoBehaviour
     private LayerMask LadderEdge;
     private LayerMask LadderEdge1;
 
+
+    
+    private GameObject _renderer;
     private Animator _animator;
     private Rigidbody2D _rigidbody;
     private Collider2D _colliderWhole;
@@ -105,7 +114,8 @@ public class PlayerControllerExperimental : MonoBehaviour
     void Start()
      {
         _rigidbody = gameObject.GetComponent<Rigidbody2D>();
-        _animator = gameObject.GetComponent<Animator>();
+        _renderer = gameObject.transform.Find("SpriteAnimation").gameObject;
+        _animator = _renderer.GetComponent<Animator>();
         _colliderBody = GameObject.FindGameObjectWithTag("body_collider").GetComponent<Collider2D>();
         _colliderCorner = GameObject.FindGameObjectWithTag("corner_collider").GetComponent<Collider2D>();
         _colliderLegs = GameObject.FindGameObjectWithTag("legs_collider").GetComponent<Collider2D>();
@@ -124,6 +134,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         _scriptDestinations = new List<Vector3>();
         _keysToReact = new List<KeyCode>();
         _animScriptCommands = new List<List<animScriptCommands>>();
+        _rendererPosDif = new List<Vector3>();
 
         _onLeftDirection = false;
         _onRightDirection = false;
@@ -272,7 +283,6 @@ public class PlayerControllerExperimental : MonoBehaviour
                     resetImpacts();
                     _ignoreLedderEdge = false;
                     _animator.SetBool("Inert Down", false);
-                    _animator.SetBool("Tube", false);
                     _animator.SetBool("Movement", (_moveDirection != 0) ? true : false);
 
                     break;
@@ -398,7 +408,11 @@ public class PlayerControllerExperimental : MonoBehaviour
                     break;
 
                 case PlayerState.TubeSliding:
+                    
+                    _animator.SetBool("Tube Idle", false);
+                    _animator.SetBool("Tube", false);
                     _animator.SetBool("Inert Down", true);
+                   
                     _index++;
                     break;
 
@@ -510,7 +524,19 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     public void OnKeySpace()
     {
-        if (_isScripting) _index++;
+        if (_isScripting)
+        {   
+            switch (CurrentState)
+            {
+                case PlayerState.EdgeLaddering:
+                    //_animator.SetBool("Ladder Move", true);
+                    _index++;
+                    break;
+                default:
+                    _index++;
+                    break;
+            }
+        }
         else
         {
             if (CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Sloping) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
@@ -602,13 +628,14 @@ public class PlayerControllerExperimental : MonoBehaviour
     private void onSlopeImpact()
     {
         _scriptDestinations.Clear();
+        _animator.SetBool("Movement", false);
+        _animator.SetBool("Slope", true);
         GameObject go = findClosestObjectWithTag("slopeEnd", 5);
         _scriptDestinations.Add(new Vector3(go.transform.position.x + go.GetComponent<SpriteRenderer>().bounds.size.x/2 + playerWidth/2 , go.transform.position.y - go.GetComponent<SpriteRenderer>().bounds.size.y / 2 + playerHeight/2));
         _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(2f, 0f));
         if (go.transform.localScale.x > 0) SetFacingRight(true);
         else SetFacingRight(false);
         _scriptSpeed = 10.0f;
-        transform.rotation = Quaternion.Euler(0, 0, -30);
         _isScripting = true;
         _scriptSpeedAccelarated = true;
         _scriptAcceleration = 0.2f;
@@ -616,10 +643,14 @@ public class PlayerControllerExperimental : MonoBehaviour
         _rigidbody.velocity = new Vector3(0, 0, 0);
         _index = 0;
         _indexToReact = -1;
-        _indexToRotate = 0;
-        _scriptRotation = Quaternion.Euler(0, 0, 0);
+        _indexToRotate = -1;
         _keysToReact.Clear();
         _animScriptCommands.Clear();
+        _animScriptCommands.Add(new List<animScriptCommands> {  });
+        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.SlopeFalse, animScriptCommands.MovementTrue });
+        _rendererPosDif.Clear();
+        _rendererPosDif.Add(new Vector2(-0.25f, -0.25f));
+        _rendererPosDif.Add(new Vector2(0f, 0f));
     }
 
 
@@ -641,6 +672,8 @@ public class PlayerControllerExperimental : MonoBehaviour
         _keysToReact.Add(KeyCode.DownArrow);
         _animScriptCommands.Clear();
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.MovementFalse, animScriptCommands.TubeTrue });
+        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.TubeIdleTrue });
+        _rendererPosDif.Clear();
     }
 
     void onEdgeCornerImpact()
@@ -672,6 +705,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (FacingRight) _keysToReact.Add(KeyCode.LeftArrow);
         else _keysToReact.Add(KeyCode.RightArrow);
         _animScriptCommands.Clear();
+        _rendererPosDif.Clear();
     }
 
     void onLadderEdgeImpact()
@@ -705,9 +739,10 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (FacingRight)_keysToReact.Add(KeyCode.LeftArrow);
         else _keysToReact.Add(KeyCode.RightArrow);
         _animScriptCommands.Clear();
-        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.LadderMovementTrue });
+        _animScriptCommands.Add(new List<animScriptCommands> { });
         _animScriptCommands.Add(new List<animScriptCommands> { });
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.LadderMovementFalse, animScriptCommands.LadderFalse});
+        _rendererPosDif.Clear();
     }
 
 
@@ -739,6 +774,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         _animScriptCommands.Clear();
         _animScriptCommands.Add(new List<animScriptCommands> { });
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.LadderTrue });
+        _rendererPosDif.Clear();
     }
 
     void onEdgeBodyImpact()
@@ -764,6 +800,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         _indexToReact = -1;
         _indexToRotate = -1;
         _animScriptCommands.Clear();
+        _rendererPosDif.Clear();
     }
 
     private void onWallImpact()
@@ -809,8 +846,79 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
         if (_scriptSpeedAccelarated) _scriptSpeed += _scriptAcceleration;
         transform.position = Vector2.MoveTowards(_rigidbody.transform.position, _scriptDestinations[_index], _scriptSpeed * Time.deltaTime);
+        if (_index < _rendererPosDif.Count)
+        {
+            _renderer.transform.position = _rendererPosDif[_index] + transform.position;
+        }
         if (_rigidbody.transform.position == _scriptDestinations[_index])
         {
+
+            if (_index < _animScriptCommands.Count)
+            {
+                foreach (var animScriptCommand in _animScriptCommands[_index])
+                {
+                    switch (animScriptCommand)
+                    {
+                        case animScriptCommands.LadderMovementFalse:
+                            _animator.SetBool("LadderMovement", false);
+                            break;
+
+                        case animScriptCommands.LadderMovementTrue:
+                            _animator.SetBool("LadderMovement", true);
+                            break;
+
+                        case animScriptCommands.LadderFalse:
+                            _animator.SetBool("Ladder", false);
+                            break;
+
+                        case animScriptCommands.LadderTrue:
+                            _animator.SetBool("Ladder", true);
+                            break;
+
+                        case animScriptCommands.MovementFalse:
+                            _animator.SetBool("Movement", false);
+                            break;
+
+                        case animScriptCommands.MovementTrue:
+                            _animator.SetBool("Movement", true);
+                            break;
+
+                        case animScriptCommands.TubeFalse:
+                            _animator.SetBool("Tube", false);
+                            break;
+
+                        case animScriptCommands.TubeTrue:
+                            _animator.SetBool("Tube", true);
+                            break;
+
+                        case animScriptCommands.InertDownFalse:
+                            _animator.SetBool("Inert Down", false);
+                            break;
+
+                        case animScriptCommands.InertDownTrue:
+                            _animator.SetBool("Inert Down", true);
+                            break;
+
+                        case animScriptCommands.SlopeFalse:
+                            _animator.SetBool("Slope", false);
+                            break;
+
+                        case animScriptCommands.SlopeTrue:
+                            _animator.SetBool("Slope", true);
+                            break;
+
+                        case animScriptCommands.TubeIdleFalse:
+                            _animator.SetBool("Tube Idle", false);
+                            break;
+
+                        case animScriptCommands.TubeIdleTrue:
+                            _animator.SetBool("Tube Idle", true);
+                            break;
+                    }
+                }
+            }
+
+
             if (_indexToReact == _index)
             {
                 if (_onTopDirection) {
@@ -859,57 +967,11 @@ public class PlayerControllerExperimental : MonoBehaviour
             else
             {
                 if (_index == _indexToRotate) transform.rotation = _scriptRotation;
-                if (_index < _animScriptCommands.Count)
-                {
-                    foreach (var animScriptCommand in _animScriptCommands[_index])
-                    {
-                        switch (animScriptCommand)  
-                        {
-                            case animScriptCommands.LadderMovementFalse:
-                                _animator.SetBool("LadderMovement", false);
-                                break;
-
-                            case animScriptCommands.LadderMovementTrue:
-                                _animator.SetBool("LadderMovement", true);
-                                break;
-
-                            case animScriptCommands.LadderFalse:
-                                _animator.SetBool("Ladder", false);
-                                break;
-
-                            case animScriptCommands.LadderTrue:
-                                _animator.SetBool("Ladder", true);
-                                break;
-
-                            case animScriptCommands.MovementFalse:
-                                _animator.SetBool("Movement", false);
-                                break;
-
-                            case animScriptCommands.MovementTrue:
-                                _animator.SetBool("Movement", true);
-                                break;
-
-                            case animScriptCommands.TubeFalse:
-                                _animator.SetBool("Tube", false);
-                                break;
-
-                            case animScriptCommands.TubeTrue:
-                                _animator.SetBool("Tube", true);
-                                break;
-
-                            case animScriptCommands.InertDownFalse:
-                                _animator.SetBool("Inert Down", false);
-                                break;
-
-                            case animScriptCommands.InertDownTrue:
-                                _animator.SetBool("Inert Down", true);
-                                break;
-                        }
-                    }
-                }
+                
                 _index++;
             }
             
+
         }
 
     }
