@@ -46,6 +46,8 @@ public class PlayerControllerExperimental : MonoBehaviour
         LadderTrue,
         MovementTrue,
         MovementFalse,
+        TubeTrue,
+        TubeFalse
     }
 
     private List<List<animScriptCommands>> _animScriptCommands;
@@ -390,6 +392,11 @@ public class PlayerControllerExperimental : MonoBehaviour
                     _animator.SetBool("LadderMovement", true);
                     break;
 
+                case PlayerState.TubeSliding:
+                    _animator.SetBool("Tube", false);
+                    _index++;
+                    break;
+
                 default:
                     _index++;
                     break;
@@ -628,6 +635,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         _keysToReact.Clear();
         _keysToReact.Add(KeyCode.DownArrow);
         _animScriptCommands.Clear();
+        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.MovementFalse, animScriptCommands.TubeTrue });
     }
 
     void onEdgeCornerImpact()
@@ -850,7 +858,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                 {
                     foreach (var animScriptCommand in _animScriptCommands[_index])
                     {
-                        switch (animScriptCommand)
+                        switch (animScriptCommand)  
                         {
                             case animScriptCommands.LadderMovementFalse:
                                 _animator.SetBool("LadderMovement", false);
@@ -869,11 +877,19 @@ public class PlayerControllerExperimental : MonoBehaviour
                                 break;
 
                             case animScriptCommands.MovementFalse:
-                                _animator.SetBool("Movement", true);
+                                _animator.SetBool("Movement", false);
                                 break;
 
                             case animScriptCommands.MovementTrue:
-                                _animator.SetBool("Movement", false);
+                                _animator.SetBool("Movement", true);
+                                break;
+
+                            case animScriptCommands.TubeFalse:
+                                _animator.SetBool("Tube", false);
+                                break;
+
+                            case animScriptCommands.TubeTrue:
+                                _animator.SetBool("Tube", true);
                                 break;
                         }
                     }
