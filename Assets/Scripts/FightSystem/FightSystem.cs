@@ -4,25 +4,14 @@ using UnityEngine.UI;
 using UnityEngine;
 
 public class FightSystem : MonoBehaviour {
-    [SerializeField]
-    public GameObject Enemy;
-    private int _animHash = Animator.StringToHash("Base Layer.PlayerPunch");
 
-    //public Text StaminaText;
-    public int MaxStaminaPoints = 100;
-    private int _staminaPoints;
-    private float _staminaRegenerationTime = 2.0f;
-    private float _timeStamp;
-
-    //public Text PlayerHealth;
-    public int MaxHealthPoints = 100;
+    public int HealthPointsMax = 100;
     private int _healthPoints;
 
     private bool _canIFight = true;
     private bool _sideFlag = false;
     private Animator _anim;
 
-    public bool IsFighting = false;
     private bool _isDefending = false;
 
     [HideInInspector]
@@ -36,16 +25,13 @@ public class FightSystem : MonoBehaviour {
 
     void Start()
     {
+        Time.timeScale = 1.0f;
+
         FistCollider.enabled = false;
 
         IsQTE = false;
         _anim = GetComponent<Animator>();
-        _staminaPoints = 20;
-        //StaminaText.text = "Stamina: " + _staminaPoints;
-        _healthPoints = MaxHealthPoints;
-        //PlayerHealth.text = "Health: " + _healthPoints;
-        _timeStamp = Time.time;
-       // Debug.Log("time stamp: " + _timeStamp);
+        _healthPoints = HealthPointsMax;
     }
 
     public void CancelQTE()
@@ -56,16 +42,10 @@ public class FightSystem : MonoBehaviour {
 
     void Update()
     {
-        if (Enemy == null)
-            Debug.Log("enemy null");
-
         if ( IsQTE )
         {
             if ( ClickedTheCircle )
             {
-                if (Enemy != null)
-                    Enemy.GetComponent<EnemyController>()._isUnderAttack = true;
-
                 Debug.Log("super atak");
                 ClickedTheCircle = false;
                 _anim.SetBool("playersuperatt", true);
@@ -74,97 +54,62 @@ public class FightSystem : MonoBehaviour {
             return;
         }
 
-        if ( (Time.time - _timeStamp > _staminaRegenerationTime) )
+        var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
+
+        if (stateInfo.IsName("Base Layer.PlayerPunch") || stateInfo.IsName("Base Layer.PlayerDefend") || stateInfo.IsName("Base Layer.PlayerSuperPunch"))
         {
-            SetStamina(5);
-            _timeStamp = Time.time;
+            _sideFlag = true;
         }
 
-        if ( true )
+        if (_sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunch") && !stateInfo.IsName("Base Layer.PlayerDefend") && !stateInfo.IsName("Base Layer.PlayerSuperPunch"))
         {
-            var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
+            _sideFlag = false;
+            _isDefending = false;
+            _canIFight = true;
+            FistCollider.enabled = false;
+        }
 
-            if (stateInfo.IsName("Base Layer.PlayerPunch") || stateInfo.IsName("Base Layer.PlayerDefend") || stateInfo.IsName("Base Layer.PlayerSuperPunch"))
-            {
-                _sideFlag = true;
-            }
-
-            if (_sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunch") && !stateInfo.IsName("Base Layer.PlayerDefend") && !stateInfo.IsName("Base Layer.PlayerSuperPunch"))
-            {
-                //Debug.Log("nie ma animacji");
-            }
-
-            if ( _sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunch") && !stateInfo.IsName("Base Layer.PlayerDefend") && !stateInfo.IsName("Base Layer.PlayerSuperPunch"))
-            {
-                _sideFlag = false;
-                _isDefending = false;
-                _canIFight = true;
-                FistCollider.enabled = false;
-                //Enemy.GetComponent<EnemyController>()._isUnderAttack = false;
-            }
-
-            if (_canIFight)
-            {
+        if (_canIFight)
+        {
  
-                if (ClickedAttack)
+                if ( ClickedAttack || Input.GetKey(KeyCode.F) )
                 {
+                    ShootRay();
+
                     ClickedAttack = false;
                     _canIFight = false;
                     FistCollider.enabled = true;
-                    //Debug.Log("animacja uruchomiona");
                     _anim.SetBool("playerattack", true);
-                    if ( Enemy != null )
-                    Enemy.GetComponent<EnemyController>()._isUnderAttack = true;
-
-                    //Enemy.GetComponent<EnemyController>().Defend();
-                    //SetStamina(-10);
+                                   
                 }
                 else if ( Input.GetKeyDown(KeyCode.G) )
                 {
                     _canIFight = false;
                     _isDefending = true;
-                    //Debug.Log("animacja uruchomiona");
                     _anim.SetBool("playerdefend", true);
                 }
-            }
-        }
+         }
+
     }
 
-    public void ProceedToFight()
+    void ShootRay()
     {
-        GetComponent<Rigidbody2D>().velocity = new Vector2(0f, 0f);
-        
-        if ( (transform.position.x < Enemy.transform.position.x && transform.localScale.x < 0) || (transform.position.x > Enemy.transform.position.x && transform.localScale.x > 0) )
+        RaycastHit2D hit;
+
+        Vector2 RayDirection = new Vector2(transform.position.x, transform.position.y + 1.2f);
+
+        Debug.DrawRay(RayDirection, transform.localScale.x * Vector3.right * 5.0f, Color.yellow, 2.0f);
+
+        hit = Physics2D.Raycast(RayDirection, transform.localScale.x * Vector3.right, 5.0f);
+        if (hit.collider != null)
         {
-            transform.localScale = new Vector3(-1.0f * transform.localScale.x, transform.localScale.y, transform.localScale.z);
+            if (hit.collider.tag == "Enemy")
+                hit.collider.gameObject.SendMessage("Defend");
         }
-
-    _canIFight = true;
-    _sideFlag = false;
-    _isDefending = false;
-
-}
-
-    void SetStamina( int value )
-    {
-        _staminaPoints += value;
-        //Debug.Log("stamina: " + _staminaPoints);
-        if ( _staminaPoints > MaxStaminaPoints )
+        else
         {
-            _staminaPoints = MaxStaminaPoints;
+            //Debug.Log("nie ma kolizji");
         }
-        else if ( _staminaPoints < 0 )
-        {
-            _staminaPoints = 0;
-        }
-
-        //StaminaText.text = "Stamina: " + _staminaPoints;
-    }
-
-    void LetThemFight()
-    {
-        _canIFight = true;
-        Debug.Log("let them");
     }
 
     void OnTriggerEnter2D(Collider2D col)
@@ -176,7 +121,6 @@ public class FightSystem : MonoBehaviour {
             if ( _healthPoints <= 0 )
             {
                 //Debug.Log("umrales");
-                //PlayerHealth.enabled = false;
             }
         }
         else if (col.gameObject.tag == "EnemyFist" && _isDefending)
@@ -190,16 +134,15 @@ public class FightSystem : MonoBehaviour {
     {
         _healthPoints += value;
 
-        if ( _healthPoints > MaxHealthPoints )
+        if ( _healthPoints > HealthPointsMax)
         {
-            _healthPoints = MaxHealthPoints;
+            _healthPoints = HealthPointsMax;
         }
         else if ( _healthPoints < 0 )
         {
             _healthPoints = 0;
         }
 
-        //PlayerHealth.text = "Health: " + _healthPoints;
     }
 
 }
