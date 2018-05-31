@@ -20,6 +20,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private bool _wallImpact = false;
     private bool _ladderImpact = false;
+    
 
     private bool _ignoreLedderEdge = false;
     
@@ -47,7 +48,9 @@ public class PlayerControllerExperimental : MonoBehaviour
         MovementTrue,
         MovementFalse,
         TubeTrue,
-        TubeFalse
+        TubeFalse,
+        InertDownTrue,
+        InertDownFalse
     }
 
     private List<List<animScriptCommands>> _animScriptCommands;
@@ -268,6 +271,8 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                     resetImpacts();
                     _ignoreLedderEdge = false;
+                    _animator.SetBool("Inert Down", false);
+                    _animator.SetBool("Tube", false);
                     _animator.SetBool("Movement", (_moveDirection != 0) ? true : false);
 
                     break;
@@ -393,7 +398,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                     break;
 
                 case PlayerState.TubeSliding:
-                    _animator.SetBool("Tube", false);
+                    _animator.SetBool("Inert Down", true);
                     _index++;
                     break;
 
@@ -890,6 +895,14 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                             case animScriptCommands.TubeTrue:
                                 _animator.SetBool("Tube", true);
+                                break;
+
+                            case animScriptCommands.InertDownFalse:
+                                _animator.SetBool("Inert Down", false);
+                                break;
+
+                            case animScriptCommands.InertDownTrue:
+                                _animator.SetBool("Inert Down", true);
                                 break;
                         }
                     }
