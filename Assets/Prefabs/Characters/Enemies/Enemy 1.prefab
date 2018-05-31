@@ -134,7 +134,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1638983339565842}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.9621553, y: -2.132794, z: 0}
+  m_LocalPosition: {x: 0.2555251, y: -2.1924398, z: 0}
   m_LocalScale: {x: 0.79172087, y: 2.2843926, z: 1}
   m_Children:
   - {fileID: 4942407808885896}
@@ -361,12 +361,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0b51bf3fb7cc81498bfdf423771a67e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Enemy: {fileID: 0}
-  MaxStaminaPoints: 100
-  MaxHealthPoints: 100
-  IsFighting: 0
+  HealthPointsMax: 100
   IsQTE: 0
   ClickedTheCircle: 0
+  ClickedAttack: 0
+  FistCollider: {fileID: 0}
 --- !u!114 &114809755364476554
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -379,7 +378,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   QteButton: {fileID: 1962483241360684, guid: 9efc0730f63eaab4da4d9c98915d04e5, type: 2}
-  EnemyHealthPoints: 100
+  EnemyHealthPointsMax: 100
   _isUnderAttack: 0
   _isDefending: 0
   EnemyRunningSpeed: 5
@@ -391,6 +390,8 @@ MonoBehaviour:
   - 1.5
   - 3
   QTECircleInterval: 3
+  FistCollider1: {fileID: 61392892882898212}
+  FistCollider2: {fileID: 61101561556088186}
 --- !u!212 &212240507466390610
 SpriteRenderer:
   m_ObjectHideFlags: 1

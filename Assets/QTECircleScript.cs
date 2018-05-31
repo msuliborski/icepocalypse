@@ -7,6 +7,9 @@ public class QTECircleScript : MonoBehaviour {
     public float LifeTime = 1.0f;
     private float _startTime;
 
+    [HideInInspector]
+    public string _qteType;
+
     [SerializeField]
     public GameObject FatherObject;
 
@@ -22,16 +25,29 @@ public class QTECircleScript : MonoBehaviour {
 
         if ( Time.time - _startTime >= LifeTime )
         {
-            Debug.Log("kolko znika.");
-            FatherObject.GetComponent<EnemyController>().CancelQTE();
+            if (_qteType == "Enemy")
+            {
+                Debug.Log("kolko znika.");
+                FatherObject.GetComponent<EnemyController>().CancelQTE();
+            }
+
             Destroy(gameObject);
         }
 	}
 
     void OnMouseDown()
     {
-        GameObject.FindGameObjectWithTag("Player").GetComponent<FightSystem>().ClickedTheCircle = true;
-        FatherObject.GetComponent<EnemyController>().SetQTETimeStamp();
-        Destroy(gameObject);
+        if ( _qteType == "Enemy" )
+        {
+            GameObject.FindGameObjectWithTag("Player").GetComponent<FightSystem>().ClickedTheCircle = true;
+            FatherObject.GetComponent<EnemyController>().SetQTETimeStamp();
+            Destroy(gameObject);
+        }
+        else if (_qteType == "Dog")
+        {
+            FatherObject.GetComponent<WildDogScript>().ClickedTheCircle = true;
+            Destroy(gameObject);
+            Debug.Log("destroy");
+        }
     }
 }
