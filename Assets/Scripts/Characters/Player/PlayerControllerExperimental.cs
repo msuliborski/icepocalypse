@@ -307,7 +307,9 @@ public class PlayerControllerExperimental : MonoBehaviour
                     break;
 
                 case PlayerState.Laddering:
-                     
+
+
+                    if (Physics2D.IsTouchingLayers(_colliderLegs, Ground)) _animator.SetBool("LadderMovement", false);
                     onLadderImpact();
                     if (Input.GetKeyDown(KeyCode.Space) || _onTopDirection)
                     {
@@ -330,7 +332,8 @@ public class PlayerControllerExperimental : MonoBehaviour
                         OnKeyLeft();
                         _onLeftDirection = false;
                     }
-                    
+
+
                     break;
                 
                 case PlayerState.Sloping:
@@ -449,6 +452,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                     SetFacingRight(true);
                     _ignoreLedderEdge = true;
                     _ladderImpact = false;
+                    _animator.SetBool("Ladder", false);
                     break;
 
                 case PlayerState.EgdeClimbingCorner:
@@ -492,6 +496,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                     SetFacingRight(false);
                     _ignoreLedderEdge = true;
                     _ladderImpact = false;
+                    _animator.SetBool("Ladder", false);
                    break;
 
                 case PlayerState.EgdeClimbingCorner:
@@ -529,7 +534,6 @@ public class PlayerControllerExperimental : MonoBehaviour
             switch (CurrentState)
             {
                 case PlayerState.EdgeLaddering:
-                    //_animator.SetBool("Ladder Move", true);
                     _index++;
                     break;
                 default:
@@ -542,9 +546,16 @@ public class PlayerControllerExperimental : MonoBehaviour
             if (CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Sloping) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
             else if (CurrentState == PlayerState.WallHugging)
             {
-                _rigidbody.velocity = new Vector2(_rigidbody.velocity.x - _moveDirection * WallReflectionForce, JumpForce);
-                if (FacingRight) SetFacingRight(false);
-                else SetFacingRight(true);
+                if (FacingRight)
+                {
+                    _rigidbody.velocity = new Vector2(_rigidbody.velocity.x -  WallReflectionForce, JumpForce);
+                    SetFacingRight(false);
+                }
+                else
+                {
+                    _rigidbody.velocity = new Vector2(_rigidbody.velocity.x + WallReflectionForce, JumpForce);
+                    SetFacingRight(true);
+                }
             }
             else if (CurrentState == PlayerState.Laddering)
             {
