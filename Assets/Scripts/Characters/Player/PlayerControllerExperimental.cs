@@ -160,7 +160,8 @@ public class PlayerControllerExperimental : MonoBehaviour
     public void OnTopDirection()
     {
         //if (!_isScripting) 
-        _onTopDirection = true;
+        if (CurrentState != PlayerState.TubeSliding)
+            _onTopDirection = true;
     }
 
     public void OnDownDirection()

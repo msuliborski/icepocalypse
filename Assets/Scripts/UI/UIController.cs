@@ -39,9 +39,9 @@ public class UIController : MonoBehaviour
         _playerControllerExperimental.OnDownDirection();
     }
 
-	private void CheckGesture(Vector2 distance, Vector2 position)
+	private void CheckGesture(Vector2 distance, Vector2 position, int fingerId = -1)
 	{
-        if (EventSystem.current.IsPointerOverGameObject())
+        if (EventSystem.current.IsPointerOverGameObject(fingerId))
             return;
 
         if (position.x > Screen.width / 2)
@@ -82,11 +82,12 @@ public class UIController : MonoBehaviour
 		{
 			case TouchPhase.Began:
 				_startPosition = touch.position;
+                CheckGesture(_startPosition, _startPosition, touch.fingerId);
 				break;
 			
 			case TouchPhase.Ended:
-				Vector2 distance = touch.position - _startPosition;
-				CheckGesture(distance, touch.position);
+				//Vector2 distance = touch.position - _startPosition;
+				//CheckGesture(distance, touch.position);
 				break;
         }
 	#endif
