@@ -283,6 +283,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                     resetImpacts();
                     _ignoreLedderEdge = false;
                     _animator.SetBool("Inert Down", false);
+                    _animator.SetBool("WallReflection", false);
                     _animator.SetBool("Movement", (_moveDirection != 0) ? true : false);
 
                     break;
@@ -294,7 +295,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                     break;
 
                 case PlayerState.WallHugging:
-
+                   
                     onWallImpact();
                     manageWallTimer();
 
@@ -355,13 +356,13 @@ public class PlayerControllerExperimental : MonoBehaviour
                     break;
 
                case PlayerState.EgdeClimbingBody:
-
+                    _animator.SetBool("WallReflection", false);
                     onEdgeBodyImpact();
 
                     break;
 
                 case PlayerState.EgdeClimbingCorner:
-
+                    _animator.SetBool("WallReflection", false);
                     onEdgeCornerImpact();
 
                     break;
@@ -387,9 +388,7 @@ public class PlayerControllerExperimental : MonoBehaviour
             }
         }
 
-        // ANIMATIONS
-        
-        //myAnimator.SetBool("Grounded", grounded);
+       
     }
     #endregion
 
@@ -455,12 +454,12 @@ public class PlayerControllerExperimental : MonoBehaviour
                     _animator.SetBool("Ladder", false);
                     break;
 
-                case PlayerState.EgdeClimbingCorner:
+            /*    case PlayerState.EgdeClimbingCorner:
                     _isScripting = false;
                     _rigidbody.isKinematic = false;
                     _rigidbody.velocity = new Vector2(-_moveDirection * WallReflectionForce, JumpForce);
                     SetFacingRight(true);
-                    break;
+                    break; */
 
                 default:
                     _index++;
@@ -499,12 +498,12 @@ public class PlayerControllerExperimental : MonoBehaviour
                     _animator.SetBool("Ladder", false);
                    break;
 
-                case PlayerState.EgdeClimbingCorner:
+              /*  case PlayerState.EgdeClimbingCorner:
                     _isScripting = false;
                     _rigidbody.isKinematic = false;
                     _rigidbody.velocity = new Vector2(-_moveDirection * WallReflectionForce, JumpForce);
                     SetFacingRight(false);
-                    break;
+                    break; */
 
                 default:
                     _index++;
@@ -556,6 +555,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                     _rigidbody.velocity = new Vector2(_rigidbody.velocity.x + WallReflectionForce, JumpForce);
                     SetFacingRight(true);
                 }
+                _animator.SetBool("WallReflection", true);
             }
             else if (CurrentState == PlayerState.Laddering)
             {
@@ -819,6 +819,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (!_wallImpact)
         {
             _wallImpact = true;
+            _animator.SetBool("WallReflection", false);
             if (PreviousState == PlayerState.Grounded) _rigidbody.velocity = new Vector2(0, 6); 
             else _rigidbody.velocity = new Vector2(0, 0);
             _rigidbody.gravityScale = 0;
