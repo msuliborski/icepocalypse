@@ -5,62 +5,52 @@ using Scripts.Variables;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class UIController : MonoBehaviour
 {
 	public GameObject Player;
-	public float SwipeDetectDistance = 100.0f;
 
 
 	private Vector2 _startPosition;
 	private bool _touching = false;
+    private PlayerControllerExperimental _playerControllerExperimental;
 	
+    public void Start() 
+    {
+        _playerControllerExperimental = Player.GetComponent<PlayerControllerExperimental>();
+    }
 	public void OnLeft()
 	{
-		Debug.Log("facing left");
-		var pce = Player.GetComponent<PlayerControllerExperimental>();
-		pce.OnLeftDirection();
-
+		_playerControllerExperimental.OnLeftDirection();
 	}
 
 	public void OnRight()
 	{
-		Debug.Log("facing right");
-		var pce = Player.GetComponent<PlayerControllerExperimental>();
-		pce.OnRightDirection();
-		
+		_playerControllerExperimental.OnRightDirection();
 	}
 
     public void OnTop() {
-        var pce = Player.GetComponent<PlayerControllerExperimental>();
-		pce.OnTopDirection();
+        _playerControllerExperimental.OnTopDirection();
     }
 
     public void OnDown() 
     {
-        var pce = Player.GetComponent<PlayerControllerExperimental>();
-		pce.OnDownDirection();
+        _playerControllerExperimental.OnDownDirection();
     }
 
-	private void CheckGesture(Vector2 dist)
+	private void CheckGesture(Vector2 distance, Vector2 position)
 	{
-		if (dist.x > SwipeDetectDistance * 2.5f)
-		{
-			OnRight();
-		}
-		else if (dist.x < -SwipeDetectDistance * 2.5f)
-		{
-			OnLeft();
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+
+        if (position.x > Screen.width / 2)
+        {
+            OnRight();
         }
-
-
-        if (dist.y > SwipeDetectDistance) 
+        else
         {
-            OnTop();
-        } 
-        else if (dist.y < -SwipeDetectDistance) 
-        {
-            OnDown();
+            OnLeft();
         }
 	}
 
@@ -78,10 +68,10 @@ public class UIController : MonoBehaviour
 		{
 			if (_touching)
 			{
-				Vector2 dist;
-				dist.x = Input.mousePosition.x - _startPosition.x;
-				dist.y = Input.mousePosition.y - _startPosition.y;
-				CheckGesture(dist);
+				Vector2 distance;
+				distance.x = Input.mousePosition.x - _startPosition.x;
+				distance.y = Input.mousePosition.y - _startPosition.y;
+				CheckGesture(distance, Input.mousePosition);
 			}
 			_touching = false;
 		}
@@ -95,10 +85,8 @@ public class UIController : MonoBehaviour
 				break;
 			
 			case TouchPhase.Ended:
-				Vector2 dist;
-				dist.x = Input.mousePosition.x - _startPosition.x;
-				dist.y = Input.mousePosition.y - _startPosition.y;
-				CheckGesture(dist);
+				Vector2 distance = touch.position - _startPosition;
+				CheckGesture(distance, touch.position);
 				break;
         }
 	#endif
