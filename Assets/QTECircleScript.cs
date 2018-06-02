@@ -35,7 +35,7 @@ public class QTECircleScript : MonoBehaviour {
         }
 	}
 
-    void OnMouseDown()
+    void OnMouseUp()
     {
         if ( _qteType == "Enemy" )
         {
