@@ -643,10 +643,22 @@ public class PlayerControllerExperimental : MonoBehaviour
         _animator.SetBool("Movement", false);
         _animator.SetBool("Slope", true);
         GameObject go = findClosestObjectWithTag("slopeEnd", 5);
-        _scriptDestinations.Add(new Vector3(go.transform.position.x + go.GetComponent<SpriteRenderer>().bounds.size.x/2 + playerWidth/2 , go.transform.position.y - go.GetComponent<SpriteRenderer>().bounds.size.y / 2 + playerHeight/2));
-        _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(2f, 0f));
-        if (go.transform.localScale.x > 0) SetFacingRight(true);
-        else SetFacingRight(false);
+        _rendererPosDif.Clear();
+        if (go.transform.localScale.x > 0)
+        {
+            SetFacingRight(true);
+            _scriptDestinations.Add(new Vector3(go.transform.position.x + go.GetComponent<SpriteRenderer>().bounds.size.x / 2 + playerWidth / 2, go.transform.position.y - go.GetComponent<SpriteRenderer>().bounds.size.y / 2 + playerHeight / 2));
+            _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(2f, 0f));
+            _rendererPosDif.Add(new Vector2(-0.25f, -0.25f));
+        }
+        else
+        {
+            SetFacingRight(false);
+            _scriptDestinations.Add(new Vector3(go.transform.position.x - go.GetComponent<SpriteRenderer>().bounds.size.x / 2 - playerWidth / 2, go.transform.position.y - go.GetComponent<SpriteRenderer>().bounds.size.y / 2 + playerHeight / 2));
+            _scriptDestinations.Add(_scriptDestinations[0] - new Vector3(2f, 0f));
+            _rendererPosDif.Add(new Vector2(0.25f, -0.25f));
+        }
+        _rendererPosDif.Add(new Vector2(0f, 0f));
         _scriptSpeed = 10.0f;
         _isScripting = true;
         _scriptSpeedAccelarated = true;
@@ -660,9 +672,6 @@ public class PlayerControllerExperimental : MonoBehaviour
         _animScriptCommands.Clear();
         _animScriptCommands.Add(new List<animScriptCommands> {  });
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.SlopeFalse, animScriptCommands.MovementTrue });
-        _rendererPosDif.Clear();
-        _rendererPosDif.Add(new Vector2(-0.25f, -0.25f));
-        _rendererPosDif.Add(new Vector2(0f, 0f));
     }
 
 
@@ -670,8 +679,16 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
         _scriptDestinations.Clear();
         GameObject go = findClosestObjectWithTag("tubeEnd", 1);
-        _scriptDestinations.Add(new Vector3(go.transform.position.x + playerWidth, transform.position.y, 0f));
-        _scriptDestinations.Add(new Vector3(go.transform.position.x + playerWidth, go.transform.position.y + playerHeight/4, 0f));
+        if (FacingRight)
+        {
+            _scriptDestinations.Add(new Vector3(go.transform.position.x + playerWidth, transform.position.y, 0f));
+            _scriptDestinations.Add(new Vector3(go.transform.position.x + playerWidth, go.transform.position.y + playerHeight / 4, 0f));
+        }
+        else
+        {
+            _scriptDestinations.Add(new Vector3(go.transform.position.x - playerWidth, transform.position.y, 0f));
+            _scriptDestinations.Add(new Vector3(go.transform.position.x - playerWidth, go.transform.position.y + playerHeight / 4, 0f));
+        }
         _scriptSpeed = 3.0f;
         _isScripting = true;
         _scriptSpeedAccelarated = false;
