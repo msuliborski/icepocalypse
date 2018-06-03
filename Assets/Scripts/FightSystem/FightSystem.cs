@@ -25,8 +25,6 @@ public class FightSystem : MonoBehaviour {
 
     void Start()
     {
-        Time.timeScale = 1.0f;
-
         FistCollider.enabled = false;
 
         IsQTE = false;
