@@ -11,6 +11,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     public UnityEvent TubeStopperDestroy;
     public float JumpForce = 18;
+    public float WallJumpForce = 24;
     public float WallReflectionForce = 17;
     public float MoveSpeed = 10;
     public int Hp = 100;
@@ -56,7 +57,11 @@ public class PlayerControllerExperimental : MonoBehaviour
         InertDownTrue,
         InertDownFalse,
         SlopeTrue,
-        SlopeFalse
+        SlopeFalse,
+        CzekaningTrue,
+        CzekaningFalse,
+        JumpToWallTrue,
+        JumpToWallFalse
     }
 
     private List<List<animScriptCommands>> _animScriptCommands;
@@ -285,6 +290,8 @@ public class PlayerControllerExperimental : MonoBehaviour
                     _ignoreLedderEdge = false;
                     _animator.SetBool("Inert Down", false);
                     _animator.SetBool("WallReflection", false);
+                    _animator.SetBool("JumpToWall", false);
+                    _animator.SetBool("Czekaning", false);
                     _animator.SetBool("Movement", (_moveDirection != 0) ? true : false);
 
                     break;
@@ -415,6 +422,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                     _animator.SetBool("Tube Idle", false);
                     _animator.SetBool("Tube", false);
                     _animator.SetBool("Inert Down", true);
+
                    
                     _index++;
                     break;
@@ -548,14 +556,16 @@ public class PlayerControllerExperimental : MonoBehaviour
             {
                 if (FacingRight)
                 {
-                    _rigidbody.velocity = new Vector2(_rigidbody.velocity.x -  WallReflectionForce, JumpForce);
+                    _rigidbody.velocity = new Vector2(_rigidbody.velocity.x -  WallReflectionForce, WallJumpForce);
                     SetFacingRight(false);
                 }
                 else
                 {
-                    _rigidbody.velocity = new Vector2(_rigidbody.velocity.x + WallReflectionForce, JumpForce);
+                    _rigidbody.velocity = new Vector2(_rigidbody.velocity.x + WallReflectionForce, WallJumpForce);
                     SetFacingRight(true);
                 }
+                _animator.SetBool("Czekaning", false);
+                _animator.SetBool("JumpToWall", false);
                 _animator.SetBool("WallReflection", true);
             }
             else if (CurrentState == PlayerState.Laddering)
@@ -734,6 +744,8 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (FacingRight) _keysToReact.Add(KeyCode.LeftArrow);
         else _keysToReact.Add(KeyCode.RightArrow);
         _animScriptCommands.Clear();
+        _animScriptCommands.Add(new List<animScriptCommands> {animScriptCommands.CzekaningTrue});
+        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.CzekaningFalse, animScriptCommands.MovementTrue});
         _rendererPosDif.Clear();
     }
 
@@ -829,7 +841,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         _indexToReact = -1;
         _indexToRotate = -1;
         _animScriptCommands.Clear();
-        _rendererPosDif.Clear();
+       _rendererPosDif.Clear();
     }
 
     private void onWallImpact()
@@ -837,10 +849,18 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (!_wallImpact)
         {
             _wallImpact = true;
-            _animator.SetBool("WallReflection", false);
-            if (PreviousState == PlayerState.Grounded) _rigidbody.velocity = new Vector2(0, 6); 
-            else _rigidbody.velocity = new Vector2(0, 0);
-            _rigidbody.gravityScale = 0;
+            if (PreviousState == PlayerState.Grounded)
+            {
+                _rigidbody.velocity = new Vector2(0, 6);
+                _animator.SetBool("JumpToWall", true);
+            }
+            else
+            {
+                _rigidbody.velocity = new Vector2(0, 0);
+                _animator.SetBool("WallReflection", false);
+                _animator.SetBool("Czekaning", true);
+            }
+             _rigidbody.gravityScale = 0;
         }
     }
 
@@ -943,6 +963,22 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                         case animScriptCommands.TubeIdleTrue:
                             _animator.SetBool("Tube Idle", true);
+                            break;
+
+                        case animScriptCommands.CzekaningFalse:
+                            _animator.SetBool("Czekaning", false);
+                            break;
+
+                        case animScriptCommands.CzekaningTrue:
+                            _animator.SetBool("Czekaning", true);
+                            break;
+
+                        case animScriptCommands.JumpToWallFalse:
+                            _animator.SetBool("JumpToWall", false);
+                            break;
+
+                        case animScriptCommands.JumpToWallTrue:
+                            _animator.SetBool("JumpToWall", true);
                             break;
                     }
                 }
