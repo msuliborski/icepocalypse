@@ -49,7 +49,7 @@ public class EnemyController : MonoBehaviour {
     public Collider2D FistCollider1;
     public Collider2D FistCollider2;
 
-    public GameObject HitFlag;
+    //public GameObject HitFlag;
 
     enum Facing
     {
@@ -74,7 +74,7 @@ public class EnemyController : MonoBehaviour {
 	{
         //Time.timeScale = 0.1f;
 
-        HitFlag.SetActive(false);
+        //HitFlag.SetActive(false);
 
         FistCollider1.enabled = false;
         FistCollider2.enabled = false;
@@ -198,17 +198,12 @@ public class EnemyController : MonoBehaviour {
             ChangeFacingDirection();
         }
 
-        if (col.gameObject.tag == "PlayerFist" && _isUnderAttack && !_isDefending )//&& _isUnderAttack && !_isDefending )
+        if (col.gameObject.tag == "PlayerFist" )//&& _isUnderAttack && !_isDefending )
         {
-            if (!_isDefending)
-            {
-                Debug.Log("nie broni sie");
-            }
+            //HitFlag.SetActive(!HitFlag.active);
 
-            HitFlag.SetActive(!HitFlag.active);
-
-            Debug.Log("enemy health: " + _enemyHealthPoints);
             SetHealth(-10);
+            Debug.Log("enemy health: " + _enemyHealthPoints);
             _isUnderAttack = false;
 
             if (_enemyHealthPoints <= 0)
@@ -381,10 +376,10 @@ public class EnemyController : MonoBehaviour {
                // Debug.Log("pownien muc");
             }
 
-            if (x <= 1.0f)
+            if (x <= 0.8f)
             {
                 _canHeFight = false;
-                //_anim.SetBool("defend", true);
+                _anim.SetBool("defend", true);
                 //_animatingTime = Time.time;
                 _isDefending = true;
                 Debug.Log("defend");

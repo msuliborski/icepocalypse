@@ -17,6 +17,8 @@ public class FightSystem : MonoBehaviour {
     [HideInInspector]
     public bool IsQTE;
     [HideInInspector]
+    public bool IsDogQTE;
+    [HideInInspector]
     public bool ClickedTheCircle;
     [HideInInspector]
     public bool ClickedAttack;
@@ -40,6 +42,11 @@ public class FightSystem : MonoBehaviour {
 
     void Update()
     {
+        if ( Input.GetKey(KeyCode.X) )
+        {
+            _anim.SetBool("WatchOut", true);
+        }
+
         if ( IsQTE )
         {
             if ( ClickedTheCircle )
@@ -51,6 +58,18 @@ public class FightSystem : MonoBehaviour {
 
             return;
         }
+        else if (IsDogQTE)
+            {
+                if (ClickedTheCircle)
+                {
+                    Debug.Log("super atak");
+                    ClickedTheCircle = false;
+                    _anim.SetBool("SuperAttack", true);
+                    _anim.SetBool("WatchOut", false);
+                }
+
+                return;
+            }
 
         var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
@@ -96,13 +115,17 @@ public class FightSystem : MonoBehaviour {
     {
         RaycastHit2D hit;
 
-        Vector2 RayDirection = new Vector2(transform.position.x, transform.position.y + 1.2f);
+        Vector2 RayDirection = new Vector2(transform.position.x, transform.position.y + 0.5f);
         Debug.DrawRay(RayDirection, transform.localScale.x * Vector3.right * 5.0f, Color.yellow, 2.0f);
-        hit = Physics2D.Raycast(RayDirection, transform.localScale.x * Vector3.right, 5.0f);
+        int layerMask = ~(LayerMask.GetMask("Player"));
+        hit = Physics2D.Raycast(RayDirection, transform.localScale.x * Vector3.right, 5.0f,layerMask );
         if (hit.collider != null)
         {
             if (hit.collider.tag == "Enemy")
+            {
                 hit.collider.gameObject.SendMessage("Defend");
+                Debug.Log("wyslalaem");
+            }
         }
     }
 
@@ -136,6 +159,12 @@ public class FightSystem : MonoBehaviour {
         {
             _healthPoints = 0;
         }
+    }
+
+    public void GetReady()
+    {
+        Debug.Log("wywoluje");
+        _anim.SetBool("WatchOut", true);
     }
 
 }
