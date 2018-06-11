@@ -157,44 +157,6 @@ Prefab:
       propertyPath: MainCamera
       value: 
       objectReference: {fileID: 502143754}
-    - target: {fileID: 1612765503035232, guid: 6d2cf71c49a0c47bc8b4d72604da58fa, type: 2}
-      propertyPath: m_TagString
-      value: PlayerFist
-      objectReference: {fileID: 0}
-    - target: {fileID: 61462599598060138, guid: 6d2cf71c49a0c47bc8b4d72604da58fa,
-        type: 2}
-      propertyPath: m_IsTrigger
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 61579684703718688, guid: 6d2cf71c49a0c47bc8b4d72604da58fa,
-        type: 2}
-      propertyPath: m_IsTrigger
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1350960262320466, guid: 6d2cf71c49a0c47bc8b4d72604da58fa, type: 2}
-      propertyPath: m_Layer
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 1237946902400446, guid: 6d2cf71c49a0c47bc8b4d72604da58fa, type: 2}
-      propertyPath: m_Layer
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 1345205478244158, guid: 6d2cf71c49a0c47bc8b4d72604da58fa, type: 2}
-      propertyPath: m_Layer
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 1612765503035232, guid: 6d2cf71c49a0c47bc8b4d72604da58fa, type: 2}
-      propertyPath: m_Layer
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 1121157264945870, guid: 6d2cf71c49a0c47bc8b4d72604da58fa, type: 2}
-      propertyPath: m_Layer
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 1291221520647384, guid: 6d2cf71c49a0c47bc8b4d72604da58fa, type: 2}
-      propertyPath: m_Layer
-      value: 20
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6d2cf71c49a0c47bc8b4d72604da58fa, type: 2}
   m_IsPrefabParent: 0
@@ -391,6 +353,11 @@ Camera:
   m_PrefabParentObject: {fileID: 20004471768075652, guid: d50f094e367196041ae53577332d2f79,
     type: 2}
   m_PrefabInternal: {fileID: 502143753}
+--- !u!61 &613457955 stripped
+BoxCollider2D:
+  m_PrefabParentObject: {fileID: 61462599598060138, guid: 6d2cf71c49a0c47bc8b4d72604da58fa,
+    type: 2}
+  m_PrefabInternal: {fileID: 107522998}
 --- !u!1 &895717443
 GameObject:
   m_ObjectHideFlags: 0
@@ -643,11 +610,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4588973693518386, guid: b8bd2ccc2bf7d5a48a52c6619773ceff, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 2.8475318
+      value: 3.041
       objectReference: {fileID: 0}
     - target: {fileID: 4588973693518386, guid: b8bd2ccc2bf7d5a48a52c6619773ceff, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -2.8336797
+      value: -2.563
       objectReference: {fileID: 0}
     - target: {fileID: 4588973693518386, guid: b8bd2ccc2bf7d5a48a52c6619773ceff, type: 2}
       propertyPath: m_LocalPosition.z
@@ -677,6 +644,11 @@ Prefab:
       propertyPath: m_Name
       value: WildDog
       objectReference: {fileID: 0}
+    - target: {fileID: 114661171538037586, guid: b8bd2ccc2bf7d5a48a52c6619773ceff,
+        type: 2}
+      propertyPath: PlayerCollider
+      value: 
+      objectReference: {fileID: 613457955}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b8bd2ccc2bf7d5a48a52c6619773ceff, type: 2}
   m_IsPrefabParent: 0
@@ -1321,3 +1293,54 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+--- !u!1001 &2106887839
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4588973693518386, guid: b8bd2ccc2bf7d5a48a52c6619773ceff, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 24.74
+      objectReference: {fileID: 0}
+    - target: {fileID: 4588973693518386, guid: b8bd2ccc2bf7d5a48a52c6619773ceff, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -2.71
+      objectReference: {fileID: 0}
+    - target: {fileID: 4588973693518386, guid: b8bd2ccc2bf7d5a48a52c6619773ceff, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4588973693518386, guid: b8bd2ccc2bf7d5a48a52c6619773ceff, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4588973693518386, guid: b8bd2ccc2bf7d5a48a52c6619773ceff, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4588973693518386, guid: b8bd2ccc2bf7d5a48a52c6619773ceff, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4588973693518386, guid: b8bd2ccc2bf7d5a48a52c6619773ceff, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4588973693518386, guid: b8bd2ccc2bf7d5a48a52c6619773ceff, type: 2}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 114661171538037586, guid: b8bd2ccc2bf7d5a48a52c6619773ceff,
+        type: 2}
+      propertyPath: PlayerCollider
+      value: 
+      objectReference: {fileID: 613457955}
+    - target: {fileID: 1795422699194316, guid: b8bd2ccc2bf7d5a48a52c6619773ceff, type: 2}
+      propertyPath: m_Name
+      value: WildDog (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: b8bd2ccc2bf7d5a48a52c6619773ceff, type: 2}
+  m_IsPrefabParent: 0

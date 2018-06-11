@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class WildDogScript : MonoBehaviour
 {
+    public BoxCollider2D PlayerCollider;
+
     public float EnemyRunningSpeed = 5.0f;
     public float EnemyWalkingSpeed = 2.5f;
     public float FightingDeadZone = 0.5f;
@@ -25,7 +27,7 @@ public class WildDogScript : MonoBehaviour
 
     private bool _isClutching;
     private float _time;
-    private int _keyPressesIterator;
+    private int _keyPressesIterator = 0;
 
     public GameObject QTECircle;
 
@@ -94,45 +96,58 @@ public class WildDogScript : MonoBehaviour
         }
         else
         {
-            if ( _playerObject != null )
+            if ( _circle == null )
             {
-                transform.position = new Vector2(_playerObject.transform.position.x, _playerObject.transform.position.y + 0.7f);
-                _rb.isKinematic = true;
-                transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
+                Vector2 vector = new Vector2(transform.position.x + 1.0f, transform.position.y + 0.5f);
+
+                _circle = Instantiate(QTECircle, vector, Quaternion.identity) as GameObject;
+                _circle.GetComponent<QTECircleScript>().FatherObject = gameObject;
+
+                _circle.GetComponent<QTECircleScript>()._qteType = "Dog";
+                _circle.GetComponent<QTECircleScript>().LifeTime = 0f;
             }
-            
-            if ( _playerObject == null )
-            {
-                Debug.Log("object null");
-            }
-            //Fight();
+
+            Fight();
         }
 
     }
 
-    void Fight()
+    IEnumerator TurnSpriteOffInAWhile()
     {
+        yield return new WaitForSecondsRealtime(0.35f);
+        GetComponent<SpriteRenderer>().enabled = false;
+    }
+
+    void Fight()
+    { 
+        _rb.velocity = new Vector2((_playerObject.transform.position.x - transform.position.x) * 7.0f, (_playerObject.transform.position.y + 0.3f - transform.position.y) * 10.0f);
+
         if ( Time.time - _time >= 5.0f )
         {
-            Debug.Log("gracz umiera");
-            _playerObject = null;
-            //_rb.isKinematic = false;
-            //this.GetComponent<BoxCollider2D>().isTrigger = false;
+            //GetComponent<BoxCollider2D>().isTrigger = false;
+            Debug.Log("pies wraca do noaodow");
+            _rb.velocity = new Vector2(0f, 0f);
+            _playerObject.SetActive(false);
+            GetComponent<SpriteRenderer>().enabled = true;
+            _isClutching = false;
+            _dogState = PlayerState.Walking;
+            Destroy(_circle);
+            Debug.Log("ada");
         }
 
-        if ( Input.GetKeyDown( KeyCode.F) && _keyPressesIterator < 20 )
+        if (ClickedTheCircle && _keyPressesIterator < 10)
         {
+            ClickedTheCircle = false;
             _keyPressesIterator++;
+            Debug.Log("klik");
         }
-        else if ( _keyPressesIterator >= 20 )
+        
+        if ( _keyPressesIterator >= 10 )
         {
-            //_rb.AddForce(new Vector2(0.5f, 0f));
-            //_rb.isKinematic = false;
-            //this.GetComponent<BoxCollider2D>().isTrigger = false;
-            Time.timeScale = 1.0f;
+            _playerObject.GetComponent<FightSystem>().DogIsDead();
+            _playerObject.GetComponent<FightSystem>().IsDogQTE = false;
+            Destroy(_circle);
             Destroy(gameObject);
-            //_playerObject.transform.rotation = new Quaternion(0f, 0f, 0f, 0f);
-            //_playerObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
         }
     }
 
@@ -140,20 +155,19 @@ public class WildDogScript : MonoBehaviour
     {
         if (col.gameObject.tag == "Player")
         {
-            _rb.velocity = new Vector2((_playerObject.transform.position.x - transform.position.x) * 7.0f, (_playerObject.transform.position.y + 3.0f - transform.position.y) * 10.0f);
-            Debug.Log("jebanl");
+            //_rb.velocity = new Vector2((_playerObject.transform.position.x - transform.position.x) * 7.0f, (_playerObject.transform.position.y + 3.0f - transform.position.y) * 10.0f);
+            Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), PlayerCollider);
 
             if ( ClickedTheCircle )
             {
                 Destroy(gameObject);
-                Debug.Log("mamy animacje kontry na psie");
             }
             else
             {
-                //_isClutching = true;
+                _isClutching = true;
                 //this.GetComponent<BoxCollider2D>().isTrigger = true;
-                // _time = Time.time;
-                Debug.Log("a tu bedzie strugling");
+                _time = Time.time;
+                _playerObject.GetComponent<FightSystem>().FallDown();
             }
         }
     }
@@ -208,7 +222,6 @@ public class WildDogScript : MonoBehaviour
 
             case PlayerState.Attack:
                 //_rb.AddForce(new Vector2( (_playerObject.transform.position.x - transform.position.x) * 4000.0f, (_playerObject.transform.position.y + 1.0f - transform.position.y)*5000.0f ));
-                Debug.Log("skacze");
                 _anim.SetBool("jump", true);
                 _playerObject.GetComponent<FightSystem>().IsDogQTE = true;
                 _playerObject.GetComponent<FightSystem>().GetReady();
@@ -221,7 +234,7 @@ public class WildDogScript : MonoBehaviour
                 _circle.GetComponent<QTECircleScript>().FatherObject = gameObject;
 
                 _circle.GetComponent<QTECircleScript>()._qteType = "Dog";
-                _circle.GetComponent<QTECircleScript>().LifeTime = 10.0f;
+                _circle.GetComponent<QTECircleScript>().LifeTime = 0.01f;
 
                 _dogState = PlayerState.Attacking;
                 break;
@@ -285,8 +298,7 @@ public class WildDogScript : MonoBehaviour
 
     public void JumpYouFaggot()
     {
-        _rb.AddForce(new Vector2((_playerObject.transform.position.x - transform.position.x) * 4000.0f, (_playerObject.transform.position.y - transform.position.y) * 5000.0f));
-        Debug.Log("faggot");
+        _rb.AddForce(new Vector2((_playerObject.transform.position.x - transform.position.x) * 2000.0f, (_playerObject.transform.position.y - transform.position.y) * 3000.0f));
         _dogState = PlayerState.Attacking;
     }
 

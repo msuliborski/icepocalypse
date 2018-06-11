@@ -42,11 +42,6 @@ public class FightSystem : MonoBehaviour {
 
     void Update()
     {
-        if ( Input.GetKey(KeyCode.X) )
-        {
-            _anim.SetBool("WatchOut", true);
-        }
-
         if ( IsQTE )
         {
             if ( ClickedTheCircle )
@@ -60,7 +55,7 @@ public class FightSystem : MonoBehaviour {
         }
         else if (IsDogQTE)
             {
-                if (ClickedTheCircle)
+            if (ClickedTheCircle)
                 {
                     Debug.Log("super atak");
                     ClickedTheCircle = false;
@@ -165,6 +160,24 @@ public class FightSystem : MonoBehaviour {
     {
         Debug.Log("wywoluje");
         _anim.SetBool("WatchOut", true);
+        _anim.SetBool("Movement", false);
+        GetComponent<PlayerControllerExperimental>().StopMovement();
+    }
+
+    public void FallDown()
+    {
+        //GetComponent<BoxCollider2D>().isTrigger = true;
+        //GetComponent<Rigidbody2D>().isKinematic = true;
+        Debug.Log("upadam");
+        _anim.SetBool("FallDown", true);
+        _anim.SetBool("WatchOut", false);
+    }
+
+    public void DogIsDead()
+    {
+        Debug.Log("dajemy animacje zabijania psa");
+        _anim.SetBool("KillTheDog", true);
+        _anim.SetBool("FallDown", false);
     }
 
 }

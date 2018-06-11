@@ -22,6 +22,8 @@ public class QTECircleScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        if (LifeTime == 0f)
+            return;
 
         if ( Time.time - _startTime >= LifeTime )
         {
@@ -41,17 +43,22 @@ public class QTECircleScript : MonoBehaviour {
     void OnMouseUp()
     {
         Debug.Log("klik");
-        GameObject.FindGameObjectWithTag("Player").GetComponent<FightSystem>().ClickedTheCircle = true;
+
         if ( _qteType == "Enemy" )
         {
             FatherObject.GetComponent<EnemyController>().SetQTETimeStamp();
-            Destroy(gameObject);
         }
         else if (_qteType == "Dog")
         {
             FatherObject.GetComponent<WildDogScript>().ClickedTheCircle = true;
             Time.timeScale = 1.0f;
+        }
+
+        if (LifeTime != 0f)
+        {
+            GameObject.FindGameObjectWithTag("Player").GetComponent<FightSystem>().ClickedTheCircle = true;
             Destroy(gameObject);
         }
+
     }
 }

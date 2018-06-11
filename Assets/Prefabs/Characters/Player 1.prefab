@@ -27,7 +27,7 @@ GameObject:
   - component: {fileID: 114136804003637190}
   - component: {fileID: 114295858409766844}
   - component: {fileID: 114108698665337454}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: Player 1
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 4543369311411246}
   - component: {fileID: 212092174576018086}
   - component: {fileID: 95401490551610110}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: SpriteAnimation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,7 +60,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4248268080642920}
   - component: {fileID: 61085884734708986}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: corner_collider
   m_TagString: corner_collider
   m_Icon: {fileID: 0}
@@ -76,7 +76,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4768795708464234}
   - component: {fileID: 61979928485215980}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: legs_collider
   m_TagString: legs_collider
   m_Icon: {fileID: 0}
@@ -92,7 +92,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4527537010833514}
   - component: {fileID: 61250802627469764}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: body_collider
   m_TagString: body_collider
   m_Icon: {fileID: 0}
@@ -108,9 +108,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4600569305798886}
   - component: {fileID: 61579684703718688}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: AttackCollider
-  m_TagString: Untagged
+  m_TagString: PlayerFist
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -188,7 +188,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1121157264945870}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10.7, y: -2.35, z: 0}
+  m_LocalPosition: {x: -2.79, y: -2.56, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4248268080642920}
@@ -302,7 +302,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0.42586946, y: 0.40167272}
@@ -374,6 +374,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HealthPointsMax: 100
   IsQTE: 0
+  IsDogQTE: 0
   ClickedTheCircle: 0
   ClickedAttack: 0
   FistCollider: {fileID: 61579684703718688}

@@ -20,7 +20,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/EnemyFightSystemScene.unity
     guid: 6fa92e050e8dd9242a1628cde3f35372
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/GunScene.unity
     guid: f7dbc61ff2d840348af7205e2c6f14ac
+  - enabled: 1
+    path: Assets/Scenes/DogFightAndAnimationScene.unity
+    guid: 6efd5262ea060ba489df57cd5e8573bd
   m_configObjects: {}

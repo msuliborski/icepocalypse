@@ -21,7 +21,6 @@ public class CameraController : MonoBehaviour
     void LateUpdate()
     {
         gameObject.transform.position = new Vector3(Player.transform.position.x, Player.transform.position.y, gameObject.transform.position.z);
-
     }
 
     public void OnWarmAreaEnter()
