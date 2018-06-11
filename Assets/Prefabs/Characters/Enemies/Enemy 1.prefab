@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4491613415389612}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: ViewRange
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35,7 +35,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4284418251334636}
   - component: {fileID: 212255022312290996}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: HitConnected
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53,7 +53,7 @@ GameObject:
   - component: {fileID: 212886458350435064}
   - component: {fileID: 61101561556088186}
   - component: {fileID: 50209820706514656}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: LeftHand
   m_TagString: EnemyFist
   m_Icon: {fileID: 0}
@@ -68,7 +68,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4242271388446544}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: PatrolDistanceTransform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 50291679098316076}
   - component: {fileID: 114809755364476554}
   - component: {fileID: 95277074253476050}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: Enemy 1
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 212764169047960452}
   - component: {fileID: 61392892882898212}
   - component: {fileID: 50618417648162860}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: RightHand
   m_TagString: EnemyFist
   m_Icon: {fileID: 0}
@@ -146,7 +146,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1638983339565842}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.13, y: -2.62, z: 0}
+  m_LocalPosition: {x: 43.55, y: -8.25, z: 0}
   m_LocalScale: {x: 0.3871806, y: 0.39012763, z: 1}
   m_Children:
   - {fileID: 4706352753461926}
@@ -360,7 +360,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac485f1824bb0ea40b306ffbe119ce83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  QteButton: {fileID: 1962483241360684, guid: 9efc0730f63eaab4da4d9c98915d04e5, type: 2}
+  CanvasObject: {fileID: 0}
+  QteButton: {fileID: 1581814255972552, guid: 5cb9cd2f0d5969c48841a87e4085ec70, type: 2}
   EnemyHealthPointsMax: 100
   _isUnderAttack: 0
   _isDefending: 0

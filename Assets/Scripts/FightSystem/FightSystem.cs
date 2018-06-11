@@ -112,7 +112,7 @@ public class FightSystem : MonoBehaviour {
 
         Vector2 RayDirection = new Vector2(transform.position.x, transform.position.y + 0.5f);
         Debug.DrawRay(RayDirection, transform.localScale.x * Vector3.right * 5.0f, Color.yellow, 2.0f);
-        int layerMask = ~(LayerMask.GetMask("Player"));
+        int layerMask = LayerMask.GetMask("Enemy");
         hit = Physics2D.Raycast(RayDirection, transform.localScale.x * Vector3.right, 5.0f,layerMask );
         if (hit.collider != null)
         {

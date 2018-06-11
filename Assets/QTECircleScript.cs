@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class QTECircleScript : MonoBehaviour {
 
@@ -13,10 +14,14 @@ public class QTECircleScript : MonoBehaviour {
     [SerializeField]
     public GameObject FatherObject;
 
+    private Button _button;
+
 	// Use this for initialization
 	void Start ()
     {
         _startTime = Time.time;
+        _button = GetComponent<Button>();
+        _button.onClick.AddListener(OnMouseUp);
     }
 	
 	// Update is called once per frame

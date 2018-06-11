@@ -4,6 +4,8 @@ using UnityEngine.UI;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour {
+    public GameObject CanvasObject;
+
     public GameObject QteButton;
 
     public int EnemyHealthPointsMax = 100;
@@ -125,7 +127,6 @@ public class EnemyController : MonoBehaviour {
 
         if ( _sideFlag && !stateInfo.IsName("Base Layer.Attack") && !stateInfo.IsName("Base Layer.Defend") )
         {
-            Debug.Log("animcaj nie gra");
             _canHeFight = true;
             _sideFlag = false;
             FistCollider1.enabled = false;
@@ -332,9 +333,12 @@ public class EnemyController : MonoBehaviour {
 
     GameObject PutCircle( Vector3 vector )
     {
-        GameObject circle = Instantiate(QteButton, vector, Quaternion.identity) as GameObject;
+        GameObject circle = Instantiate(QteButton, CanvasObject.transform);
+        //Instantiate(QteButton, new Vector3( CanvasObject.transform.position.x, CanvasObject.transform.position.y, 0f), Quaternion.identity, CanvasObject.transform ) as GameObject;
         circle.GetComponent<QTECircleScript>().FatherObject = gameObject;
+        //Instantiate(QteButton, CanvasObject.transform);
         circle.GetComponent<QTECircleScript>()._qteType = "Enemy";
+        circle.GetComponent<QTECircleScript>().LifeTime = 10.0f;
         return circle;
     }
 

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class WildDogScript : MonoBehaviour
 {
+    public GameObject CanvasObject;
+
     public BoxCollider2D PlayerCollider;
 
     public float EnemyRunningSpeed = 5.0f;
@@ -100,9 +102,8 @@ public class WildDogScript : MonoBehaviour
             {
                 Vector2 vector = new Vector2(transform.position.x + 1.0f, transform.position.y + 0.5f);
 
-                _circle = Instantiate(QTECircle, vector, Quaternion.identity) as GameObject;
+                _circle = Instantiate(QTECircle, CanvasObject.transform);
                 _circle.GetComponent<QTECircleScript>().FatherObject = gameObject;
-
                 _circle.GetComponent<QTECircleScript>()._qteType = "Dog";
                 _circle.GetComponent<QTECircleScript>().LifeTime = 0f;
             }
@@ -230,9 +231,8 @@ public class WildDogScript : MonoBehaviour
                 // _jumped = true;
                 Vector2 vector = new Vector2(transform.position.x, transform.position.y + 0.5f);
 
-                _circle = Instantiate(QTECircle, vector, Quaternion.identity) as GameObject;
+                _circle = Instantiate(QTECircle, CanvasObject.transform);
                 _circle.GetComponent<QTECircleScript>().FatherObject = gameObject;
-
                 _circle.GetComponent<QTECircleScript>()._qteType = "Dog";
                 _circle.GetComponent<QTECircleScript>().LifeTime = 0.01f;
 
