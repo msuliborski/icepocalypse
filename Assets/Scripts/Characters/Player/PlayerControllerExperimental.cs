@@ -551,17 +551,19 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
         else
         {
-            if (CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Sloping) _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
+            if (CurrentState == PlayerState.Grounded) _rigidbody.AddForce(new Vector2(0, 450*JumpForce));//_rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
             else if (CurrentState == PlayerState.WallHugging)
             {
                 if (FacingRight)
                 {
-                    _rigidbody.velocity = new Vector2(_rigidbody.velocity.x -  WallReflectionForce, WallJumpForce);
+                    //_rigidbody.velocity = new Vector2(_rigidbody.velocity.x - WallReflectionForce, WallJumpForce);
+                    _rigidbody.AddForce(new Vector2(-300*WallReflectionForce, 400*WallJumpForce));
                     SetFacingRight(false);
                 }
                 else
                 {
-                    _rigidbody.velocity = new Vector2(_rigidbody.velocity.x + WallReflectionForce, WallJumpForce);
+                    //_rigidbody.velocity = new Vector2(_rigidbody.velocity.x + WallReflectionForce, WallJumpForce);
+                    _rigidbody.AddForce(new Vector2(300 * WallReflectionForce, 400 * WallJumpForce));
                     SetFacingRight(true);
                 }
                 _animator.SetBool("Czekaning", false);
