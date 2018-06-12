@@ -12,7 +12,7 @@ public class WildDogScript : MonoBehaviour
     public float EnemyWalkingSpeed = 2.5f;
     public float FightingDeadZone = 0.5f;
     public Transform ViewRangeTransform;
-    public Transform PatrolDistanceTransform;
+    //public Transform PatrolDistanceTransform;
 
     private GameObject _playerObject;
 
@@ -49,25 +49,25 @@ public class WildDogScript : MonoBehaviour
     enum PlayerState
     {
         Idle,
-        Walking,
         Running,
         Attack,
         Attacking
     }
 
-    private PlayerState _dogState = PlayerState.Walking;
+    private PlayerState _dogState = PlayerState.Idle;
 
     void Start()
     {
+        Debug.Log("dupa i hui");
         _anim = GetComponent<Animator>();
 
         _isClutching = false;
         _rb = GetComponent<Rigidbody2D>();
 
         _playerObject = GameObject.FindGameObjectWithTag("Player");
-        _patrolDistance = Mathf.Abs(transform.position.x - PatrolDistanceTransform.position.x);
-        _patrolRangeA = transform.position.x - _patrolDistance;
-        _patrolRangeB = transform.position.x + _patrolDistance;
+        //_patrolDistance = Mathf.Abs(transform.position.x - PatrolDistanceTransform.position.x);
+        //_patrolRangeA = transform.position.x - _patrolDistance;
+        //_patrolRangeB = transform.position.x + _patrolDistance;
 
         //Debug.Log("A: " + _patrolRangeA + " B: " + _patrolRangeB);
 
@@ -85,15 +85,10 @@ public class WildDogScript : MonoBehaviour
 
     void Update()
     {
+
         if ( !_isClutching )
         {
             _playerEnemyDistance = _playerObject.transform.position.x - transform.position.x;
-
-            if (_dogState != PlayerState.Running && _dogState != PlayerState.Attacking && _dogState != PlayerState.Attack && (transform.position.x <= _patrolRangeA && _facingD == Facing.Left) || (transform.position.x >= _patrolRangeB && _facingD == Facing.Right))
-            {
-                ChangeFacingDirection();
-            }
-
             GetState();
         }
         else
@@ -131,7 +126,7 @@ public class WildDogScript : MonoBehaviour
             _playerObject.SetActive(false);
             GetComponent<SpriteRenderer>().enabled = true;
             _isClutching = false;
-            _dogState = PlayerState.Walking;
+            _dogState = PlayerState.Idle;
             Destroy(_circle);
             Debug.Log("ada");
         }
@@ -191,9 +186,7 @@ public class WildDogScript : MonoBehaviour
     {
         switch (_dogState)
         {
-            case PlayerState.Walking:
-                Walk(EnemyWalkingSpeed);
-
+            case PlayerState.Idle:
                 if (Mathf.Abs(_playerEnemyDistance) < _triggerRange)
                 {
                     if (_facingD == Facing.Left)
@@ -201,6 +194,7 @@ public class WildDogScript : MonoBehaviour
                         if (_playerEnemyDistance < 0)
                         {
                             _dogState = PlayerState.Running;
+                            Debug.Log("ustawiam run");
                         }
                     }
                     else if (_playerEnemyDistance > 0)
@@ -217,6 +211,7 @@ public class WildDogScript : MonoBehaviour
                 if (Mathf.Abs(_playerEnemyDistance) <= FightingDeadZone)
                 {
                     _dogState = PlayerState.Attack;
+                    Debug.Log("ustawiam atak");
                 }
 
                 break;
@@ -225,8 +220,19 @@ public class WildDogScript : MonoBehaviour
                 //_rb.AddForce(new Vector2( (_playerObject.transform.position.x - transform.position.x) * 4000.0f, (_playerObject.transform.position.y + 1.0f - transform.position.y)*5000.0f ));
                 _anim.SetBool("jump", true);
                 _playerObject.GetComponent<FightSystem>().IsDogQTE = true;
-                _playerObject.GetComponent<FightSystem>().GetReady();
+
+                if (transform.position.x < _playerObject.transform.position.x)
+                {
+                    _playerObject.GetComponent<FightSystem>().GetReady(-1);
+                }
+                else
+                {
+                    _playerObject.GetComponent<FightSystem>().GetReady(1);
+                }
+
+                Debug.Log("time scale");
                 Time.timeScale = 0.01f;
+                Debug.Log("timescale");
                 //_dogState = PlayerState.Attacking;
                 // _jumped = true;
                 Vector2 vector = new Vector2(transform.position.x, transform.position.y + 0.5f);

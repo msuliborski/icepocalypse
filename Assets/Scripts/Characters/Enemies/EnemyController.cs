@@ -118,6 +118,7 @@ public class EnemyController : MonoBehaviour {
 
 	void Update () 
 	{
+
         var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
         if (stateInfo.IsName("Base Layer.Attack") || stateInfo.IsName("Base Layer.Defend"))
@@ -188,7 +189,8 @@ public class EnemyController : MonoBehaviour {
     {
         if ( col.gameObject.tag == "Player" )
         {
-	        _rb.velocity = new Vector2(0, _rb.velocity.y);
+            //_rb.velocity = new Vector2(0, _rb.velocity.y);
+            _rb.constraints = RigidbodyConstraints2D.FreezePositionX;
         }
     }
 
@@ -199,7 +201,7 @@ public class EnemyController : MonoBehaviour {
             ChangeFacingDirection();
         }
 
-        if (col.gameObject.tag == "PlayerFist" )//&& _isUnderAttack && !_isDefending )
+        if (col.gameObject.tag == "PlayerFist" && _isUnderAttack && !_isDefending )
         {
             //HitFlag.SetActive(!HitFlag.active);
 
@@ -274,6 +276,7 @@ public class EnemyController : MonoBehaviour {
 
             case PlayerState.Running:
                 Run(EnemyRunningSpeed);
+                Debug.Log(_playerEnemyDistance);
                 if (Mathf.Abs(_playerEnemyDistance) <= FightingDeadZone)
                 {
                     _playerState = PlayerState.Attacking;
@@ -291,7 +294,7 @@ public class EnemyController : MonoBehaviour {
                     _rb.constraints = RigidbodyConstraints2D.None;
                     _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
                     Time.timeScale = 1.0f;
-                    //Debug.Log("Running");
+                    Debug.Log("Running");
                 }
                 break;
         }

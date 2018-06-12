@@ -146,7 +146,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1638983339565842}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 43.55, y: -8.25, z: 0}
+  m_LocalPosition: {x: 48.3, y: -8.74316, z: 0}
   m_LocalScale: {x: 0.3871806, y: 0.39012763, z: 1}
   m_Children:
   - {fileID: 4706352753461926}
@@ -367,13 +367,13 @@ MonoBehaviour:
   _isDefending: 0
   EnemyRunningSpeed: 5
   EnemyWalkingSpeed: 2.5
-  FightingDeadZone: 0.7
+  FightingDeadZone: 0.65
   ViewRangeTransform: {fileID: 4491613415389612}
   PatrolDistanceTransform: {fileID: 4242271388446544}
   QTECirclePositionsArray:
+  - 1
   - 1.5
-  - 3
-  QTECircleInterval: 3
+  QTECircleInterval: 0.5
   FistCollider1: {fileID: 61392892882898212}
   FistCollider2: {fileID: 61101561556088186}
 --- !u!212 &212255022312290996

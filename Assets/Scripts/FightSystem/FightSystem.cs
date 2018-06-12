@@ -110,7 +110,7 @@ public class FightSystem : MonoBehaviour {
     {
         RaycastHit2D hit;
 
-        Vector2 RayDirection = new Vector2(transform.position.x, transform.position.y + 0.5f);
+        Vector2 RayDirection = new Vector2(transform.position.x + 0.7f, transform.position.y + 0.5f);
         Debug.DrawRay(RayDirection, transform.localScale.x * Vector3.right * 5.0f, Color.yellow, 2.0f);
         int layerMask = LayerMask.GetMask("Enemy");
         hit = Physics2D.Raycast(RayDirection, transform.localScale.x * Vector3.right, 5.0f,layerMask );
@@ -156,8 +156,17 @@ public class FightSystem : MonoBehaviour {
         }
     }
 
-    public void GetReady()
+    public void GetReady( int side )
     {
+        if ( side == 1  && transform.localScale.x < 0f )
+        {
+            transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+        }
+        else if ( side == -1 && transform.localScale.x > 0f )
+        {
+            transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+        }
+
         Debug.Log("wywoluje");
         _anim.SetBool("WatchOut", true);
         _anim.SetBool("Movement", false);
