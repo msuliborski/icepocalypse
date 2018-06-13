@@ -52,6 +52,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         JumpToWallTrue,
         JumpToWallFalse,
         UpTrue,
+<<<<<<< HEAD
         UpFalse,
         Up1True,
         Up1False,
@@ -59,6 +60,9 @@ public class PlayerControllerExperimental : MonoBehaviour
         Up2False,
         UpLadderTrue,
         UpLadderFalse
+=======
+        UpFalse
+>>>>>>> 8f39dc3f66dbb51f91437d17eba9a407f908ceac
     }
 
     private List<List<animScriptCommands>> _animScriptCommands;
@@ -351,6 +355,14 @@ public class PlayerControllerExperimental : MonoBehaviour
                         _onTopDirection = false;
                         OnKeySpace();
                     }
+<<<<<<< HEAD
+=======
+                   /* if (_rigidbody.velocity.x == 0.0f)
+                    {
+                        if (FacingRight) _rigidbody.velocity = new Vector2(0.0000001f, -0.0000001f);
+                        else _rigidbody.velocity = new Vector2(-0.0000001f, -0.0000001f);
+                    }*/
+>>>>>>> 8f39dc3f66dbb51f91437d17eba9a407f908ceac
                     break;
 
                 case PlayerState.Death:
@@ -925,6 +937,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                         case animScriptCommands.UpFalse:
                             _animator.SetBool("Up", false);
                             break;
+<<<<<<< HEAD
 
                         case animScriptCommands.Up1True:
                             _animator.SetBool("Up1", true);
@@ -949,6 +962,8 @@ public class PlayerControllerExperimental : MonoBehaviour
                         case animScriptCommands.UpLadderFalse:
                             _animator.SetBool("UpLadder", false);
                             break;
+=======
+>>>>>>> 8f39dc3f66dbb51f91437d17eba9a407f908ceac
                     }
                 }
             }
