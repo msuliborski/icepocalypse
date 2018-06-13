@@ -52,7 +52,13 @@ public class PlayerControllerExperimental : MonoBehaviour
         JumpToWallTrue,
         JumpToWallFalse,
         UpTrue,
-        UpFalse
+        UpFalse,
+        Up1True,
+        Up1False,
+        Up2True,
+        Up2False,
+        UpLadderTrue,
+        UpLadderFalse
     }
 
     private List<List<animScriptCommands>> _animScriptCommands;
@@ -374,7 +380,6 @@ public class PlayerControllerExperimental : MonoBehaviour
                     if (FacingRight) _rigidbody.velocity = new Vector2(0.5f, -3f);
                     else _rigidbody.velocity = new Vector2(-0.5f, -3f);
                     _ignoreLedderEdge = true;
-                    //_ladderImpact = false;
                     _animator.SetBool("LadderMovement", true);
                     break;
 
@@ -487,6 +492,9 @@ public class PlayerControllerExperimental : MonoBehaviour
             {
                 case PlayerState.EdgeLaddering:
                     _index++;
+                    
+                    _animator.SetBool("Ladder", false);
+                    _animator.SetBool("UpLadder" , true);
                     break;
                 default:
                     _index++;
@@ -725,9 +733,9 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (FacingRight)_keysToReact.Add(KeyCode.LeftArrow);
         else _keysToReact.Add(KeyCode.RightArrow);
         _animScriptCommands.Clear();
-        _animScriptCommands.Add(new List<animScriptCommands> { });
-        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.LadderFalse, animScriptCommands.UpTrue });
-        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.UpFalse });
+        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.MovementFalse});
+        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.UpLadderFalse });
+        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.MovementTrue });
         _rendererPosDif.Clear();
     }
 
@@ -921,6 +929,30 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                         case animScriptCommands.UpFalse:
                             _animator.SetBool("Up", false);
+                            break;
+
+                        case animScriptCommands.Up1True:
+                            _animator.SetBool("Up1", true);
+                            break;
+
+                        case animScriptCommands.Up1False:
+                            _animator.SetBool("Up1", false);
+                            break;
+
+                        case animScriptCommands.Up2True:
+                            _animator.SetBool("Up2", true);
+                            break;
+
+                        case animScriptCommands.Up2False:
+                            _animator.SetBool("Up2", false);
+                            break;
+
+                        case animScriptCommands.UpLadderTrue:
+                            _animator.SetBool("UpLadder", true);
+                            break;
+
+                        case animScriptCommands.UpLadderFalse:
+                            _animator.SetBool("UpLadder", false);
                             break;
                     }
                 }
