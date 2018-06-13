@@ -345,11 +345,11 @@ public class PlayerControllerExperimental : MonoBehaviour
                         _onTopDirection = false;
                         OnKeySpace();
                     }
-                    if (_rigidbody.velocity.x == 0.0f)
+                   /* if (_rigidbody.velocity.x == 0.0f)
                     {
                         if (FacingRight) _rigidbody.velocity = new Vector2(0.0000001f, -0.0000001f);
                         else _rigidbody.velocity = new Vector2(-0.0000001f, -0.0000001f);
-                    }
+                    }*/
                     break;
 
                 case PlayerState.Death:
