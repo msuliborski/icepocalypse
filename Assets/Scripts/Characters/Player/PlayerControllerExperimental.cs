@@ -149,18 +149,18 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     public void OnLeftDirection() 
     {
-        if (!_isScripting) _onLeftDirection = true;
+        if (!_isScripting && CurrentState != PlayerState.Attacking ) _onLeftDirection = true;
     }
 
     public void OnRightDirection() 
     {
-        if (!_isScripting) _onRightDirection = true;
+        if (!_isScripting && CurrentState != PlayerState.Attacking ) _onRightDirection = true;
     }
 
     public void OnTopDirection()
     {
         //if (!_isScripting) 
-        if (CurrentState != PlayerState.TubeSliding)
+        if (CurrentState != PlayerState.TubeSliding && CurrentState != PlayerState.Attacking)
             _onTopDirection = true;
     }
 
@@ -173,7 +173,7 @@ public class PlayerControllerExperimental : MonoBehaviour
             (_isScripting && CurrentState == PlayerState.EgdeClimbingBody) ||
             (CurrentState == PlayerState.TubeSliding && 
             _isScripting && 
-            _rigidbody.transform.position == _scriptDestinations[_index])
+            _rigidbody.transform.position == _scriptDestinations[_index]) && CurrentState != PlayerState.Attacking
         )
         {
             _onDownDirection = true;
@@ -183,7 +183,11 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void Update()
     {
-        
+        //Debug.Log(CurrentState);
+
+        if (CurrentState == PlayerState.Attacking)
+            return;
+
         if (Input.GetKeyDown(KeyCode.P)) Debug.Break();
 
         if (_isScripting) script();
@@ -250,7 +254,6 @@ public class PlayerControllerExperimental : MonoBehaviour
             else
             {
                 if (CurrentState != PlayerState.Death) PreviousState = CurrentState;
-                CurrentState = PlayerState.Death;
             }
 
             switch (CurrentState)
@@ -1016,6 +1019,19 @@ public class PlayerControllerExperimental : MonoBehaviour
             }
         }
         return closest;
+    }
+
+    public void SetAttackingState()
+    {
+        CurrentState = PlayerState.Attacking;
+    }
+
+    public IEnumerator UnsetAttackingState()
+    {
+        Debug.Log("unset");
+        yield return new WaitForSecondsRealtime(0.5f);
+        CurrentState = PlayerState.Grounded;
+        Debug.Log("grounded");
     }
     #endregion
 }

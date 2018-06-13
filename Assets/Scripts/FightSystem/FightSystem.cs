@@ -38,6 +38,9 @@ public class FightSystem : MonoBehaviour {
     {
         _canIFight = true;
         IsQTE = false;
+        IsDogQTE = false;
+        StartCoroutine(GetComponent<PlayerControllerExperimental>().UnsetAttackingState());
+        //GetComponent<PlayerControllerExperimental>().UnsetAttackingState();
     }
 
     void Update()
@@ -61,9 +64,10 @@ public class FightSystem : MonoBehaviour {
                     ClickedTheCircle = false;
                     _anim.SetBool("SuperAttack", true);
                     _anim.SetBool("WatchOut", false);
-                }
+                CancelQTE();
+            }
 
-                return;
+            return;
             }
 
         var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
@@ -158,6 +162,8 @@ public class FightSystem : MonoBehaviour {
 
     public void GetReady( int side )
     {
+        GetComponent<PlayerControllerExperimental>().SetAttackingState();
+
         if ( side == 1  && transform.localScale.x < 0f )
         {
             transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
@@ -178,6 +184,7 @@ public class FightSystem : MonoBehaviour {
         //GetComponent<BoxCollider2D>().isTrigger = true;
         //GetComponent<Rigidbody2D>().isKinematic = true;
         Debug.Log("upadam");
+        //GetComponent<PlayerControllerExperimental>().SetAttackingState();
         _anim.SetBool("FallDown", true);
         _anim.SetBool("WatchOut", false);
     }
@@ -187,6 +194,7 @@ public class FightSystem : MonoBehaviour {
         Debug.Log("dajemy animacje zabijania psa");
         _anim.SetBool("KillTheDog", true);
         _anim.SetBool("FallDown", false);
+        CancelQTE();
     }
 
 }

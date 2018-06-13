@@ -341,7 +341,7 @@ public class EnemyController : MonoBehaviour {
         circle.GetComponent<QTECircleScript>().FatherObject = gameObject;
         //Instantiate(QteButton, CanvasObject.transform);
         circle.GetComponent<QTECircleScript>()._qteType = "Enemy";
-        circle.GetComponent<QTECircleScript>().LifeTime = 10.0f;
+        circle.GetComponent<QTECircleScript>().LifeTime = 2.0f;
         return circle;
     }
 
