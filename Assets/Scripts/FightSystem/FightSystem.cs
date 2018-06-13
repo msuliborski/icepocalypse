@@ -123,16 +123,18 @@ public class FightSystem : MonoBehaviour {
             if (hit.collider.tag == "Enemy")
             {
                 hit.collider.gameObject.SendMessage("Defend");
-                Debug.Log("wyslalaem");
+               // Debug.Log("wyslalaem");
             }
         }
     }
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        if ( col.gameObject.tag == "EnemyFist" && !_isDefending )
+        if ( col.gameObject.tag == "EnemyFist" )
         {
             //SetHealth(-10);
+
+            Debug.Log("dostales bulawa");
 
             if ( _healthPoints <= 0 )
             {

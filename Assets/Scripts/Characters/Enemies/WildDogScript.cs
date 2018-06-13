@@ -58,7 +58,6 @@ public class WildDogScript : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("dupa i hui");
         _anim = GetComponent<Animator>();
 
         _isClutching = false;
@@ -121,21 +120,18 @@ public class WildDogScript : MonoBehaviour
         if ( Time.time - _time >= 5.0f )
         {
             //GetComponent<BoxCollider2D>().isTrigger = false;
-            Debug.Log("pies wraca do noaodow");
             _rb.velocity = new Vector2(0f, 0f);
             _playerObject.SetActive(false);
             GetComponent<SpriteRenderer>().enabled = true;
             _isClutching = false;
             _dogState = PlayerState.Idle;
             Destroy(_circle);
-            Debug.Log("ada");
         }
 
         if (ClickedTheCircle && _keyPressesIterator < 10)
         {
             ClickedTheCircle = false;
             _keyPressesIterator++;
-            Debug.Log("klik");
         }
         
         if ( _keyPressesIterator >= 10 )
@@ -194,7 +190,6 @@ public class WildDogScript : MonoBehaviour
                         if (_playerEnemyDistance < 0)
                         {
                             _dogState = PlayerState.Running;
-                            Debug.Log("ustawiam run");
                         }
                     }
                     else if (_playerEnemyDistance > 0)
@@ -211,7 +206,6 @@ public class WildDogScript : MonoBehaviour
                 if (Mathf.Abs(_playerEnemyDistance) <= FightingDeadZone)
                 {
                     _dogState = PlayerState.Attack;
-                    Debug.Log("ustawiam atak");
                 }
 
                 break;
@@ -230,9 +224,7 @@ public class WildDogScript : MonoBehaviour
                     _playerObject.GetComponent<FightSystem>().GetReady(1);
                 }
 
-                Debug.Log("time scale");
                 Time.timeScale = 0.01f;
-                Debug.Log("timescale");
                 //_dogState = PlayerState.Attacking;
                 // _jumped = true;
                 Vector2 vector = new Vector2(transform.position.x, transform.position.y + 0.5f);
