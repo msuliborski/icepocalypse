@@ -51,14 +51,11 @@ public class PlayerControllerExperimental : MonoBehaviour
         CzekaningFalse,
         JumpToWallTrue,
         JumpToWallFalse,
-        UpTrue,
-        UpFalse,
-        Up1True,
-        Up1False,
-        Up2True,
-        Up2False,
         UpLadderTrue,
-        UpLadderFalse
+        UpLadderFalse,
+        UpWallTrue,
+        UpWallFalse
+
     }
 
     private List<List<animScriptCommands>> _animScriptCommands;
@@ -321,7 +318,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                 case PlayerState.Laddering:
 
-                    if (Physics2D.IsTouchingLayers(_colliderLegs, Ground)) _animator.SetBool("LadderMovement", false);
+                    if (Physics2D.IsTouchingLayers(_colliderLegs, Ground) && _rigidbody.velocity.y < 0) _animator.SetBool("LadderMovement", false);
                     if (Input.GetKeyDown(KeyCode.Space) || _onTopDirection)
                     {
                         _onTopDirection = false;
@@ -487,10 +484,14 @@ public class PlayerControllerExperimental : MonoBehaviour
             {
                 case PlayerState.EdgeLaddering:
                     _index++;
-                    
-                    _animator.SetBool("Ladder", false);
-                    _animator.SetBool("UpLadder" , true);
+                    _animator.SetBool("UpLadder", true);
                     break;
+
+                case PlayerState.EgdeClimbingCorner:
+                    _index++;
+                    _animator.SetBool("UpWall", true);
+                    break;
+
                 default:
                     _index++;
                     break;
@@ -595,7 +596,9 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onLadderImpact()
     {
+
         _animator.SetBool("Ladder", true);
+        _animator.SetBool("WallReflection", false);
         _rigidbody.gravityScale = 0;
         if (!_ignoreLedderEdge) _rigidbody.velocity = new Vector2(0f, 0f);
         else
@@ -692,9 +695,14 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (FacingRight) _keysToReact.Add(KeyCode.LeftArrow);
         else _keysToReact.Add(KeyCode.RightArrow);
         _animScriptCommands.Clear();
-        _animScriptCommands.Add(new List<animScriptCommands> {animScriptCommands.CzekaningTrue});
-        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.CzekaningFalse, animScriptCommands.MovementTrue});
+        _animScriptCommands.Add(new List<animScriptCommands> {animScriptCommands.JumpToWallFalse, animScriptCommands.CzekaningTrue});
+        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.UpWallFalse,  animScriptCommands.CzekaningFalse, animScriptCommands.MovementTrue});
+        _animScriptCommands.Add(new List<animScriptCommands> {  });
         _rendererPosDif.Clear();
+        _rendererPosDif.Add(new Vector3(0f, 0f, 0f));
+        if (FacingRight) _rendererPosDif.Add(new Vector3(0.15f, -0.15f, 0f));
+        else _rendererPosDif.Add(new Vector3(-0.15f, -0.15f, 0f));
+        _rendererPosDif.Add(new Vector3(0f, 0f, 0f));
     }
 
     void onLadderEdgeImpact()
@@ -728,10 +736,14 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (FacingRight)_keysToReact.Add(KeyCode.LeftArrow);
         else _keysToReact.Add(KeyCode.RightArrow);
         _animScriptCommands.Clear();
-        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.MovementFalse});
-        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.UpLadderFalse });
-        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.MovementTrue });
+        _animScriptCommands.Add(new List<animScriptCommands> { });
+        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.LadderFalse, animScriptCommands.UpLadderFalse });//animScriptCommands.MovementTrue });
+        _animScriptCommands.Add(new List<animScriptCommands> {  });
         _rendererPosDif.Clear();
+        _rendererPosDif.Add(new Vector3(0f, 0f, 0f));
+        if (FacingRight) _rendererPosDif.Add(new Vector3(0.15f, -0.15f, 0f));
+        else _rendererPosDif.Add(new Vector3(-0.15f, -0.15f, 0f));
+        _rendererPosDif.Add(new Vector3(0f, 0f, 0f));
     }
 
 
@@ -918,36 +930,20 @@ public class PlayerControllerExperimental : MonoBehaviour
                             _animator.SetBool("JumpToWall", true);
                             break;
 
-                        case animScriptCommands.UpTrue:
-                            _animator.SetBool("Up", true);
-                            break;
-
-                        case animScriptCommands.UpFalse:
-                            _animator.SetBool("Up", false);
-                            break;
-
-                        case animScriptCommands.Up1True:
-                            _animator.SetBool("Up1", true);
-                            break;
-
-                        case animScriptCommands.Up1False:
-                            _animator.SetBool("Up1", false);
-                            break;
-
-                        case animScriptCommands.Up2True:
-                            _animator.SetBool("Up2", true);
-                            break;
-
-                        case animScriptCommands.Up2False:
-                            _animator.SetBool("Up2", false);
-                            break;
-
                         case animScriptCommands.UpLadderTrue:
                             _animator.SetBool("UpLadder", true);
                             break;
 
                         case animScriptCommands.UpLadderFalse:
                             _animator.SetBool("UpLadder", false);
+                            break;
+
+                        case animScriptCommands.UpWallTrue:
+                            _animator.SetBool("UpWall", true);
+                            break;
+
+                        case animScriptCommands.UpWallFalse:
+                            _animator.SetBool("UpWall", false);
                             break;
                     }
                 }
