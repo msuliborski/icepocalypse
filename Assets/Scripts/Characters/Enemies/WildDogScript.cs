@@ -6,7 +6,7 @@ public class WildDogScript : MonoBehaviour
 {
     public GameObject CanvasObject;
 
-    public BoxCollider2D PlayerCollider;
+    public PolygonCollider2D PlayerCollider;
 
     public float EnemyRunningSpeed = 5.0f;
     public float EnemyWalkingSpeed = 2.5f;
