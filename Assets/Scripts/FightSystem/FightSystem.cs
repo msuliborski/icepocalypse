@@ -27,6 +27,8 @@ public class FightSystem : MonoBehaviour {
 
     public BoxCollider2D FistCollider;
 
+    private bool _gameStarted = false;
+
     void Start()
     {
         FistCollider.enabled = false;
@@ -34,6 +36,17 @@ public class FightSystem : MonoBehaviour {
         IsQTE = false;
         _anim = GetComponentInChildren<Animator>();
         _healthPoints = HealthPointsMax;
+    }
+
+    public void OnPlayerDeath()
+    {
+        Debug.Log("Player death");
+        _gameStarted = false;
+    }
+
+    public void OnGameStarted()
+    {
+        _gameStarted = true;
     }
 
     public void CancelQTE()
@@ -55,6 +68,8 @@ public class FightSystem : MonoBehaviour {
 
     void Update()
     {
+        if (!_gameStarted) return;
+
         if ( IsQTE )
         {
             if ( ClickedTheCircle )
@@ -145,9 +160,11 @@ public class FightSystem : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D col)
     {
+        if (!_gameStarted) return;
         if ( col.gameObject.tag == "EnemyFist" )
         {
             //SetHealth(-10);
+            GetComponent<PlayerControllerExperimental>().TakeHP(10);
 
             //Debug.Log("dostales bulawa");
             _anim.SetBool("GotHit", true);
