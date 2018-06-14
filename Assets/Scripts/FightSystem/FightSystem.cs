@@ -1,148 +1,165 @@
-﻿using System.Collections;
+﻿﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 
 public class FightSystem : MonoBehaviour {
-    [SerializeField]
-    public GameObject Enemy;
-    private int _animHash = Animator.StringToHash("Base Layer.PlayerPunch");
 
-    public Text StaminaText;
-    public int MaxStaminaPoints = 100;
-    private int _staminaPoints;
-    private float _staminaRegenerationTime = 2.0f;
-    private float _timeStamp;
+    public GameObject AttackButtonToDisableWhenQTE;
 
-    public Text PlayerHealth;
-    public int MaxHealthPoints = 100;
+    public int HealthPointsMax = 100;
     private int _healthPoints;
 
     private bool _canIFight = true;
     private bool _sideFlag = false;
     private Animator _anim;
 
-    public bool IsFighting = false;
     private bool _isDefending = false;
+
+    [HideInInspector]
+    public bool IsQTE;
+    [HideInInspector]
+    public bool IsDogQTE;
+    [HideInInspector]
+    public bool ClickedTheCircle;
+    [HideInInspector]
+    public bool ClickedAttack;
+
+    public BoxCollider2D FistCollider;
 
     void Start()
     {
-        _anim = GetComponent<Animator>();
-        _staminaPoints = 20;
-        StaminaText.text = "Stamina: " + _staminaPoints;
-        _healthPoints = MaxHealthPoints;
-        PlayerHealth.text = "Health: " + _healthPoints;
-        _timeStamp = Time.time;
-        Debug.Log("time stamp: " + _timeStamp);
+        FistCollider.enabled = false;
+
+        IsQTE = false;
+        _anim = GetComponentInChildren<Animator>();
+        _healthPoints = HealthPointsMax;
+    }
+
+    public void CancelQTE()
+    {
+        _canIFight = true;
+        IsQTE = false;
+        IsDogQTE = false;
+        StartCoroutine(GetComponent<PlayerControllerExperimental>().UnsetAttackingState());
+        AttackButtonToDisableWhenQTE.SetActive(true);
+        //GetComponent<PlayerControllerExperimental>().UnsetAttackingState();
+    }
+
+    public void ProceedToQTE()
+    {
+        IsQTE = true;
+        GetComponent<PlayerControllerExperimental>().SetAttackingState();
+        AttackButtonToDisableWhenQTE.SetActive(false);
     }
 
     void Update()
     {
-        if ( (Time.time - _timeStamp > _staminaRegenerationTime) )
+        if ( IsQTE )
         {
-            SetStamina(5);
-            _timeStamp = Time.time;
+            if ( ClickedTheCircle )
+            {
+                Debug.Log("super atak");
+                ClickedTheCircle = false;
+                _anim.SetBool("SuperAttack", true);
+            }
+
+            return;
+        }
+        else if (IsDogQTE)
+            {
+            if (ClickedTheCircle)
+                {
+                    Debug.Log("super atak");
+                    ClickedTheCircle = false;
+                    _anim.SetBool("SuperAttack", true);
+                    _anim.SetBool("WatchOut", false);
+                CancelQTE();
+            }
+
+            return;
+            }
+
+        var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
+
+        if (stateInfo.IsName("Base Layer.PlayerPunchBare") || stateInfo.IsName("Base Layer.PlayerDefend") || stateInfo.IsName("Base Layer.PlayerSuperPunchBare"))
+        {
+            _sideFlag = true;
         }
 
-        if ( IsFighting )
+        if (_sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunchBare") && !stateInfo.IsName("Base Layer.PlayerDefend") && !stateInfo.IsName("Base Layer.PlayerSuperPunchBare"))
         {
-            var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
-
-            if (stateInfo.IsName("Base Layer.PlayerPunch"))
-            {
-                _sideFlag = true;
-            }
-            else if (stateInfo.IsName("Base Layer.PlayerDefend"))
-            {
-                _sideFlag = true;
-            }
-
-            if (_sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunch") && !stateInfo.IsName("Base Layer.PlayerDefend"))
-            {
-                Debug.Log("nie ma animacji");
-            }
-
-            if ( _sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunch") && !stateInfo.IsName("Base Layer.PlayerDefend"))
-            {
-                _sideFlag = false;
-                _isDefending = false;
-                _canIFight = true;
-                Enemy.GetComponent<EnemyController>()._isUnderAttack = false;
-            }
-
-            if (_canIFight)
-            {
-                if (Input.GetKeyDown(KeyCode.F) && _staminaPoints >= 10 )
-                {
-                    _canIFight = false;
-                    //Debug.Log("animacja uruchomiona");
-                    _anim.SetBool("playerattack", true);
-                    Enemy.GetComponent<EnemyController>().Defend();
-                    SetStamina(-10);
-                }
-                else if ( Input.GetKeyDown(KeyCode.G) )
-                {
-                    _canIFight = false;
-                    _isDefending = true;
-                    //Debug.Log("animacja uruchomiona");
-                    _anim.SetBool("playerdefend", true);
-                }
-            }
+            _sideFlag = false;
+            _isDefending = false;
+            _canIFight = true;
+            FistCollider.enabled = false;
         }
-    }
 
-    public void ProceedToFight()
-    {
-        GetComponent<Rigidbody2D>().velocity = new Vector2(0f, 0f);
         
-        if ( (transform.position.x < Enemy.transform.position.x && transform.localScale.x < 0) || (transform.position.x > Enemy.transform.position.x && transform.localScale.x > 0) )
+        if (true)//_canIFight)
         {
-            transform.localScale = new Vector3(-1.0f * transform.localScale.x, transform.localScale.y, transform.localScale.z);
-        }
+            if ( ClickedAttack || Input.GetKey(KeyCode.F) )
+            {
+                ShootRay();
 
-    _canIFight = true;
-    _sideFlag = false;
-    _isDefending = false;
+                ClickedAttack = false;
+                _canIFight = false;
+                FistCollider.enabled = true;
+                _anim.SetBool("Attack", true);
+                GetComponent<PlayerControllerExperimental>().StopMovement();
+                                
+            }
+            else if ( Input.GetKeyDown(KeyCode.G) )
+            {
+                //_canIFight = false;
+                //_isDefending = true;
+               // _anim.SetBool("playerdefend", true);
+            }
+         }
 
-}
 
-    void SetStamina( int value )
-    {
-        _staminaPoints += value;
-        Debug.Log("stamina: " + _staminaPoints);
-        if ( _staminaPoints > MaxStaminaPoints )
-        {
-            _staminaPoints = MaxStaminaPoints;
-        }
-        else if ( _staminaPoints < 0 )
-        {
-            _staminaPoints = 0;
-        }
-
-        StaminaText.text = "Stamina: " + _staminaPoints;
     }
 
-    void LetThemFight()
+    public void KillTheGuyFinisher()
     {
-        _canIFight = true;
-        Debug.Log("let them");
+        _anim.SetBool("KillTheGuy", true);
+    }
+
+    void ShootRay()
+    {
+        RaycastHit2D hit;
+
+        Vector2 RayDirection = new Vector2(transform.position.x + 0.7f, transform.position.y + 0.5f);
+        Debug.DrawRay(RayDirection, transform.localScale.x * Vector3.right * 5.0f, Color.yellow, 2.0f);
+        int layerMask = LayerMask.GetMask("Enemy");
+        hit = Physics2D.Raycast(RayDirection, transform.localScale.x * Vector3.right, 5.0f,layerMask );
+        if (hit.collider != null)
+        {
+            if (hit.collider.tag == "Enemy")
+            {
+                hit.collider.gameObject.SendMessage("Defend");
+               // Debug.Log("wyslalaem");
+            }
+        }
     }
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        if ( col.gameObject.tag == "EnemyFist" && !_isDefending )
+        if ( col.gameObject.tag == "EnemyFist" )
         {
-            SetHealth(-10);
+            //SetHealth(-10);
+
+            //Debug.Log("dostales bulawa");
+            _anim.SetBool("GotHit", true);
 
             if ( _healthPoints <= 0 )
             {
-                Debug.Log("umrales");
-                PlayerHealth.enabled = false;
+                //Debug.Log("umrales");
             }
         }
         else if (col.gameObject.tag == "EnemyFist" && _isDefending)
         {
-            Debug.Log("obrona");
+            //Debug.Log("obrona");
         }
 
     }
@@ -151,16 +168,51 @@ public class FightSystem : MonoBehaviour {
     {
         _healthPoints += value;
 
-        if ( _healthPoints > MaxHealthPoints )
+        if ( _healthPoints > HealthPointsMax)
         {
-            _healthPoints = MaxHealthPoints;
+            _healthPoints = HealthPointsMax;
         }
         else if ( _healthPoints < 0 )
         {
             _healthPoints = 0;
         }
+    }
 
-        PlayerHealth.text = "Health: " + _healthPoints;
+    public void GetReady( int side )
+    {
+        GetComponent<PlayerControllerExperimental>().SetAttackingState();
+
+        if ( side == 1  && transform.localScale.x < 0f )
+        {
+            transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+        }
+        else if ( side == -1 && transform.localScale.x > 0f )
+        {
+            transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+        }
+
+        Debug.Log("wywoluje");
+        _anim.SetBool("WatchOut", true);
+        _anim.SetBool("Movement", false);
+        GetComponent<PlayerControllerExperimental>().StopMovement();
+    }
+
+    public void FallDown()
+    {
+        //GetComponent<BoxCollider2D>().isTrigger = true;
+        //GetComponent<Rigidbody2D>().isKinematic = true;
+        Debug.Log("upadam");
+        //GetComponent<PlayerControllerExperimental>().SetAttackingState();
+        _anim.SetBool("FallDown", true);
+        _anim.SetBool("WatchOut", false);
+    }
+
+    public void DogIsDead()
+    {
+        Debug.Log("dajemy animacje zabijania psa");
+        _anim.SetBool("KillTheDog", true);
+        _anim.SetBool("FallDown", false);
+        CancelQTE();
     }
 
 }

@@ -1,4 +1,4 @@
-﻿﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
@@ -148,12 +148,12 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     public void OnLeftDirection() 
     {
-        if (!_isScripting && _gameStarted) _onLeftDirection = true;
+        if (!_isScripting && _gameStarted && CurrentState != PlayerState.Attacking) _onLeftDirection = true;
     }
 
     public void OnRightDirection() 
     {
-        if (!_isScripting && _gameStarted) _onRightDirection = true;
+        if (!_isScripting && _gameStarted && CurrentState != PlayerState.Attacking) _onRightDirection = true;
     }
 
     public void OnTopDirection()
@@ -211,7 +211,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void Update()
     {
-        if (!_gameStarted)
+        if (!_gameStarted || CurrentState == PlayerState.Attacking)
             return;
         
         if (Input.GetKeyDown(KeyCode.P)) Debug.Break();
@@ -1074,6 +1074,19 @@ public class PlayerControllerExperimental : MonoBehaviour
             }
         }
         return closest;
+    }
+
+    public void SetAttackingState()
+    {
+        CurrentState = PlayerState.Attacking;
+    }
+
+    public IEnumerator UnsetAttackingState()
+    {
+        Debug.Log("unset");
+        yield return new WaitForSecondsRealtime(0.5f);
+        CurrentState = PlayerState.Grounded;
+        Debug.Log("grounded");
     }
     #endregion
 }

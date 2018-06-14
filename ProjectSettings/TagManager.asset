@@ -21,6 +21,7 @@ TagManager:
   - hook
   - hole
   - tubeMarker
+  - ViewTrigger
   layers:
   - Default
   - TransparentFX
@@ -42,7 +43,7 @@ TagManager:
   - Ladder
   - LadderEdge
   - LadderEdge1
-  - 
+  - Enemy
   - 
   - 
   - 

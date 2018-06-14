@@ -26,10 +26,12 @@ public class UIController : MonoBehaviour
 	private Vector2 _startPosition;
 	private bool _touching = false;
     private PlayerControllerExperimental _playerControllerExperimental;
+    private FightSystem _fightSystem;
 	
     public void Start() 
     {
         _playerControllerExperimental = Player.GetComponent<PlayerControllerExperimental>();
+        _fightSystem = Player.GetComponent<FightSystem>();
     }
 	public void OnLeft()
 	{
@@ -48,6 +50,12 @@ public class UIController : MonoBehaviour
     public void OnDown() 
     {
         _playerControllerExperimental.OnDownDirection();
+    }
+
+    public void OnAttack()
+    {
+        _playerControllerExperimental.StopMovement();
+        _fightSystem.ClickedAttack = true;
     }
 
 	private void CheckGesture(Vector2 distance, Vector2 position, int fingerId = -1)
