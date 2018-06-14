@@ -491,7 +491,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0b51bf3fb7cc81498bfdf423771a67e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AttackButtonToDisableWhenQTE: {fileID: 1121157264945870}
+  AttackButtonToDisableWhenQTE: {fileID: 0}
   HealthPointsMax: 100
   IsQTE: 0
   IsDogQTE: 0
@@ -532,7 +532,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1121157264945870}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 01e2b3863c1bb044cab18d5131dadae8, type: 3}
   m_Name: 
