@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class FightSystem : MonoBehaviour {
 
+    public GameObject AttackButtonToDisableWhenQTE;
+
     public int HealthPointsMax = 100;
     private int _healthPoints;
 
@@ -40,7 +42,15 @@ public class FightSystem : MonoBehaviour {
         IsQTE = false;
         IsDogQTE = false;
         StartCoroutine(GetComponent<PlayerControllerExperimental>().UnsetAttackingState());
+        AttackButtonToDisableWhenQTE.SetActive(true);
         //GetComponent<PlayerControllerExperimental>().UnsetAttackingState();
+    }
+
+    public void ProceedToQTE()
+    {
+        IsQTE = true;
+        GetComponent<PlayerControllerExperimental>().SetAttackingState();
+        AttackButtonToDisableWhenQTE.SetActive(false);
     }
 
     void Update()
@@ -86,7 +96,7 @@ public class FightSystem : MonoBehaviour {
         }
 
         
-        if (_canIFight)
+        if (true)//_canIFight)
         {
             if ( ClickedAttack || Input.GetKey(KeyCode.F) )
             {
@@ -95,19 +105,24 @@ public class FightSystem : MonoBehaviour {
                 ClickedAttack = false;
                 _canIFight = false;
                 FistCollider.enabled = true;
-                _anim.SetTrigger("Attack");
+                _anim.SetBool("Attack", true);
                 GetComponent<PlayerControllerExperimental>().StopMovement();
                                 
             }
             else if ( Input.GetKeyDown(KeyCode.G) )
             {
-                _canIFight = false;
-                _isDefending = true;
-                _anim.SetBool("playerdefend", true);
+                //_canIFight = false;
+                //_isDefending = true;
+               // _anim.SetBool("playerdefend", true);
             }
          }
 
 
+    }
+
+    public void KillTheGuyFinisher()
+    {
+        _anim.SetBool("KillTheGuy", true);
     }
 
     void ShootRay()
@@ -134,7 +149,8 @@ public class FightSystem : MonoBehaviour {
         {
             //SetHealth(-10);
 
-            Debug.Log("dostales bulawa");
+            //Debug.Log("dostales bulawa");
+            _anim.SetBool("GotHit", true);
 
             if ( _healthPoints <= 0 )
             {

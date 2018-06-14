@@ -122,7 +122,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1845424676770558}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 21.95, y: 2.47, z: 0}
+  m_LocalPosition: {x: 35.73, y: -8.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4744378142069996}
@@ -495,6 +495,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0b51bf3fb7cc81498bfdf423771a67e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AttackButtonToDisableWhenQTE: {fileID: 0}
   HealthPointsMax: 100
   IsQTE: 0
   IsDogQTE: 0

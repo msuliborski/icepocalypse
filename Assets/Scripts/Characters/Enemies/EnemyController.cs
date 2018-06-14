@@ -108,14 +108,15 @@ public class EnemyController : MonoBehaviour {
 
 	void Update () 
 	{
+
         var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
-        if (stateInfo.IsName("Base Layer.Attack") || stateInfo.IsName("Base Layer.Defend"))
+        if (stateInfo.IsName("Base Layer.Attack") || stateInfo.IsName("Base Layer.EnemyDefendAnimation"))
         {
             _sideFlag = true;
         }
 
-        if ( _sideFlag && !stateInfo.IsName("Base Layer.Attack") && !stateInfo.IsName("Base Layer.Defend") )
+        if ( _sideFlag && !stateInfo.IsName("Base Layer.Attack") && !stateInfo.IsName("Base Layer.EnemyDefendAnimation") )
         {
             _canHeFight = true;
             _sideFlag = false;
@@ -143,7 +144,9 @@ public class EnemyController : MonoBehaviour {
                 else
                 {
                     CancelQTE();
-                    Debug.Log("FINISZER.");
+                    _playerObject.GetComponent<FightSystem>().KillTheGuyFinisher();
+                    _playerObject.GetComponent<FightSystem>().CancelQTE();
+                    Destroy(gameObject);
                 }
             }
 
@@ -206,9 +209,11 @@ public class EnemyController : MonoBehaviour {
 
     void OnTriggerEnter2D( Collider2D col )
     {
-        if (col.gameObject.tag == "PlayerFist" && _isUnderAttack && !_isDefending )
+        if (col.gameObject.tag == "PlayerFist" && _isUnderAttack )
         {
             //HitFlag.SetActive(!HitFlag.active);
+
+            _anim.SetBool("gotHit", true);
 
             SetHealth(-10);
             Debug.Log("enemy health: " + _enemyHealthPoints);
@@ -218,7 +223,6 @@ public class EnemyController : MonoBehaviour {
             {
                 //gameObject.SetActive(false);
                 _enemyHealthPoints = EnemyHealthPointsMax;
-                Time.timeScale = 1.0f;
                 Destroy(gameObject);
             }
 
@@ -226,17 +230,12 @@ public class EnemyController : MonoBehaviour {
             {
                 _didQTE = true;
                 _isHurt = true;
-                _playerObject.GetComponent<FightSystem>().IsQTE = true;
+                _playerObject.GetComponent<FightSystem>().ProceedToQTE();
                 _qteCircle = PutCircle(new Vector3(transform.position.x, transform.position.y + QTECirclePositionsArray[_qteCircleIterator], transform.position.z));
                 _qteCircleIterator++;
                 _timeStamp = Time.time;
             }
         }
-    }
-
-    void LockXAxis()
-    {
-        _rb.constraints = RigidbodyConstraints2D.FreezePositionX;
     }
 
     void SetHealth(int value)
@@ -294,7 +293,6 @@ public class EnemyController : MonoBehaviour {
                     _anim.SetBool("run", true);
                     _rb.constraints = RigidbodyConstraints2D.None;
                     _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-                    Time.timeScale = 1.0f;
                 }
                 break;
         }
@@ -367,7 +365,9 @@ public class EnemyController : MonoBehaviour {
             //_anim.SetBool("defend", true);
         }
 
-        if ( x < 0.5f && _canHeFight )
+        //Debug.Log(x);
+
+        if ( x < 0.1f )//&& _canHeFight )
         {
             _canHeFight = false;
             WeaponCollider.enabled = true;
@@ -389,10 +389,11 @@ public class EnemyController : MonoBehaviour {
 
             if (x <= 0.8f)
             {
-                _canHeFight = false;
-                _anim.SetBool("defend", true);
+                //Time.timeScale = 0.1f;
+                //_canHeFight = false;
+               // _anim.SetBool("defend", true);
                 //_animatingTime = Time.time;
-                _isDefending = true;
+                //_isDefending = true;
             }
         }
         
