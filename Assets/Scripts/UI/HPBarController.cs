@@ -26,6 +26,7 @@ public class HPBarController : MonoBehaviour {
         {
             yield return null;
         }
+        bar.color = new Color(255, 0, 0, 255);
         bar.CrossFadeAlpha(0, 0.5f, true);
         yield return new WaitForSeconds(0.5f);
         bar.enabled = false;

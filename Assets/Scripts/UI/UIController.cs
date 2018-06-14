@@ -116,6 +116,28 @@ public class UIController : MonoBehaviour
         StartCoroutine(GameStart());
     }
 
+    public void OnPlayerDeath()
+    {
+        StartCoroutine(PlayerDeath());
+
+    }
+
+    IEnumerator PlayerDeath()
+    {
+        CanvasGroup deathCanvasGroup = DeathPanel.GetComponent<CanvasGroup>();
+        CanvasGroup gameTopCanvasGroup = GameTopPanel.GetComponent<CanvasGroup>();
+        CanvasGroup gameControlsCanvasGroup = GameControlsPanel.GetComponent<CanvasGroup>();
+
+        DeathPanel.SetActive(true);
+        deathCanvasGroup.alpha = 0;
+        StartCoroutine(FadeInCanvas(deathCanvasGroup, 0.5f));
+        StartCoroutine(FadeOutCanvas(gameTopCanvasGroup, 0.3f));
+        StartCoroutine(FadeOutCanvas(gameControlsCanvasGroup, 0.3f));
+
+        yield return new WaitForSeconds(0.5f);
+        yield return null;
+    }
+
     IEnumerator GameStart()
     {
         CanvasGroup startCanvasGroup = StartPanel.GetComponent<CanvasGroup>();

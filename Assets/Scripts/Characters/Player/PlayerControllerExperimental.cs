@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.Events;
+using Scripts.Variables;
 
 
 public class PlayerControllerExperimental : MonoBehaviour
 {
     #region Variables
+    public GameEvent PlayerDamageEvent;
+    public GameEvent PlayerDeathEvent;
     public float JumpForce = 18;
     public float WallJumpForce = 24;
     public float WallReflectionForce = 17;
@@ -29,6 +32,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     private KeyCode _keyToReact;
     private List<KeyCode> _keysToReact;
     private List<Vector3> _rendererPosDif;
+
 
 
     private bool _gameStarted = false;
@@ -181,6 +185,28 @@ public class PlayerControllerExperimental : MonoBehaviour
             _onDownDirection = true;
         }
              
+    }
+
+    public void OnBarrelExploded()
+    {
+        if (!_gameStarted) return;
+
+        TakeHP(10);   
+    }
+
+    public void TakeHP(int amount)
+    {
+        Hp -= amount;
+        for (int i = amount / 10; i >= 1; i--)
+        {
+            PlayerDamageEvent.Raise();
+        }
+
+        if (Hp <= 0)
+        {
+            PlayerDeathEvent.Raise();
+            _gameStarted = false;
+        }
     }
 
     void Update()

@@ -284,6 +284,7 @@ GameObject:
   - component: {fileID: 114553174509832440}
   - component: {fileID: 114045053634360648}
   - component: {fileID: 114184931291842898}
+  - component: {fileID: 114399529366714078}
   m_Layer: 0
   m_Name: UI
   m_TagString: Untagged
@@ -823,6 +824,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameRestartEvent: {fileID: 11400000, guid: 042ec887023ba4bc5baf49dc9998649c, type: 2}
+--- !u!114 &114399529366714078
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1460348959845974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09798795485e471abd1c1544a45d9ad4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: c4d64c3071d6b450daf27102b31cecc9, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114553174509832440}
+        m_MethodName: OnPlayerDeath
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114404839863438076
 MonoBehaviour:
   m_ObjectHideFlags: 1
