@@ -7,8 +7,6 @@ using Scripts.Variables;
 public class FreezingController : MonoBehaviour {
     public float FreezeTime = 30.0f;
     public float WarmMultiplier = 2.0f;
-    public Camera MainCamera;
-
     public GameEvent FreezeEvent;
 
     private FrostEffect frostEffect;
@@ -21,7 +19,7 @@ public class FreezingController : MonoBehaviour {
         _freezeLevel = 0;
         _freezed = false;
         _inWarmArea = false;
-        frostEffect = MainCamera.GetComponent<FrostEffect>();
+        frostEffect = Camera.main.GetComponent<FrostEffect>();
 	}
 
 	void Update()

@@ -6,10 +6,21 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using Scripts.Variables;
 
 public class UIController : MonoBehaviour
 {
 	public GameObject Player;
+
+    public GameObject DeathPanel;
+    public GameObject GameTopPanel;
+    public GameObject GameControlsPanel;
+    public GameObject StartPanel;
+
+    public Transform PlayerStartPosition;
+
+    public GameEvent GameStartedEvent;
+
 
 
 	private Vector2 _startPosition;
@@ -92,4 +103,96 @@ public class UIController : MonoBehaviour
         }
 	#endif
 	}
+
+
+    public void OnGameRestart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        //StartCoroutine(GameRestart());
+    }
+
+    public void OnGameStart()
+    {
+        StartCoroutine(GameStart());
+    }
+
+    IEnumerator GameStart()
+    {
+        CanvasGroup startCanvasGroup = StartPanel.GetComponent<CanvasGroup>();
+        CanvasGroup gameTopCanvasGroup = GameTopPanel.GetComponent<CanvasGroup>();
+        CanvasGroup gameControlsCanvasGroup = GameControlsPanel.GetComponent<CanvasGroup>();
+
+
+        // 0.5f -> first 0.2 only  fading out StartPanel
+        //      -> then 0.3 fade out DeathPanel + fade in Controls and HP Bar
+        StartPanel.SetActive(true);
+        StartCoroutine(FadeOutCanvas(startCanvasGroup, 0.5f));
+        yield return new WaitForSeconds(0.2f);
+
+        GameTopPanel.SetActive(true);
+        GameControlsPanel.SetActive(true);
+        gameTopCanvasGroup.alpha = 0;
+        gameControlsCanvasGroup.alpha = 0;
+
+        StartCoroutine(FadeInCanvas(gameTopCanvasGroup, 0.3f));
+        StartCoroutine(FadeInCanvas(gameControlsCanvasGroup, 0.3f));
+        yield return new WaitForSeconds(0.3f);
+
+        StartPanel.SetActive(false);
+
+        GameStartedEvent.Raise();
+
+        yield return null;
+    }
+
+
+    IEnumerator GameRestart()
+    {
+        CanvasGroup deathCanvasGroup = DeathPanel.GetComponent<CanvasGroup>();
+        CanvasGroup gameTopCanvasGroup = GameTopPanel.GetComponent<CanvasGroup>();
+        CanvasGroup gameControlsCanvasGroup = GameControlsPanel.GetComponent<CanvasGroup>();
+
+
+        // 0.5f -> first 0.2 only  fading out DeathScreen
+        //      -> then 0.3 fade out DeathScren + fade in Controls and HP Bar
+        DeathPanel.SetActive(true);
+        StartCoroutine(FadeOutCanvas(deathCanvasGroup, 0.5f));
+        yield return new WaitForSeconds(0.2f);
+
+        GameTopPanel.SetActive(true);
+        GameControlsPanel.SetActive(true);
+        gameTopCanvasGroup.alpha = 0;
+        gameControlsCanvasGroup.alpha = 0;
+
+        StartCoroutine(FadeInCanvas(gameTopCanvasGroup, 0.3f));
+        StartCoroutine(FadeInCanvas(gameControlsCanvasGroup, 0.3f));
+        yield return new WaitForSeconds(0.3f);
+
+        DeathPanel.SetActive(false);
+
+        GameStartedEvent.Raise(); 
+
+        yield return null;
+    }
+
+    IEnumerator FadeOutCanvas(CanvasGroup canvasGroup, float fadeTime)
+    {
+        for (float time = fadeTime; time > 0; time -= Time.unscaledDeltaTime)
+        {
+            canvasGroup.alpha = (time / fadeTime);
+            yield return null;
+        }
+        yield return null;
+    }
+
+    IEnumerator FadeInCanvas(CanvasGroup canvasGroup, float fadeTime)
+    {
+        for (float time = fadeTime; time > 0; time -= Time.unscaledDeltaTime)
+        {
+            canvasGroup.alpha = 1.0f - (time / fadeTime);
+            yield return null;
+        }
+        yield return null;
+    }
+
 }

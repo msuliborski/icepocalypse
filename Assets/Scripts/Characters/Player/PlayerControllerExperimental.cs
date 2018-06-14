@@ -30,6 +30,9 @@ public class PlayerControllerExperimental : MonoBehaviour
     private List<KeyCode> _keysToReact;
     private List<Vector3> _rendererPosDif;
 
+
+    private bool _gameStarted = false;
+
     private enum animScriptCommands
     {
         Nothing,
@@ -141,22 +144,31 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     public void OnLeftDirection() 
     {
-        if (!_isScripting) _onLeftDirection = true;
+        if (!_isScripting && _gameStarted) _onLeftDirection = true;
     }
 
     public void OnRightDirection() 
     {
-        if (!_isScripting) _onRightDirection = true;
+        if (!_isScripting && _gameStarted) _onRightDirection = true;
     }
 
     public void OnTopDirection()
     {
-        if (CurrentState != PlayerState.TubeSliding)
+        if (CurrentState != PlayerState.TubeSliding && _gameStarted)
             _onTopDirection = true;
+    }
+
+    public void OnGameStarted()
+    {
+        Debug.Log("Player received signal, let's go");
+        _gameStarted = true;
     }
 
     public void OnDownDirection()
     {
+        if (!_gameStarted)
+            return;
+        
         if(
             !_isScripting || 
             (_isScripting && CurrentState == PlayerState.EdgeLaddering) ||
@@ -173,6 +185,9 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void Update()
     {
+        if (!_gameStarted)
+            return;
+        
         if (Input.GetKeyDown(KeyCode.P)) Debug.Break();
 
         if (_isScripting) script();

@@ -4,24 +4,23 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-
-    public GameObject Player;
-    private float _differenceX;
-    private float _differenceY;
+    
+    private GameObject _player;
 
     ParticleSystem[] _childrenParticles;
     void Start() 
     {
-        Player = GameObject.FindGameObjectWithTag("Player");
-        gameObject.transform.position = new Vector3(Player.transform.position.x, Player.transform.position.y, gameObject.transform.position.z);
+        _player = GameObject.FindGameObjectWithTag("Player");
         _childrenParticles = gameObject.GetComponentsInChildren<ParticleSystem>();
     }
 
     // Update is called once per frame
     void LateUpdate()
     {
-        gameObject.transform.position = new Vector3(Player.transform.position.x + 2, Player.transform.position.y + 1, gameObject.transform.position.z);
-
+        if (_player != null)
+        {
+            gameObject.transform.position = new Vector3(_player.transform.position.x + 2, _player.transform.position.y + 1, gameObject.transform.position.z);
+        }
     }
 
     public void OnWarmAreaEnter()
@@ -40,28 +39,3 @@ public class CameraController : MonoBehaviour
         }
     }
 };
-
-
-
-/*
-public class CameraController : MonoBehaviour
-{
-
-    public GameObject Player;
-    private float _differenceX;
-    private float _differenceY;
-    void Start()
-    {
-        Player = GameObject.FindGameObjectWithTag("Player");
-        _differenceX = gameObject.transform.position.x - Player.transform.position.x;
-        _differenceY = gameObject.transform.position.y - Player.transform.position.y;
-    }
-
-    // Update is called once per frame
-    void LateUpdate()
-    {
-        gameObject.transform.position = new Vector3(_differenceX + Player.transform.position.x, _differenceY + Player.transform.position.y, gameObject.transform.position.z);
-
-    }
-};
-*/
