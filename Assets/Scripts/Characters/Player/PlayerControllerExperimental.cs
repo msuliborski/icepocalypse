@@ -359,7 +359,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                 case PlayerState.Laddering:
 
-                    if (Physics2D.IsTouchingLayers(_colliderLegs, Ground) && _rigidbody.velocity.y < 0) _animator.SetBool("LadderMovement", false);
+                    if (_rigidbody.velocity.y <= 0 && Physics2D.IsTouchingLayers(_colliderLegs, Ground)) _animator.SetBool("LadderMovement", false);
                     if (Input.GetKeyDown(KeyCode.Space) || _onTopDirection)
                     {
                         _onTopDirection = false;
@@ -679,17 +679,12 @@ public class PlayerControllerExperimental : MonoBehaviour
         _animator.SetBool("WallReflection", false);
         _animator.SetBool("Czekaning", false);
         _animator.SetBool("Slope", false);
-        GameObject go = findClosestObjectWithTag("tubeEnd", 1);
-        if (FacingRight)
-        {
-            _scriptDestinations.Add(new Vector3(go.transform.position.x + playerWidth, transform.position.y, 0f));
-            _scriptDestinations.Add(new Vector3(go.transform.position.x + playerWidth, go.transform.position.y + playerHeight / 4, 0f));
-        }
-        else
-        {
-            _scriptDestinations.Add(new Vector3(go.transform.position.x - playerWidth, transform.position.y, 0f));
-            _scriptDestinations.Add(new Vector3(go.transform.position.x - playerWidth, go.transform.position.y + playerHeight / 4, 0f));
-        }
+        GameObject Start = findClosestObjectWithTag("tubeMarker", 1);
+        GameObject End = findClosestObjectWithTag("tubeEnd", 1);
+        if (transform.position.x < Start.transform.position.x) SetFacingRight(true);
+        else SetFacingRight(false);
+        _scriptDestinations.Add(new Vector3(Start.transform.position.x, transform.position.y, 0f));
+        _scriptDestinations.Add(new Vector3(End.transform.position.x + playerWidth, End.transform.position.y + playerHeight / 4, 0f));
         _scriptSpeed = 3.0f;
         _isScripting = true;
         _scriptSpeedAccelarated = false;
