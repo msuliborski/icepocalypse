@@ -4,6 +4,11 @@ using UnityEngine.UI;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour {
+
+    private float _attackDelay = 1.5f;
+
+    private float _attackDelayTimeStamp = 0f;
+
     public GameObject CanvasObject;
 
     public GameObject QteButton;
@@ -49,7 +54,7 @@ public class EnemyController : MonoBehaviour {
     private bool _canHeFight = true;
     private bool _sideFlag = false;
 
-    public Collider2D WeaponCollider;
+    public GameObject WeaponCollider;
 
     private bool _wait = false;
     private float _waitTime = 1.0f;
@@ -82,7 +87,7 @@ public class EnemyController : MonoBehaviour {
 
         //HitFlag.SetActive(false);
 
-        WeaponCollider.enabled = false;
+        WeaponCollider.SetActive(false);
 
         _timeStamp = 0f;
 
@@ -120,7 +125,7 @@ public class EnemyController : MonoBehaviour {
         {
             _canHeFight = true;
             _sideFlag = false;
-            WeaponCollider.enabled = false;
+            //WeaponCollider.enabled = false;
             _isDefending = false;
         }
 
@@ -285,7 +290,12 @@ public class EnemyController : MonoBehaviour {
             case PlayerState.Attacking:
              //   Debug.Log("attacking");
                 _rb.velocity = new Vector2(0f, _rb.velocity.y);
-                Attack();
+                
+                if( Time.time - _attackDelayTimeStamp >= _attackDelay )
+                {
+                    Attack();
+                }
+
                 if (Mathf.Abs(_playerEnemyDistance) > FightingDeadZone)
                 {
                     _playerState = PlayerState.Running;
@@ -357,22 +367,35 @@ public class EnemyController : MonoBehaviour {
 
     void Attack()
     {
+        //float x = Random.Range(1.0f, 3.0f);
 
-        float x = Random.Range(0f, 3.0f);
+        _attackDelay = Random.Range(1.0f, 3.0f);
+        Debug.Log(_attackDelay);
 
         if (_isDefending)
         {
             //_anim.SetBool("defend", true);
         }
 
-        //Debug.Log(x);
+        _canHeFight = false;
+        //WeaponCollider.enabled = true;
+        _anim.SetBool("attack", true);
+        Debug.Log("kod ataku");
 
-        if ( x < 0.1f )//&& _canHeFight )
-        {
-            _canHeFight = false;
-            WeaponCollider.enabled = true;
-            _anim.SetBool("attack", true);
-        }
+        _playerObject.GetComponent<FightSystem>().IsUnderAttack = true;
+        _attackDelayTimeStamp = Time.time;
+       
+       // StartCoroutine(PerformAttack());
+    }
+
+    IEnumerator PerformAttack()
+    {
+        yield return new WaitForSecondsRealtime(0.7f);
+
+        _canHeFight = false;
+        //WeaponCollider.enabled = true;
+        _anim.SetBool("attack", true);
+        _playerObject.GetComponent<FightSystem>().IsUnderAttack = true;
     }
 
     public void Defend()

@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class FightSystem : MonoBehaviour {
 
+    [HideInInspector]
+    public bool IsUnderAttack = false;
+
     public GameObject AttackButtonToDisableWhenQTE;
 
     public int HealthPointsMax = 100;
@@ -144,7 +147,18 @@ public class FightSystem : MonoBehaviour {
     {
         RaycastHit2D hit;
 
-        Vector2 RayDirection = new Vector2(transform.position.x + 0.7f, transform.position.y + 0.5f);
+        Vector2 RayDirection;
+
+        if (transform.localScale.x > 0f)
+        {
+             RayDirection = new Vector2(transform.position.x + 0.7f, transform.position.y + 0.5f);
+        }
+        else
+        {
+             RayDirection = new Vector2(transform.position.x - 0.7f, transform.position.y + 0.5f);
+        }
+
+        //Vector2 RayDirection = new Vector2(transform.position.x + 0.7f, transform.position.y + 0.5f);
         Debug.DrawRay(RayDirection, transform.localScale.x * Vector3.right * 5.0f, Color.yellow, 2.0f);
         int layerMask = LayerMask.GetMask("Enemy");
         hit = Physics2D.Raycast(RayDirection, transform.localScale.x * Vector3.right, 5.0f,layerMask );
@@ -153,7 +167,6 @@ public class FightSystem : MonoBehaviour {
             if (hit.collider.tag == "Enemy")
             {
                 hit.collider.gameObject.SendMessage("Defend");
-               // Debug.Log("wyslalaem");
             }
         }
     }
@@ -161,8 +174,10 @@ public class FightSystem : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D col)
     {
         if (!_gameStarted) return;
-        if ( col.gameObject.tag == "EnemyFist" )
+        if ( col.gameObject.tag == "EnemyFist" && IsUnderAttack )
         {
+
+            IsUnderAttack = false;
             //SetHealth(-10);
             GetComponent<PlayerControllerExperimental>().TakeHP(10);
 
