@@ -14,9 +14,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/scene.unity
     guid: 4b7b2a23349e3284c9a7b5009c886cfb
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/ldr.unity
     guid: aa3d2b4d64bb9ff4298936895eb41ec7
   - enabled: 1
     path: Assets/Scenes/bezsceny.unity
     guid: cf2d45ef66af9478e90662c5b5eb300b
+  m_configObjects: {}

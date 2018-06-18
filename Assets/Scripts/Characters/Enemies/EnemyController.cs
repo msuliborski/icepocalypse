@@ -80,6 +80,20 @@ public class EnemyController : MonoBehaviour {
 
 	private PlayerState _playerState = PlayerState.Walking;
 
+
+    bool _gameStarted = false;
+
+    public void OnGameStarted()
+    {
+        _gameStarted = true;
+    }
+
+    public void OnPlayerDeath()
+    {
+        _gameStarted = false;
+    }
+
+
 	
 	void Start ()
 	{
@@ -113,6 +127,10 @@ public class EnemyController : MonoBehaviour {
 
 	void Update () 
 	{
+        if (!_gameStarted)
+        {
+            return;
+        }
 
         var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
@@ -220,7 +238,7 @@ public class EnemyController : MonoBehaviour {
 
             _anim.SetBool("gotHit", true);
 
-            SetHealth(-10);
+            SetHealth(-20);
             Debug.Log("enemy health: " + _enemyHealthPoints);
             _isUnderAttack = false;
 
@@ -231,7 +249,8 @@ public class EnemyController : MonoBehaviour {
                 Destroy(gameObject);
             }
 
-            if ( _enemyHealthPoints <= 20 && !_isHurt && !_didQTE)
+            // th7 was here : MOVIE CHANGES
+            /*if ( _enemyHealthPoints <= 20 && !_isHurt && !_didQTE)
             {
                 _didQTE = true;
                 _isHurt = true;
@@ -239,7 +258,7 @@ public class EnemyController : MonoBehaviour {
                 _qteCircle = PutCircle(new Vector3(transform.position.x, transform.position.y + QTECirclePositionsArray[_qteCircleIterator], transform.position.z));
                 _qteCircleIterator++;
                 _timeStamp = Time.time;
-            }
+            }*/
         }
     }
 
@@ -369,7 +388,7 @@ public class EnemyController : MonoBehaviour {
     {
         //float x = Random.Range(1.0f, 3.0f);
 
-        _attackDelay = Random.Range(1.0f, 3.0f);
+        _attackDelay = Random.Range(1.0f, 5.0f);
         Debug.Log(_attackDelay);
 
         if (_isDefending)

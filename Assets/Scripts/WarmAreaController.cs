@@ -10,12 +10,15 @@ public class WarmAreaController : MonoBehaviour {
 
 	public void OnTriggerEnter2D(Collider2D collision)
 	{
-        WarmAreaEnter.Raise();
+        Debug.Log("area entered " + collision.gameObject.tag);
+        if (collision.gameObject.tag == "Player")
+            WarmAreaEnter.Raise();
 	}
 
 	private void OnTriggerExit2D(Collider2D collision)
 	{
-        WarmAreaExit.Raise();
+        if (collision.gameObject.tag == "Player")
+            WarmAreaExit.Raise();
 	}
 
 }

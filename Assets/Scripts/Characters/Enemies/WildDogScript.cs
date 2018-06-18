@@ -31,6 +31,19 @@ public class WildDogScript : MonoBehaviour
     private float _time;
     private int _keyPressesIterator = 0;
 
+
+    bool _gameStarted = false;
+
+    public void OnGameStarted()
+    {
+        _gameStarted = true;
+    }
+
+    public void OnPlayerDeath()
+    {
+        _gameStarted = false;
+    }
+
     public GameObject QTECircle;
 
     private Animator _anim;
@@ -84,6 +97,8 @@ public class WildDogScript : MonoBehaviour
 
     void Update()
     {
+        if (!_gameStarted)
+            return;
 
         if ( !_isClutching )
         {
@@ -119,15 +134,16 @@ public class WildDogScript : MonoBehaviour
 
         if ( Time.time - _time >= 5.0f )
         {
+            // : MOVIE CHANGES 
+            /*
             //GetComponent<BoxCollider2D>().isTrigger = false;
             _rb.velocity = new Vector2(0f, 0f);
             _playerObject.SetActive(false);
             GetComponent<SpriteRenderer>().enabled = true;
             _isClutching = false;
             _dogState = PlayerState.Idle;
-            Destroy(_circle);
+            Destroy(_circle);*/
         }
-
         if (ClickedTheCircle && _keyPressesIterator < 10)
         {
             ClickedTheCircle = false;
@@ -148,7 +164,7 @@ public class WildDogScript : MonoBehaviour
         if (col.gameObject.tag == "Player")
         {
             //_rb.velocity = new Vector2((_playerObject.transform.position.x - transform.position.x) * 7.0f, (_playerObject.transform.position.y + 3.0f - transform.position.y) * 10.0f);
-            Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), PlayerCollider);
+           // Physics2D.IgnoreCollision(GetComponent<BoxCollider2D>(), PlayerCollider);
 
             if ( ClickedTheCircle )
             {
@@ -224,15 +240,16 @@ public class WildDogScript : MonoBehaviour
                     _playerObject.GetComponent<FightSystem>().GetReady(1);
                 }
 
-                Time.timeScale = 0.01f;
+                Time.timeScale = 0.1f;
                 //_dogState = PlayerState.Attacking;
                 // _jumped = true;
                 Vector2 vector = new Vector2(transform.position.x, transform.position.y + 0.5f);
 
+
                 _circle = Instantiate(QTECircle, CanvasObject.transform);
                 _circle.GetComponent<QTECircleScript>().FatherObject = gameObject;
                 _circle.GetComponent<QTECircleScript>()._qteType = "Dog";
-                _circle.GetComponent<QTECircleScript>().LifeTime = 0.01f;
+                _circle.GetComponent<QTECircleScript>().LifeTime = 0f;
 
                 _dogState = PlayerState.Attacking;
                 break;

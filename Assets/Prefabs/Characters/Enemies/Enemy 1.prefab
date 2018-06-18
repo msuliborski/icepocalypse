@@ -72,6 +72,8 @@ GameObject:
   - component: {fileID: 50687634785535348}
   - component: {fileID: 114671938316141478}
   - component: {fileID: 95205294239475546}
+  - component: {fileID: 114194073272264570}
+  - component: {fileID: 114969153714333850}
   m_Layer: 20
   m_Name: Enemy 1
   m_TagString: Enemy
@@ -114,7 +116,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1508442799789786}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.07, y: 2.007495, z: 0}
+  m_LocalPosition: {x: 25.04, y: 2.02, z: 0}
   m_LocalScale: {x: 0.38, y: 0.39012763, z: 1}
   m_Children:
   - {fileID: 4101178692454944}
@@ -145,7 +147,7 @@ Transform:
   m_GameObject: {fileID: 1333696215088756}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.94, y: 0.78, z: 0}
-  m_LocalScale: {x: 0.38182592, y: -0.999627, z: 1}
+  m_LocalScale: {x: -0.3818259, y: -0.999627, z: 1}
   m_Children: []
   m_Father: {fileID: 4215606399853642}
   m_RootOrder: 1
@@ -276,6 +278,34 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114194073272264570
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1508442799789786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09798795485e471abd1c1544a45d9ad4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: c0f2611572e8c4a4d8bc7b0b0de379ae, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114671938316141478}
+        m_MethodName: OnGameStarted
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114213011312328732
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -315,7 +345,35 @@ MonoBehaviour:
   - 1.5
   - 1.5
   QTECircleInterval: 1
-  WeaponCollider: {fileID: 61765516519928676}
+  WeaponCollider: {fileID: 1029020878577226}
+--- !u!114 &114969153714333850
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1508442799789786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09798795485e471abd1c1544a45d9ad4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: c4d64c3071d6b450daf27102b31cecc9, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114671938316141478}
+        m_MethodName: OnPlayerDeath
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!212 &212878665276077928
 SpriteRenderer:
   m_ObjectHideFlags: 1
