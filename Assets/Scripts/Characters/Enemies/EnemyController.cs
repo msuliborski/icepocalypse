@@ -4,6 +4,13 @@ using UnityEngine.UI;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour {
+
+    private float _attackDelay = 1.5f;
+
+    private float _attackDelayTimeStamp = 0f;
+
+    public GameObject CanvasObject;
+
     public GameObject QteButton;
 
     public int EnemyHealthPointsMax = 100;
@@ -17,12 +24,13 @@ public class EnemyController : MonoBehaviour {
     public float EnemyRunningSpeed = 5.0f;
     public float EnemyWalkingSpeed = 2.5f;
     public float FightingDeadZone = 0.5f;
-    public Transform ViewRangeTransform;
-    public Transform PatrolDistanceTransform;
 
     private GameObject _playerObject;
 
     private Rigidbody2D _rb;
+
+    public Transform PatrolDistanceTransformLeft;
+    public Transform PatrolDistanceTransformRight;
 
     private float _patrolDistance;
     private float _patrolRangeA;
@@ -46,8 +54,13 @@ public class EnemyController : MonoBehaviour {
     private bool _canHeFight = true;
     private bool _sideFlag = false;
 
-    public Collider2D FistCollider1;
-    public Collider2D FistCollider2;
+    public GameObject WeaponCollider;
+
+    private bool _wait = false;
+    private float _waitTime = 1.0f;
+    private float _waitFlag;
+
+    //public GameObject HitFlag;
 
     enum Facing
     {
@@ -67,11 +80,28 @@ public class EnemyController : MonoBehaviour {
 
 	private PlayerState _playerState = PlayerState.Walking;
 
+
+    bool _gameStarted = false;
+
+    public void OnGameStarted()
+    {
+        _gameStarted = true;
+    }
+
+    public void OnPlayerDeath()
+    {
+        _gameStarted = false;
+    }
+
+
 	
 	void Start ()
 	{
-        FistCollider1.enabled = false;
-        FistCollider2.enabled = false;
+        //Time.timeScale = 0.1f;
+
+        //HitFlag.SetActive(false);
+
+        WeaponCollider.SetActive(false);
 
         _timeStamp = 0f;
 
@@ -83,23 +113,10 @@ public class EnemyController : MonoBehaviour {
         _rb = GetComponent<Rigidbody2D>();
         _playerObject = GameObject.FindGameObjectWithTag("Player");
 
-        _patrolDistance = Mathf.Abs(transform.position.x - PatrolDistanceTransform.position.x);
-        _patrolRangeA = transform.position.x - _patrolDistance;
-        _patrolRangeB = transform.position.x + _patrolDistance;
+        _patrolRangeA = PatrolDistanceTransformLeft.position.x;
+        _patrolRangeB = PatrolDistanceTransformRight.position.x;
 
         //Debug.Log("A: " + _patrolRangeA + " B: " + _patrolRangeB);
-
-        if (ViewRangeTransform.position.x > transform.position.x )
-        {
-            _facing = Facing.Right;
-            //ChangeFacingDirection();
-        }
-        else
-        {
-            _facing = Facing.Left;
-        }
-
-        _triggerRange = Mathf.Abs( ViewRangeTransform.position.x - transform.position.x );
 
 	}
 
@@ -110,19 +127,23 @@ public class EnemyController : MonoBehaviour {
 
 	void Update () 
 	{
+        if (!_gameStarted)
+        {
+            return;
+        }
+
         var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
-        if (stateInfo.IsName("Base Layer.Attack") || stateInfo.IsName("Base Layer.Defend") || _canHeFight)
+        if (stateInfo.IsName("Base Layer.Attack") || stateInfo.IsName("Base Layer.EnemyDefendAnimation"))
         {
             _sideFlag = true;
         }
 
-        if ( _sideFlag && !stateInfo.IsName("Base Layer.Attack") && !stateInfo.IsName("Base Layer.Defend") && !_canHeFight )
+        if ( _sideFlag && !stateInfo.IsName("Base Layer.Attack") && !stateInfo.IsName("Base Layer.EnemyDefendAnimation") )
         {
             _canHeFight = true;
             _sideFlag = false;
-            FistCollider1.enabled = false;
-            FistCollider2.enabled = false;
+            //WeaponCollider.enabled = false;
             _isDefending = false;
         }
 
@@ -138,8 +159,6 @@ public class EnemyController : MonoBehaviour {
                     return;
                 }
 
-                Debug.Log("nowe kolko");
-
                 if (_qteCircleIterator < QTECirclePositionsArray.Length)
                 {
                     _qteCircle = PutCircle(new Vector3(transform.position.x, transform.position.y + QTECirclePositionsArray[_qteCircleIterator], transform.position.z));
@@ -148,7 +167,9 @@ public class EnemyController : MonoBehaviour {
                 else
                 {
                     CancelQTE();
-                    Debug.Log("FINISZER.");
+                    _playerObject.GetComponent<FightSystem>().KillTheGuyFinisher();
+                    _playerObject.GetComponent<FightSystem>().CancelQTE();
+                    Destroy(gameObject);
                 }
             }
 
@@ -171,46 +192,69 @@ public class EnemyController : MonoBehaviour {
 
         if(  _playerState == PlayerState.Walking && ( transform.position.x <= _patrolRangeA && _facing == Facing.Left ) ||  _playerState == PlayerState.Walking && ( transform.position.x >= _patrolRangeB && _facing == Facing.Right ) )
         {
-            ChangeFacingDirection();
+            _anim.SetBool("stand", true);
+            StartCoroutine(Wait());
+            _playerState = PlayerState.Idle;
         }
        
 	}
+
+    IEnumerator Wait()
+    {
+        yield return new WaitForSecondsRealtime(_waitTime);
+        _anim.SetBool("stand", false);
+        ChangeFacingDirection();
+        _playerState = PlayerState.Walking;
+    }
 
     void OnCollisionEnter2D( Collision2D col )
     {
         if ( col.gameObject.tag == "Player" )
         {
-	        _rb.velocity = new Vector2(0, _rb.velocity.y);
+            _rb.constraints = RigidbodyConstraints2D.FreezePositionX;
+            _playerState = PlayerState.Attacking;
+
+            _anim.SetBool("readyToAttack", true);
+
+            if ( ( _playerObject.transform.localScale.x > 0f && transform.localScale.x > 0f && _playerObject.transform.position.x < transform.position.x && _facing == Facing.Right ) || (_playerObject.transform.localScale.x < 0f && transform.localScale.x < 0f && _playerObject.transform.position.x > transform.position.x && _facing == Facing.Left))
+            {
+                ChangeFacingDirection();
+            }
+
+            //_playerState = PlayerState.Running;
         }
+
+       // if (col.gameObject.tag == "Wall")
+        //{
+          //  ChangeFacingDirection();
+        //}
     }
 
     void OnTriggerEnter2D( Collider2D col )
     {
-        if (col.gameObject.tag == "Wall" )
+        if (col.gameObject.tag == "PlayerFist" && _isUnderAttack )
         {
-            ChangeFacingDirection();
-        }
+            //HitFlag.SetActive(!HitFlag.active);
 
-        if (col.gameObject.tag == "PlayerFist" && _isUnderAttack && !_isDefending )//&& _isUnderAttack && !_isDefending )
-        {
+            _anim.SetBool("gotHit", true);
+
+            SetHealth(-20);
             Debug.Log("enemy health: " + _enemyHealthPoints);
-            SetHealth(-10);
             _isUnderAttack = false;
 
             if (_enemyHealthPoints <= 0)
             {
-                Debug.Log("smierc przeciwnika");
                 //gameObject.SetActive(false);
                 _enemyHealthPoints = EnemyHealthPointsMax;
-                Time.timeScale = 1.0f;
                 Destroy(gameObject);
             }
 
+            //th7 was here : MOVIE CHANGES
             if ( _enemyHealthPoints <= 20 && !_isHurt && !_didQTE)
             {
                 _didQTE = true;
                 _isHurt = true;
-                _playerObject.GetComponent<FightSystem>().IsQTE = true;
+                _playerObject.GetComponent<FightSystem>().ProceedToQTE();
                 _qteCircle = PutCircle(new Vector3(transform.position.x, transform.position.y + QTECirclePositionsArray[_qteCircleIterator], transform.position.z));
                 _qteCircleIterator++;
                 _timeStamp = Time.time;
@@ -241,50 +285,51 @@ public class EnemyController : MonoBehaviour {
     {
         switch( _playerState )
         {
-            case PlayerState.Walking:
-                Walk(EnemyWalkingSpeed);
-                if (Mathf.Abs(_playerEnemyDistance) < _triggerRange)
-                {
-                    if (_facing == Facing.Left)
-                    {
-                        if (_playerEnemyDistance < 0 )
-                        {
-                            _playerState = PlayerState.Running;
-                            //Debug.Log("Running");
-                        }
-                    }
-                    else if (_playerEnemyDistance > 0 )
-                    {
-                        _playerState = PlayerState.Running;
-                        //Debug.Log("Running");
-                    }
-                }
+            case PlayerState.Idle:
+                Stay();
+                break;
 
+            case PlayerState.Walking:
+                //Debug.Log("walking");
+                Walk(EnemyWalkingSpeed);
                 break;
 
             case PlayerState.Running:
+               // Debug.Log("running");
                 Run(EnemyRunningSpeed);
                 if (Mathf.Abs(_playerEnemyDistance) <= FightingDeadZone)
                 {
                     _playerState = PlayerState.Attacking;
+                    _anim.SetBool("readyToAttack", true);
                     //Debug.Log("Attacking , distance: " + Mathf.Abs(_playerEnemyDistance));
                 }
 
                 break;
 
             case PlayerState.Attacking:
+             //   Debug.Log("attacking");
                 _rb.velocity = new Vector2(0f, _rb.velocity.y);
-                Attack();
+                
+                if( Time.time - _attackDelayTimeStamp >= _attackDelay )
+                {
+                    Attack();
+                }
+
                 if (Mathf.Abs(_playerEnemyDistance) > FightingDeadZone)
                 {
                     _playerState = PlayerState.Running;
+                    _anim.SetBool("readyToAttack", false);
+                    _anim.SetBool("run", true);
                     _rb.constraints = RigidbodyConstraints2D.None;
                     _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-                    Time.timeScale = 1.0f;
-                    //Debug.Log("Running");
                 }
                 break;
         }
+    }
+
+    void Stay()
+    {
+        _rb.velocity = new Vector2(0f, _rb.velocity.y);
     }
 
     void Walk( float speed )
@@ -323,9 +368,12 @@ public class EnemyController : MonoBehaviour {
 
     GameObject PutCircle( Vector3 vector )
     {
-        GameObject circle = Instantiate(QteButton, vector, Quaternion.identity) as GameObject;
+        GameObject circle = Instantiate(QteButton, CanvasObject.transform);
+        //Instantiate(QteButton, new Vector3( CanvasObject.transform.position.x, CanvasObject.transform.position.y, 0f), Quaternion.identity, CanvasObject.transform ) as GameObject;
         circle.GetComponent<QTECircleScript>().FatherObject = gameObject;
+        //Instantiate(QteButton, CanvasObject.transform);
         circle.GetComponent<QTECircleScript>()._qteType = "Enemy";
+        circle.GetComponent<QTECircleScript>().LifeTime = 2.0f;
         return circle;
     }
 
@@ -338,16 +386,34 @@ public class EnemyController : MonoBehaviour {
 
     void Attack()
     {
+        //float x = Random.Range(1.0f, 3.0f);
 
-        float x = Random.Range(0f, 3.0f);
+        _attackDelay = Random.Range(1.0f, 8.0f);
+        Debug.Log(_attackDelay);
 
-        if ( x < 1.0f && _canHeFight )
+        if (_isDefending)
         {
-            _canHeFight = false;
-            FistCollider1.enabled = true;
-            FistCollider2.enabled = true;
-            _anim.SetBool("attack", true);
+            //_anim.SetBool("defend", true);
         }
+
+        _canHeFight = false;
+        //WeaponCollider.enabled = true;
+        _anim.SetBool("attack", true);
+
+        _playerObject.GetComponent<FightSystem>().IsUnderAttack = true;
+        _attackDelayTimeStamp = Time.time;
+       
+       // StartCoroutine(PerformAttack());
+    }
+
+    IEnumerator PerformAttack()
+    {
+        yield return new WaitForSecondsRealtime(0.7f);
+
+        _canHeFight = false;
+        //WeaponCollider.enabled = true;
+        _anim.SetBool("attack", true);
+        _playerObject.GetComponent<FightSystem>().IsUnderAttack = true;
     }
 
     public void Defend()
@@ -357,16 +423,27 @@ public class EnemyController : MonoBehaviour {
             _isUnderAttack = true;
             float x = Random.Range(0f, 2.0f);
 
-            if (x <= 0.1f && _canHeFight)
+            if (!_canHeFight)
             {
-                _canHeFight = false;
-                _anim.SetBool("defend", true);
-                _animatingTime = Time.time;
-                _isDefending = true;
-                Debug.Log("defend");
+               // Debug.Log("pownien muc");
+            }
+
+            if (x <= 0.8f)
+            {
+                //Time.timeScale = 0.1f;
+                //_canHeFight = false;
+               // _anim.SetBool("defend", true);
+                //_animatingTime = Time.time;
+                //_isDefending = true;
             }
         }
         
+    }
+
+    public void CatchPlayer()
+    {
+        _anim.SetBool("run", true);
+        _playerState = PlayerState.Running;
     }
 
 }

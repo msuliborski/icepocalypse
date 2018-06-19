@@ -12,11 +12,15 @@ public class ExplosiveBarrelController : MonoBehaviour
     #endregion
 
     #region Collisions
-    void OnCollisionEnter2D(Collision2D col)
+
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        BarrelExplosionEvent.Raise();
-        Instantiate(Explosion, col.gameObject.transform.position, Quaternion.identity);
-        Destroy(gameObject);
+        if (collision.gameObject.tag == "Player")
+        {
+            BarrelExplosionEvent.Raise();
+            Instantiate(Explosion, collision.gameObject.transform.position, Quaternion.identity);
+            Destroy(gameObject);
+        }
     }
     #endregion
 }
