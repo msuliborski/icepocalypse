@@ -48,11 +48,11 @@ public class FreezingController : MonoBehaviour {
     {
         while(true)
         {
-            if (_freezeLevel / FreezeTime > 0.4f && _gameStarted)
+            if (_freezeLevel / FreezeTime > 0.5f && _gameStarted)
             {
                 GetComponent<PlayerControllerExperimental>().TakeHP(10);
             }
-            yield return new WaitForSeconds(2.0f);
+            yield return new WaitForSeconds(4.0f);
         }
     }
 

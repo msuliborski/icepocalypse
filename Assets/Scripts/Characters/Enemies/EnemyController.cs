@@ -249,8 +249,8 @@ public class EnemyController : MonoBehaviour {
                 Destroy(gameObject);
             }
 
-            // th7 was here : MOVIE CHANGES
-            /*if ( _enemyHealthPoints <= 20 && !_isHurt && !_didQTE)
+            //th7 was here : MOVIE CHANGES
+            if ( _enemyHealthPoints <= 20 && !_isHurt && !_didQTE)
             {
                 _didQTE = true;
                 _isHurt = true;
@@ -258,7 +258,7 @@ public class EnemyController : MonoBehaviour {
                 _qteCircle = PutCircle(new Vector3(transform.position.x, transform.position.y + QTECirclePositionsArray[_qteCircleIterator], transform.position.z));
                 _qteCircleIterator++;
                 _timeStamp = Time.time;
-            }*/
+            }
         }
     }
 
@@ -388,7 +388,7 @@ public class EnemyController : MonoBehaviour {
     {
         //float x = Random.Range(1.0f, 3.0f);
 
-        _attackDelay = Random.Range(1.0f, 5.0f);
+        _attackDelay = Random.Range(1.0f, 8.0f);
         Debug.Log(_attackDelay);
 
         if (_isDefending)
@@ -399,7 +399,6 @@ public class EnemyController : MonoBehaviour {
         _canHeFight = false;
         //WeaponCollider.enabled = true;
         _anim.SetBool("attack", true);
-        Debug.Log("kod ataku");
 
         _playerObject.GetComponent<FightSystem>().IsUnderAttack = true;
         _attackDelayTimeStamp = Time.time;
