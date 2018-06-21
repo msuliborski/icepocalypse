@@ -17,6 +17,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     public float MoveSpeed = 10;
     public int Hp = 100;
     private float _wallTimer = 0;
+    private float _inertTimer = 0;
     public bool FacingRight = true;
     private float _moveDirection = 0;
     private bool _ignoreLedderEdge = false;
@@ -347,6 +348,11 @@ public class PlayerControllerExperimental : MonoBehaviour
                     else _animator.SetBool("Movement", (_moveDirection != 0) ? true : false);
                     break;
 
+                case PlayerState.Inert:
+
+                    _inertTimer += Time.deltaTime;
+                    break;
+
                 case PlayerState.WallHugging:
                    
                     manageWallTimer();
@@ -413,7 +419,6 @@ public class PlayerControllerExperimental : MonoBehaviour
                     if (FacingRight) _rigidbody.velocity = new Vector2(0.5f, -3f);
                     else _rigidbody.velocity = new Vector2(-0.5f, -3f);
                     _ignoreLedderEdge = true;
-                    _animator.SetBool("LadderMovement", true);
                     break;
 
                 case PlayerState.TubeSliding:
@@ -458,6 +463,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                     SetFacingRight(true);
                     _ignoreLedderEdge = true;
                     _animator.SetBool("Ladder", false);
+                    _animator.SetBool("LadderMovement", false);
                     break;
 
                 default:
@@ -471,8 +477,6 @@ public class PlayerControllerExperimental : MonoBehaviour
             {
                 case PlayerState.Laddering:
                     MoveRightOnLadder();
-                    _animator.SetBool("LadderMovement", false);
-                    _animator.SetBool("Ladder", false);
                     break;
                 default:
                     SetFacingRight(true);
@@ -494,7 +498,8 @@ public class PlayerControllerExperimental : MonoBehaviour
                     SetFacingRight(false);
                     _ignoreLedderEdge = true;
                     _animator.SetBool("Ladder", false);
-                   break;
+                    _animator.SetBool("LadderMovement", false);
+                    break;
 
                 default:
                     _index++;
@@ -507,8 +512,6 @@ public class PlayerControllerExperimental : MonoBehaviour
             {
                 case PlayerState.Laddering:
                     MoveLeftOnLadder();
-                    _animator.SetBool("LadderMovement", false);
-                    _animator.SetBool("Ladder", false);
                     break;
                 default:
                     SetFacingRight(false);
@@ -617,6 +620,12 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onBeingInert()
     {
+        if (PreviousState == PlayerState.WallHugging) StartCoroutine(InertTimerZero());
+        if (!_ignoreLedderEdge)
+        {
+            _animator.SetBool("Ladder", false);
+            _animator.SetBool("LadderMovement", false);
+        }
         _renderer.transform.position = new Vector2(transform.position.x, transform.position.y);
         _wallTimer = 0;
         _rigidbody.gravityScale = 10;
@@ -625,6 +634,8 @@ public class PlayerControllerExperimental : MonoBehaviour
     private void onGroundImpact()
     {
         _ignoreLedderEdge = false;
+        _animator.SetBool("Ladder", false);
+        _animator.SetBool("LadderMovement", false);
         _animator.SetBool("Inert Down", false);
         _animator.SetBool("WallReflection", false);
         _animator.SetBool("JumpToWall", false);
@@ -633,6 +644,8 @@ public class PlayerControllerExperimental : MonoBehaviour
         _renderer.transform.position = new Vector2(transform.position.x, transform.position.y);
         _wallTimer = 0;
         _rigidbody.gravityScale = 10;
+        for (float i = 0.55f; i < _inertTimer; i += 0.55f) TakeHP(10);
+        _inertTimer = 0;
     }
 
     private void onLadderImpact()
@@ -646,7 +659,9 @@ public class PlayerControllerExperimental : MonoBehaviour
         {
             _ignoreLedderEdge = false;
             _rigidbody.velocity = new Vector2(0f, -3f);
+            _animator.SetBool("LadderMovement", true);
         }
+        _inertTimer = 0;
     }
 
     private void onSlopeImpact()
@@ -665,6 +680,8 @@ public class PlayerControllerExperimental : MonoBehaviour
         else SetFacingRight(false);
         _renderer.transform.position = new Vector2(-0.25f + transform.position.x, -0.25f + transform.position.y);
         _rigidbody.gravityScale = 18;
+        for (float i = 0.55f; i < _inertTimer; i += 0.55f) TakeHP(10);
+        _inertTimer = 0;
     }
 
 
@@ -699,6 +716,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.MovementFalse, animScriptCommands.TubeTrue });
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.TubeIdleTrue });
         _rendererPosDif.Clear();
+        _inertTimer = 0;
     }
 
     void onEdgeCornerImpact()
@@ -739,11 +757,15 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (FacingRight) _rendererPosDif.Add(new Vector3(0.15f, -0.15f, 0f));
         else _rendererPosDif.Add(new Vector3(-0.15f, -0.15f, 0f));
         _rendererPosDif.Add(new Vector3(0f, 0f, 0f));
+        _inertTimer = 0;
     }
 
     void onLadderEdgeImpact()
     {
         _animator.SetBool("LadderMovement", false);
+        _animator.SetBool("WallReflection", false);
+        _animator.SetBool("Ladder", true);
+        
         _scriptDestinations.Clear();
         GameObject go = findClosestObjectWithTag("ladderEdge", 5);
         if (FacingRight)
@@ -780,6 +802,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (FacingRight) _rendererPosDif.Add(new Vector3(0.15f, -0.15f, 0f));
         else _rendererPosDif.Add(new Vector3(-0.15f, -0.15f, 0f));
         _rendererPosDif.Add(new Vector3(0f, 0f, 0f));
+        _inertTimer = 0;
     }
 
 
@@ -812,6 +835,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         _animScriptCommands.Add(new List<animScriptCommands> { });
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.LadderTrue });
         _rendererPosDif.Clear();
+        _inertTimer = 0;
     }
 
     void onEdgeBodyImpact()
@@ -839,6 +863,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         _indexToRotate = -1;
         _animScriptCommands.Clear();
        _rendererPosDif.Clear();
+        _inertTimer = 0;
     }
 
     private void onWallImpact()
@@ -856,6 +881,7 @@ public class PlayerControllerExperimental : MonoBehaviour
             _animator.SetBool("Czekaning", true);
         }
         _rigidbody.gravityScale = 0;
+        _inertTimer = 0;
     }
     #endregion
 
@@ -1082,6 +1108,12 @@ public class PlayerControllerExperimental : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.5f);
         CurrentState = PlayerState.Grounded;
         Debug.Log("grounded");
+    }
+
+    public IEnumerator InertTimerZero()
+    {
+        yield return new WaitForSeconds(0.2f);
+        _inertTimer = 0;
     }
     #endregion
 }
