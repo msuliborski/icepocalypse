@@ -570,6 +570,8 @@ MonoBehaviour:
   MoveSpeed: 8
   Hp: 100
   FacingRight: 1
+  InEndOfTube: 0
+  CurrentlyActiveFood: {fileID: 0}
   _isScripting: 0
   PreviousState: 0
   CurrentState: 0

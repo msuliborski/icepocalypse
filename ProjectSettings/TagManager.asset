@@ -22,6 +22,7 @@ TagManager:
   - hole
   - tubeMarker
   - ViewTrigger
+  - Food
   layers:
   - Default
   - TransparentFX

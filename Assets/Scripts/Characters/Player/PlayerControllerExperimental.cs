@@ -20,10 +20,13 @@ public class PlayerControllerExperimental : MonoBehaviour
     private float _inertTimer = 0;
     public bool FacingRight = true;
     private float _moveDirection = 0;
+    public bool InEndOfTube = false;
     private bool _ignoreLedderEdge = false;
+    public GameObject CurrentlyActiveFood;
     private List<Vector3> _scriptDestinations;
     private float _scriptSpeed;
     public bool _isScripting = false;
+    private bool _animListExecuted = false;
     private bool _scriptSpeedAccelarated = false;
     private float _scriptAcceleration = 0;
     private int _index;
@@ -62,7 +65,8 @@ public class PlayerControllerExperimental : MonoBehaviour
         UpLadderTrue,
         UpLadderFalse,
         UpWallTrue,
-        UpWallFalse
+        UpWallFalse,
+        InEndOfTubeTrue
 
     }
 
@@ -140,12 +144,14 @@ public class PlayerControllerExperimental : MonoBehaviour
         _onRightDirection = false;
         _onTopDirection = false;
         _onDownDirection = false;
+        _tapOnFood = false;
     }
 
     bool _onLeftDirection;
     bool _onRightDirection;
     bool _onTopDirection;
     bool _onDownDirection;
+    bool _tapOnFood;
 
     public void OnLeftDirection() 
     {
@@ -344,6 +350,11 @@ public class PlayerControllerExperimental : MonoBehaviour
                         _onTopDirection = false;
                         OnKeySpace();
                     } 
+                    if(Input.GetKeyDown(KeyCode.Q) || _tapOnFood)
+                    {
+                        _tapOnFood = false;
+                        OnKeyFood();
+                    }
                     if (Physics2D.IsTouchingLayers(_colliderCorner, Wall)) _animator.SetBool("Movement", false);
                     else _animator.SetBool("Movement", (_moveDirection != 0) ? true : false);
                     break;
@@ -411,6 +422,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
         if (_isScripting)
         {
+            _animListExecuted = false;
             switch (CurrentState)
             {
                 case PlayerState.EdgeLaddering:
@@ -450,10 +462,27 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
     }
 
+
+    public void OnKeyFood()
+    {
+        if (CurrentlyActiveFood != null)
+        {
+            FoodController foodController = CurrentlyActiveFood.GetComponent<FoodController>();
+            if (!foodController.Eaten)
+            {
+                foodController.Eaten = true;
+                foodController.Animator.SetBool("eaten", true);
+                // FOR KONRAD: addHp(10);
+            }
+        }
+    }
+
+
     public void OnKeyRight()
     {
         if (_isScripting)
         {
+            _animListExecuted = false;
             switch (CurrentState)
             {
                 case PlayerState.EdgeLaddering:
@@ -489,6 +518,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
         if (_isScripting)
         {
+            _animListExecuted = false;
             switch (CurrentState)
             {
                 case PlayerState.EdgeLaddering:
@@ -523,7 +553,8 @@ public class PlayerControllerExperimental : MonoBehaviour
     public void OnKeySpace()
     {
         if (_isScripting)
-        {   
+        {
+            _animListExecuted = false;
             switch (CurrentState)
             {
                 case PlayerState.EdgeLaddering:
@@ -633,6 +664,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onGroundImpact()
     {
+        InEndOfTube = false;
         _ignoreLedderEdge = false;
         _animator.SetBool("Ladder", false);
         _animator.SetBool("LadderMovement", false);
@@ -714,8 +746,9 @@ public class PlayerControllerExperimental : MonoBehaviour
         _keysToReact.Add(KeyCode.DownArrow);
         _animScriptCommands.Clear();
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.MovementFalse, animScriptCommands.TubeTrue });
-        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.TubeIdleTrue });
+        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.TubeIdleTrue, animScriptCommands.InEndOfTubeTrue });
         _rendererPosDif.Clear();
+        _animListExecuted = false;
         _inertTimer = 0;
     }
 
@@ -746,12 +779,11 @@ public class PlayerControllerExperimental : MonoBehaviour
         _indexToRotate = -1;
         _keysToReact.Clear();
         _keysToReact.Add(KeyCode.Space);
-        if (FacingRight) _keysToReact.Add(KeyCode.LeftArrow);
-        else _keysToReact.Add(KeyCode.RightArrow);
         _animScriptCommands.Clear();
         _animScriptCommands.Add(new List<animScriptCommands> {animScriptCommands.JumpToWallFalse, animScriptCommands.CzekaningTrue});
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.UpWallFalse,  animScriptCommands.CzekaningFalse, animScriptCommands.MovementTrue});
         _animScriptCommands.Add(new List<animScriptCommands> {  });
+        _animListExecuted = false;
         _rendererPosDif.Clear();
         _rendererPosDif.Add(new Vector3(0f, 0f, 0f));
         if (FacingRight) _rendererPosDif.Add(new Vector3(0.15f, -0.15f, 0f));
@@ -797,6 +829,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         _animScriptCommands.Add(new List<animScriptCommands> { });
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.LadderFalse, animScriptCommands.UpLadderFalse });//animScriptCommands.MovementTrue });
         _animScriptCommands.Add(new List<animScriptCommands> {  });
+        _animListExecuted = false;
         _rendererPosDif.Clear();
         _rendererPosDif.Add(new Vector3(0f, 0f, 0f));
         if (FacingRight) _rendererPosDif.Add(new Vector3(0.15f, -0.15f, 0f));
@@ -831,6 +864,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         _indexToReact = -1;
         _indexToRotate = -1;
         _keysToReact.Clear();
+        _animListExecuted = false;
         _animScriptCommands.Clear();
         _animScriptCommands.Add(new List<animScriptCommands> { });
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.LadderTrue });
@@ -862,7 +896,8 @@ public class PlayerControllerExperimental : MonoBehaviour
         _indexToReact = -1;
         _indexToRotate = -1;
         _animScriptCommands.Clear();
-       _rendererPosDif.Clear();
+        _animListExecuted = false;
+        _rendererPosDif.Clear();
         _inertTimer = 0;
     }
 
@@ -914,8 +949,9 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (_rigidbody.transform.position == _scriptDestinations[_index])
         {
 
-            if (_index < _animScriptCommands.Count)
+            if (_index < _animScriptCommands.Count && !_animListExecuted)
             {
+                _animListExecuted = true;
                 foreach (var animScriptCommand in _animScriptCommands[_index])
                 {
                     switch (animScriptCommand)
@@ -1007,6 +1043,10 @@ public class PlayerControllerExperimental : MonoBehaviour
                         case animScriptCommands.UpWallFalse:
                             _animator.SetBool("UpWall", false);
                             break;
+
+                        case animScriptCommands.InEndOfTubeTrue:
+                            InEndOfTube = true;
+                            break;
                     }
                 }
             }
@@ -1059,7 +1099,7 @@ public class PlayerControllerExperimental : MonoBehaviour
             else
             {
                 if (_index == _indexToRotate) transform.rotation = _scriptRotation;
-                
+                _animListExecuted = false;
                 _index++;
             }
             
