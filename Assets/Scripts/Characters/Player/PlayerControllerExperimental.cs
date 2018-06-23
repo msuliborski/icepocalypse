@@ -146,7 +146,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
         if (_isScripting)
         {
-            if (!_scriptInputBlocade) _onLeftDirection = true;
+            _onLeftDirection = true;
         }
         else
         {
@@ -161,7 +161,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
         if (_isScripting)
         {
-            if (!_scriptInputBlocade) _onRightDirection = true;
+            _onRightDirection = true;
         }
         else
         {
@@ -191,13 +191,13 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
         if (_isScripting)
         {
-            if (!_scriptInputBlocade) _onTopDirection = true;
+            if (!_scriptInputBlocade) _onDownDirection = true;
         }
         else
         {
             if (_gameStarted && (CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Laddering))
             {
-                _onTopDirection = true;
+                _onDownDirection = true;
             }
         }
     }
