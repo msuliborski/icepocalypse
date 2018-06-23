@@ -9,6 +9,7 @@ using Scripts.Variables;
 public class PlayerControllerExperimental : MonoBehaviour
 {
     #region Variables
+    public GameEvent PlayerHealEvent;
     public GameEvent PlayerDamageEvent;
     public GameEvent PlayerDeathEvent;
     public float JumpForce = 18;
@@ -225,6 +226,29 @@ public class PlayerControllerExperimental : MonoBehaviour
             _gameStarted = false;
         }
     }
+
+    public void OnEatFood()
+    {
+        Heal(10);
+    }
+
+    public void Heal(int amount)
+    {
+        if (Hp >= 100)
+            return;
+        
+        if (Hp + amount > 100)
+        {
+            amount = 100 - Hp;
+        }
+        Hp += amount;
+        for (int i = amount / 10; i >= 1; i--)
+        {
+            PlayerHealEvent.Raise();
+        }
+
+    }
+
 
     void Update()
     {

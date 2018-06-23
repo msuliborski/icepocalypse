@@ -85,60 +85,6 @@ public class UIController : MonoBehaviour
         _fightSystem.ClickedAttack = true;
     }
 
-	private void CheckGesture(Vector2 distance, Vector2 position, int fingerId = -1)
-	{
-        if (EventSystem.current.IsPointerOverGameObject(fingerId))
-            return;
-
-        if (position.x > Screen.width / 2)
-        {
-            OnRight();
-        }
-        else
-        {
-            OnLeft();
-        }
-	}
-
-
-	private void Update()
-	{
-	#if UNITY_EDITOR 
-		if (Input.GetButtonDown("Fire1"))
-		{
-			_touching = true;
-			_startPosition = Input.mousePosition;
-		}
-
-		if (Input.GetButtonUp("Fire1"))
-		{
-			if (_touching)
-			{
-				Vector2 distance;
-				distance.x = Input.mousePosition.x - _startPosition.x;
-				distance.y = Input.mousePosition.y - _startPosition.y;
-				CheckGesture(distance, Input.mousePosition);
-			}
-			_touching = false;
-		}
-	#else
-		if(Input.touchCount != 1) return;
-		var touch = Input.touches.First();
-		switch (touch.phase)
-		{
-			case TouchPhase.Began:
-				_startPosition = touch.position;
-                CheckGesture(_startPosition, _startPosition, touch.fingerId);
-				break;
-			
-			case TouchPhase.Ended:
-				//Vector2 distance = touch.position - _startPosition;
-				//CheckGesture(distance, touch.position);
-				break;
-        }
-	#endif
-	}
-
 
     public void OnGameRestart()
     {
