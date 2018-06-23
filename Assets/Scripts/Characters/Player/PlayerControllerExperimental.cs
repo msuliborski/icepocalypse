@@ -28,18 +28,9 @@ public class PlayerControllerExperimental : MonoBehaviour
     private float _scriptSpeed;
     public bool _isScripting = false;
     private bool _animListExecuted = false;
-    private bool _scriptSpeedAccelarated = false;
-    private float _scriptAcceleration = 0;
     private int _index;
-    private int _indexToRotate = -1;
-    private Quaternion _scriptRotation;
     private int _indexToReact = -1;
-    private KeyCode _keyToReact;
-    private List<KeyCode> _keysToReact;
     private List<Vector3> _rendererPosDif;
-
-
-
     private bool _gameStarted = false;
 
     private enum animScriptCommands
@@ -113,6 +104,11 @@ public class PlayerControllerExperimental : MonoBehaviour
     private float tubeHeight;
     private float playerWidth;
     private float playerHeight;
+    bool _onLeftDirection;
+    bool _onRightDirection;
+    bool _onTopDirection;
+    bool _onDownDirection;
+    private bool _scriptInputBlocade = true;
     #endregion
 
     #region Start&Update
@@ -137,7 +133,6 @@ public class PlayerControllerExperimental : MonoBehaviour
         playerWidth = 1f;
         playerHeight = 2f;
         _scriptDestinations = new List<Vector3>();
-        _keysToReact = new List<KeyCode>();
         _animScriptCommands = new List<List<animScriptCommands>>();
         _rendererPosDif = new List<Vector3>();
 
@@ -147,59 +142,70 @@ public class PlayerControllerExperimental : MonoBehaviour
         _onDownDirection = false;
     }
 
-    bool _onLeftDirection;
-    bool _onRightDirection;
-    bool _onTopDirection;
-    bool _onDownDirection;
-
     public void OnLeftDirection() 
     {
-        if (!_isScripting && _gameStarted && CurrentState != PlayerState.Attacking)
+        if (_isScripting)
         {
-            _onLeftDirection = true;
-            _onDownDirection = false;
+            if (!_scriptInputBlocade) _onLeftDirection = true;
         }
-
+        else
+        {
+            if (_gameStarted && CurrentState == PlayerState.Grounded)
+            {
+                _onLeftDirection = true;
+            }
+        }
     }
 
     public void OnRightDirection() 
     {
-        if (!_isScripting && _gameStarted && CurrentState != PlayerState.Attacking)
+        if (_isScripting)
         {
-            _onRightDirection = true;
-            _onDownDirection = false;
+            if (!_scriptInputBlocade) _onRightDirection = true;
+        }
+        else
+        {
+            if (_gameStarted && CurrentState == PlayerState.Grounded)
+            {
+                _onRightDirection = true;
+            }
         }
     }
 
     public void OnTopDirection()
     {
-        if (CurrentState != PlayerState.TubeSliding && _gameStarted)
-            _onTopDirection = true;
+        if (_isScripting)
+        {
+            if (!_scriptInputBlocade) _onTopDirection = true;
+        }
+        else
+        {
+            if (_gameStarted && (CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Laddering || CurrentState == PlayerState.WallHugging))
+            {
+                _onTopDirection = true;
+            }
+        }
+    }
+
+    public void OnDownDirection()
+    {
+        if (_isScripting)
+        {
+            if (!_scriptInputBlocade) _onTopDirection = true;
+        }
+        else
+        {
+            if (_gameStarted && (CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Laddering))
+            {
+                _onTopDirection = true;
+            }
+        }
     }
 
     public void OnGameStarted()
     {
         Debug.Log("Player received signal, let's go");
         _gameStarted = true;
-    }
-
-    public void OnDownDirection()
-    {
-        if (!_gameStarted)
-            return;
-        
-        if(
-            !_isScripting || 
-            (_isScripting && CurrentState == PlayerState.EdgeLaddering) ||
-            (_isScripting && CurrentState == PlayerState.EgdeClimbingBody) ||
-            (CurrentState == PlayerState.TubeSliding && 
-            _isScripting && 
-            _rigidbody.transform.position == _scriptDestinations[_index])
-        )
-        {
-            _onDownDirection = true;
-        }
-             
     }
 
     public void OnBarrelExploded()
@@ -245,7 +251,6 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
 
     }
-
 
     void Update()
     {
@@ -458,6 +463,7 @@ public class PlayerControllerExperimental : MonoBehaviour
             switch (CurrentState)
             {
                 case PlayerState.EdgeLaddering:
+                    _scriptInputBlocade = true;
                     _isScripting = false;
                     _rigidbody.isKinematic = false;
                     if (FacingRight) _rigidbody.velocity = new Vector2(0.5f, -3f);
@@ -466,18 +472,13 @@ public class PlayerControllerExperimental : MonoBehaviour
                     break;
 
                 case PlayerState.TubeSliding:
-                    
+                    _scriptInputBlocade = true;
                     _animator.SetBool("Tube Idle", false);
                     _animator.SetBool("Tube", false);
                     _animator.SetBool("Inert Down", true);
-
-                   
                     _index++;
                     break;
 
-                default:
-                    _index++;
-                    break;
             }
         }
         else
@@ -494,8 +495,6 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
     }
 
-
-
     public void OnKeyRight()
     {
         if (_isScripting)
@@ -504,18 +503,17 @@ public class PlayerControllerExperimental : MonoBehaviour
             switch (CurrentState)
             {
                 case PlayerState.EdgeLaddering:
-                    _isScripting = false;
-                    _rigidbody.isKinematic = false;
-                    _rigidbody.velocity = new Vector2(3f, 0);
-                    SetFacingRight(true);
-                    _ignoreLedderEdge = true;
-                    _animator.SetBool("Ladder", false);
-                    _animator.SetBool("LadderMovement", false);
-                    //_animator.SetBool("InertDown2", false);
-                    break;
-
-                default:
-                    _index++;
+                    if (!FacingRight)
+                    {
+                        _scriptInputBlocade = true;
+                        _isScripting = false;
+                        _rigidbody.isKinematic = false;
+                        _rigidbody.velocity = new Vector2(3f, 0);
+                        SetFacingRight(true);
+                        _ignoreLedderEdge = true;
+                        _animator.SetBool("Ladder", false);
+                        _animator.SetBool("LadderMovement", false);
+                    }
                     break;
             }
         }
@@ -541,18 +539,17 @@ public class PlayerControllerExperimental : MonoBehaviour
             switch (CurrentState)
             {
                 case PlayerState.EdgeLaddering:
-                    _isScripting = false;
-                    _rigidbody.isKinematic = false;
-                    _rigidbody.velocity = new Vector2(-3f, 0);
-                    SetFacingRight(false);
-                    _ignoreLedderEdge = true;
-                    _animator.SetBool("Ladder", false);
-                    _animator.SetBool("LadderMovement", false);
-                    //_animator.SetBool("InertDown2", false);
-                    break;
-
-                default:
-                    _index++;
+                    if (FacingRight)
+                    {
+                        _scriptInputBlocade = true;
+                        _isScripting = false;
+                        _rigidbody.isKinematic = false;
+                        _rigidbody.velocity = new Vector2(-3f, 0);
+                        SetFacingRight(false);
+                        _ignoreLedderEdge = true;
+                        _animator.SetBool("Ladder", false);
+                        _animator.SetBool("LadderMovement", false);
+                    }
                     break;
             }
         }
@@ -578,17 +575,15 @@ public class PlayerControllerExperimental : MonoBehaviour
             switch (CurrentState)
             {
                 case PlayerState.EdgeLaddering:
+                    _scriptInputBlocade = true;
                     _index++;
                     _animator.SetBool("UpLadder", true);
                     break;
 
                 case PlayerState.EgdeClimbingCorner:
+                    _scriptInputBlocade = true;
                     _index++;
                     _animator.SetBool("UpWall", true);
-                    break;
-
-                default:
-                    _index++;
                     break;
             }
         }
@@ -607,7 +602,6 @@ public class PlayerControllerExperimental : MonoBehaviour
                     _rigidbody.AddForce(new Vector2(300 * WallReflectionForce, 400 * WallJumpForce));
                     SetFacingRight(true);
                 }
-                //_animator.SetBool("InertDown2", false);
                 _animator.SetBool("Czekaning", false);
                 _animator.SetBool("JumpToWall", false);
                 _animator.SetBool("Movement", true);
@@ -688,7 +682,6 @@ public class PlayerControllerExperimental : MonoBehaviour
         InEndOfTube = false;
         _inertDown = false;
         _ignoreLedderEdge = false;
-        //_animator.SetBool("InertDown2", false);
         _animator.SetBool("JumpIdle", false);
         _animator.SetBool("Ladder", false);
         _animator.SetBool("LadderMovement", false);
@@ -707,7 +700,6 @@ public class PlayerControllerExperimental : MonoBehaviour
     private void onLadderImpact()
     {
         _animator.SetBool("WallReflection", false);
-        //_animator.SetBool("InertDown2", false);
         _animator.SetBool("Ladder", true);
         _rigidbody.gravityScale = 0;
         if (!_ignoreLedderEdge) _rigidbody.velocity = new Vector2(0f, 0f);
@@ -722,7 +714,6 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onSlopeImpact()
     {
-        //_animator.SetBool("InertDown2", false);
         _animator.SetBool("Tube Idle", false);
         _animator.SetBool("Ladder", false);
         _animator.SetBool("LadderMovement", false);
@@ -744,8 +735,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onTubeImpact()
     {
-        _scriptDestinations.Clear();
-        //_animator.SetBool("InertDown2", false);
+        resetScripting();
         _animator.SetBool("Ladder", false);
         _animator.SetBool("LadderMovement", false);
         _animator.SetBool("Tube", false);
@@ -761,27 +751,14 @@ public class PlayerControllerExperimental : MonoBehaviour
         _scriptDestinations.Add(new Vector3(Start.transform.position.x, transform.position.y, 0f));
         _scriptDestinations.Add(new Vector3(End.transform.position.x + playerWidth, End.transform.position.y + playerHeight / 4, 0f));
         _scriptSpeed = 3.0f;
-        _isScripting = true;
-        _scriptSpeedAccelarated = false;
-        _rigidbody.isKinematic = true;
-        _rigidbody.velocity = new Vector3(0, 0, 0);
-        _index = 0;
         _indexToReact = 1;
-        _indexToRotate = -1;
-        _keysToReact.Clear();
-        _keysToReact.Add(KeyCode.DownArrow);
-        _animScriptCommands.Clear();
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.MovementFalse, animScriptCommands.TubeTrue });
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.TubeIdleTrue, animScriptCommands.InEndOfTubeTrue });
-        _rendererPosDif.Clear();
-        _animListExecuted = false;
-        _inertTimer = 0;
     }
 
     void onEdgeCornerImpact()
     {
-        _scriptDestinations.Clear();
-        //_animator.SetBool("InertDown2", false);
+        resetScripting();
         _animator.SetBool("WallReflection", false);
         GameObject go = findClosestObjectWithTag("WallEdge", 1);
         if (FacingRight)
@@ -797,36 +774,22 @@ public class PlayerControllerExperimental : MonoBehaviour
             _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(-1f, 0, 0));
         }
         _scriptSpeed = 4.0f;
-        _isScripting = true;
-        _scriptSpeedAccelarated = false;
-        _rigidbody.isKinematic = true;
-        _rigidbody.velocity = new Vector3(0, 0, 0);
-        _index = 0;
         _indexToReact = 0;
-        _indexToRotate = -1;
-        _keysToReact.Clear();
-        _keysToReact.Add(KeyCode.Space);
-        _animScriptCommands.Clear();
         _animScriptCommands.Add(new List<animScriptCommands> {animScriptCommands.JumpToWallFalse, animScriptCommands.CzekaningTrue});
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.UpWallFalse,  animScriptCommands.CzekaningFalse, animScriptCommands.MovementTrue});
         _animScriptCommands.Add(new List<animScriptCommands> {  });
-        _animListExecuted = false;
-        _rendererPosDif.Clear();
         _rendererPosDif.Add(new Vector3(0f, 0f, 0f));
         if (FacingRight) _rendererPosDif.Add(new Vector3(0.15f, -0.15f, 0f));
         else _rendererPosDif.Add(new Vector3(-0.15f, -0.15f, 0f));
         _rendererPosDif.Add(new Vector3(0f, 0f, 0f));
-        _inertTimer = 0;
     }
 
     void onLadderEdgeImpact()
     {
-        //_animator.SetBool("InertDown2", false);
+        resetScripting();
         _animator.SetBool("LadderMovement", false);
         _animator.SetBool("WallReflection", false);
         _animator.SetBool("Ladder", true);
-        
-        _scriptDestinations.Clear();
         GameObject go = findClosestObjectWithTag("ladderEdge", 5);
         if (FacingRight)
         {
@@ -841,36 +804,20 @@ public class PlayerControllerExperimental : MonoBehaviour
             _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(-2f, 0, 0));
         }
         _scriptSpeed = 4.0f;
-        _isScripting = true;
-        _rigidbody.isKinematic = true;
-        _scriptSpeedAccelarated = false;
-        _rigidbody.velocity = new Vector3(0, 0, 0);
-        _index = 0;
         _indexToReact = 0;
-        _indexToRotate = -1;
-        _keysToReact.Clear();
-        _keysToReact.Add(KeyCode.Space);
-        _keysToReact.Add(KeyCode.DownArrow);
-        if (FacingRight)_keysToReact.Add(KeyCode.LeftArrow);
-        else _keysToReact.Add(KeyCode.RightArrow);
-        _animScriptCommands.Clear();
         _animScriptCommands.Add(new List<animScriptCommands> { });
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.LadderFalse, animScriptCommands.UpLadderFalse });//animScriptCommands.MovementTrue });
         _animScriptCommands.Add(new List<animScriptCommands> {  });
-        _animListExecuted = false;
-        _rendererPosDif.Clear();
         _rendererPosDif.Add(new Vector3(0f, 0f, 0f));
         if (FacingRight) _rendererPosDif.Add(new Vector3(0.15f, -0.15f, 0f));
         else _rendererPosDif.Add(new Vector3(-0.15f, -0.15f, 0f));
         _rendererPosDif.Add(new Vector3(0f, 0f, 0f));
-        _inertTimer = 0;
     }
 
 
     void onLadderEdge1Impact()
     {
-        _scriptDestinations.Clear();
-        //_animator.SetBool("InertDown2", false);
+        resetScripting();
         GameObject go = findClosestObjectWithTag("ladderEdge", 5);
         if (FacingRight)
         {
@@ -885,27 +832,15 @@ public class PlayerControllerExperimental : MonoBehaviour
             _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0f, -playerWidth));
         }
         _scriptSpeed = 4.0f;
-        _isScripting = true;
-        _rigidbody.isKinematic = true;
-        _scriptSpeedAccelarated = false;
-        _rigidbody.velocity = new Vector3(0, 0, 0);
-        _index = 0;
         _indexToReact = -1;
-        _indexToRotate = -1;
-        _keysToReact.Clear();
-        _animListExecuted = false;
-        _animScriptCommands.Clear();
         _animScriptCommands.Add(new List<animScriptCommands> { });
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.LadderTrue });
-        _rendererPosDif.Clear();
-        _inertTimer = 0;
     }
 
     void onEdgeBodyImpact()
     {
-        //_animator.SetBool("InertDown2", false);
+        resetScripting();
         _animator.SetBool("WallReflection", false);
-        _scriptDestinations.Clear();
         GameObject go = findClosestObjectWithTag("WallEdge", 1);
         if (FacingRight)
         {
@@ -918,22 +853,11 @@ public class PlayerControllerExperimental : MonoBehaviour
             _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(-1f, 0, 0));
         }
         _scriptSpeed = 4.0f;
-        _isScripting = true;
-        _scriptSpeedAccelarated = false;
-        _rigidbody.isKinematic = true; 
-        _rigidbody.velocity = new Vector3(0, 0, 0);
-        _index = 0;
         _indexToReact = -1;
-        _indexToRotate = -1;
-        _animScriptCommands.Clear();
-        _animListExecuted = false;
-        _rendererPosDif.Clear();
-        _inertTimer = 0;
     }
 
     private void onWallImpact()
     {
-        _animator.SetBool("InertDown2", false);
         if (PreviousState == PlayerState.Grounded)
         {
             _rigidbody.velocity = new Vector2(0, 6);
@@ -971,7 +895,6 @@ public class PlayerControllerExperimental : MonoBehaviour
             _renderer.transform.position = transform.position;
             return;
         }
-        if (_scriptSpeedAccelarated) _scriptSpeed += _scriptAcceleration;
         transform.position = Vector2.MoveTowards(_rigidbody.transform.position, _scriptDestinations[_index], _scriptSpeed * Time.deltaTime);
         if (_index < _rendererPosDif.Count)
         {
@@ -1084,52 +1007,31 @@ public class PlayerControllerExperimental : MonoBehaviour
 
             if (_indexToReact == _index)
             {
-                if (_onTopDirection) {
+                _scriptInputBlocade = false;
+
+                if (_onTopDirection || Input.GetKeyDown(KeyCode.Space))
+                {
                     OnKeySpace();
                     _onTopDirection = false;
                 }
-
-                if (_onDownDirection)
+                else if (_onDownDirection || Input.GetKeyDown(KeyCode.DownArrow))
                 {
                     OnKeyDown();
                     _onDownDirection = false;
                 } 
-
-                if (_onRightDirection) {
+                else if (_onRightDirection || Input.GetKeyDown(KeyCode.RightArrow))
+                {
                     OnKeyRight();
                     _onRightDirection = false;
                 }
-
-                if (_onLeftDirection) {
+                else if (_onLeftDirection || Input.GetKeyDown(KeyCode.LeftArrow))
+                {
                     OnKeyLeft();
                     _onLeftDirection = false;
-                }
-
-                for (int i = 0; i < _keysToReact.Count; i++)
-                {
-                    if (Input.GetKeyDown(_keysToReact[i]))
-                    {
-                        switch (_keysToReact[i])
-                        {
-                            case KeyCode.Space:
-                                OnKeySpace();
-                                break;
-                            case KeyCode.DownArrow:
-                                OnKeyDown();
-                                break;
-                            case KeyCode.LeftArrow:
-                                OnKeyLeft();
-                                break;
-                            case KeyCode.RightArrow:
-                                OnKeyRight();
-                                break;
-                        }
-                    }
                 }
             }
             else
             {
-                if (_index == _indexToRotate) transform.rotation = _scriptRotation;
                 _animListExecuted = false;
                 _index++;
             }
@@ -1168,6 +1070,20 @@ public class PlayerControllerExperimental : MonoBehaviour
         return closest;
     }
 
+
+    private void resetScripting()
+    {
+        _scriptDestinations.Clear();
+        _isScripting = true;
+        _rigidbody.velocity = new Vector3(0, 0, 0);
+        _rigidbody.isKinematic = true;
+        _index = 0;
+        _animListExecuted = false;
+        _animScriptCommands.Clear();
+        _rendererPosDif.Clear();
+        _inertTimer = 0;
+    }
+       
     public void SetAttackingState()
     {
         CurrentState = PlayerState.Attacking;
