@@ -42,7 +42,7 @@ public class UIController : MonoBehaviour
         _leftArrow = false;
         if (!_rightArrow) 
         {
-            _playerControllerExperimental.OnDownDirection();
+            _playerControllerExperimental.StopMovement();
         }
     }
 
@@ -51,7 +51,7 @@ public class UIController : MonoBehaviour
         _rightArrow = false;
         if (!_leftArrow) 
         {
-            _playerControllerExperimental.OnDownDirection();
+            _playerControllerExperimental.StopMovement();
         }
     }
 
