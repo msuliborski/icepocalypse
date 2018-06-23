@@ -172,6 +172,16 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
     }
 
+    public void OnRightDirectionEnd()
+    {
+        _onRightDirection = false;
+    }
+
+    public void OnLeftDirectionEnd()
+    {
+        _onLeftDirection = false;
+    }
+
     public void OnTopDirection()
     {
         if (_isScripting)
@@ -369,16 +379,13 @@ public class PlayerControllerExperimental : MonoBehaviour
                     if (Input.GetKeyDown(KeyCode.RightArrow) || _onRightDirection)  
                     {
                         OnKeyRight();
-                        _onRightDirection = false;
                     }
                     if (Input.GetKeyDown(KeyCode.LeftArrow) || _onLeftDirection) 
                     {
                         OnKeyLeft();
-                        _onLeftDirection = false;
                     }
                     if (Input.GetKeyDown(KeyCode.DownArrow) || _onDownDirection)
                     {
-                        _onDownDirection = false;
                         OnKeyDown();
                     } 
                     if (Input.GetKeyDown(KeyCode.Space) || _onTopDirection)
@@ -427,12 +434,10 @@ public class PlayerControllerExperimental : MonoBehaviour
                     if ((Input.GetKeyDown(KeyCode.RightArrow) || _onRightDirection) && !FacingRight)
                     {
                         OnKeyRight();
-                        _onRightDirection = false;
                     }
                     if ((Input.GetKeyDown(KeyCode.LeftArrow) || _onLeftDirection) && FacingRight) 
                     {
                         OnKeyLeft();
-                        _onLeftDirection = false;
                     }
                     break;
                 
@@ -1020,12 +1025,10 @@ public class PlayerControllerExperimental : MonoBehaviour
                 else if (_onRightDirection || Input.GetKeyDown(KeyCode.RightArrow))
                 {
                     OnKeyRight();
-                    _onRightDirection = false;
                 }
                 else if (_onLeftDirection || Input.GetKeyDown(KeyCode.LeftArrow))
                 {
                     OnKeyLeft();
-                    _onLeftDirection = false;
                 }
             }
             else

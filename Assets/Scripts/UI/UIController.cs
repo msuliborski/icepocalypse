@@ -40,6 +40,7 @@ public class UIController : MonoBehaviour
     public void OnLeftExit()
     {
         _leftArrow = false;
+        _playerControllerExperimental.OnLeftDirectionEnd();
         if (!_rightArrow) 
         {
             _playerControllerExperimental.StopMovement();
@@ -49,6 +50,7 @@ public class UIController : MonoBehaviour
     public void OnRightExit()
     {
         _rightArrow = false;
+        _playerControllerExperimental.OnRightDirectionEnd();
         if (!_leftArrow) 
         {
             _playerControllerExperimental.StopMovement();
