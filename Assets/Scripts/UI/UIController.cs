@@ -45,6 +45,7 @@ public class UIController : MonoBehaviour
 
     public void OnTop() {
         _playerControllerExperimental.OnTopDirection();
+
     }
 
     public void OnDown() 
