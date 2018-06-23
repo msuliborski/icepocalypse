@@ -156,12 +156,21 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     public void OnLeftDirection() 
     {
-        if (!_isScripting && _gameStarted && CurrentState != PlayerState.Attacking) _onLeftDirection = true;
+        if (!_isScripting && _gameStarted && CurrentState != PlayerState.Attacking)
+        {
+            _onLeftDirection = true;
+            _onDownDirection = false;
+        }
+
     }
 
     public void OnRightDirection() 
     {
-        if (!_isScripting && _gameStarted && CurrentState != PlayerState.Attacking) _onRightDirection = true;
+        if (!_isScripting && _gameStarted && CurrentState != PlayerState.Attacking)
+        {
+            _onRightDirection = true;
+            _onDownDirection = false;
+        }
     }
 
     public void OnTopDirection()
