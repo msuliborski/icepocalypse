@@ -150,7 +150,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
         else
         {
-            if (_gameStarted && (CurrentState == PlayerState.Grounded || (CurrentState == PlayerState.Laddering && FacingRight)))
+            if (_gameStarted && (CurrentState == PlayerState.Inert || CurrentState == PlayerState.Grounded || (CurrentState == PlayerState.Laddering && FacingRight)))
             {
                 _onLeftDirection = true;
             }
@@ -165,7 +165,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
         else
         {
-            if (_gameStarted && (CurrentState == PlayerState.Grounded || (CurrentState == PlayerState.Laddering && !FacingRight)))
+            if (_gameStarted && (CurrentState == PlayerState.Inert || CurrentState == PlayerState.Grounded || (CurrentState == PlayerState.Laddering && !FacingRight)))
             {
                 _onRightDirection = true;
             }
