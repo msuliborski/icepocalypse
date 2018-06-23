@@ -1,27 +1,33 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using Scripts.Variables;
 
 public class FoodController : MonoBehaviour
 {
-    public bool Eaten = false;
-    private PlayerControllerExperimental _playerControllerScript;
-    public Animator Animator;
-
-    // Use this for initialization
-    void Start ()
-    {
-        _playerControllerScript = GameObject.FindWithTag("Player").GetComponent<PlayerControllerExperimental>();
-        Animator = GetComponent<Animator>();
-    }
+    private bool _canBeEaten = false;
+    public GameEvent PlayerEatEvent;
 	void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.gameObject.tag == "Player") _playerControllerScript.CurrentlyActiveFood = gameObject;
+        if (col.gameObject.tag == "Player")
+        {
+            _canBeEaten = true;
+        } 
     }
 
     void OnTriggerExit2D(Collider2D col)
     {
-        if (col.gameObject.tag == "Player") _playerControllerScript.CurrentlyActiveFood = null;
+        if (col.gameObject.tag == "Player") 
+        {
+            _canBeEaten = false;
+        }
     }
-	
+
+    private void OnMouseDown()
+    {
+        if (_canBeEaten)
+        {
+            PlayerEatEvent.Raise();
+            Destroy(gameObject);
+        }
+    }
+
 }

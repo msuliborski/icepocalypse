@@ -37,7 +37,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1911919523018754}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4, y: 19, z: 0}
+  m_LocalPosition: {x: -3, y: 18.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -66,7 +66,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2, y: 0.37253803}
+  m_Size: {x: 2, y: 2}
   m_EdgeRadius: 0
 --- !u!95 &95886108718291714
 Animator:
@@ -97,8 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 931af08a7d38a9f4a8211fc446c79d1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Eaten: 0
-  Animator: {fileID: 0}
+  PlayerEatEvent: {fileID: 11400000, guid: e8eb6f986584b4670a4f614c3fafff62, type: 2}
 --- !u!212 &212053597977266822
 SpriteRenderer:
   m_ObjectHideFlags: 1

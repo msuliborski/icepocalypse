@@ -24,7 +24,6 @@ public class PlayerControllerExperimental : MonoBehaviour
     public bool InEndOfTube = false;
     private bool _ignoreLedderEdge = false;
     private bool _inertDown = false;
-    public GameObject CurrentlyActiveFood;
     private List<Vector3> _scriptDestinations;
     private float _scriptSpeed;
     public bool _isScripting = false;
@@ -146,14 +145,12 @@ public class PlayerControllerExperimental : MonoBehaviour
         _onRightDirection = false;
         _onTopDirection = false;
         _onDownDirection = false;
-        _tapOnFood = false;
     }
 
     bool _onLeftDirection;
     bool _onRightDirection;
     bool _onTopDirection;
     bool _onDownDirection;
-    bool _tapOnFood;
 
     public void OnLeftDirection() 
     {
@@ -385,11 +382,6 @@ public class PlayerControllerExperimental : MonoBehaviour
                         _onTopDirection = false;
                         OnKeySpace();
                     } 
-                    if(Input.GetKeyDown(KeyCode.Q) || _tapOnFood)
-                    {
-                        _tapOnFood = false;
-                        OnKeyFood();
-                    }
                     if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) _animator.SetBool("Movement", false);
                     else _animator.SetBool("Movement", (_moveDirection != 0) ? true : false);
                     break;
@@ -502,20 +494,6 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
     }
 
-
-    public void OnKeyFood()
-    {
-        if (CurrentlyActiveFood != null)
-        {
-            FoodController foodController = CurrentlyActiveFood.GetComponent<FoodController>();
-            if (!foodController.Eaten)
-            {
-                foodController.Eaten = true;
-                foodController.Animator.SetBool("eaten", true);
-                TakeHP(-10);
-            }
-        }
-    }
 
 
     public void OnKeyRight()
