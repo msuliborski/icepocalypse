@@ -384,10 +384,6 @@ public class PlayerControllerExperimental : MonoBehaviour
                     {
                         OnKeyLeft();
                     }
-                    if (Input.GetKeyDown(KeyCode.DownArrow) || _onDownDirection)
-                    {
-                        OnKeyDown();
-                    } 
                     if (Input.GetKeyDown(KeyCode.Space) || _onTopDirection)
                     {
                         if (_moveDirection == 0 && !Physics2D.IsTouchingLayers(_colliderBody, Wall)) _animator.SetBool("JumpIdle", true);
@@ -400,11 +396,6 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                 case PlayerState.Inert:
 
-                    /*if (!_inertDown && _rigidbody.velocity.y < -5f)
-                    {
-                        _inertDown = true;
-                        _animator.SetBool("InertDown2", true);
-                    }*/
                     _inertTimer += Time.deltaTime;
                     break;
 
