@@ -348,7 +348,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                     } 
                     if (Input.GetKeyDown(KeyCode.Space) || _onTopDirection)
                     {
-                        if (_moveDirection == 0) _animator.SetBool("JumpIdle", true);
+                        if (_moveDirection == 0 && !Physics2D.IsTouchingLayers(_colliderBody, Wall)) _animator.SetBool("JumpIdle", true);
                         _onTopDirection = false;
                         OnKeySpace();
                     } 
@@ -357,7 +357,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                         _tapOnFood = false;
                         OnKeyFood();
                     }
-                    if (Physics2D.IsTouchingLayers(_colliderCorner, Wall)) _animator.SetBool("Movement", false);
+                    if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) _animator.SetBool("Movement", false);
                     else _animator.SetBool("Movement", (_moveDirection != 0) ? true : false);
                     break;
 
