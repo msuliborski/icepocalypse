@@ -732,7 +732,6 @@ public class PlayerControllerExperimental : MonoBehaviour
         _inertTimer = 0;
     }
 
-
     private void onTubeImpact()
     {
         resetScripting();
@@ -813,7 +812,6 @@ public class PlayerControllerExperimental : MonoBehaviour
         else _rendererPosDif.Add(new Vector3(-0.15f, -0.15f, 0f));
         _rendererPosDif.Add(new Vector3(0f, 0f, 0f));
     }
-
 
     void onLadderEdge1Impact()
     {
