@@ -10,7 +10,7 @@ using Scripts.Variables;
 
 public class UIController : MonoBehaviour
 {
-	public GameObject Player;
+    public GameObject Player;
 
     public GameObject DeathPanel;
     public GameObject GameTopPanel;
@@ -23,23 +23,49 @@ public class UIController : MonoBehaviour
 
 
 
-	private Vector2 _startPosition;
-	private bool _touching = false;
+    private Vector2 _startPosition;
+    private bool _touching = false;
     private PlayerControllerExperimental _playerControllerExperimental;
     private FightSystem _fightSystem;
-	
-    public void Start() 
+
+    bool _rightArrow = false;
+    bool _leftArrow = false;
+
+    public void Start()
     {
         _playerControllerExperimental = Player.GetComponent<PlayerControllerExperimental>();
         _fightSystem = Player.GetComponent<FightSystem>();
     }
+
+    public void OnLeftExit()
+    {
+        _leftArrow = false;
+        if (!_rightArrow) 
+        {
+            _playerControllerExperimental.OnDownDirection();
+        }
+    }
+
+    public void OnRightExit()
+    {
+        _rightArrow = false;
+        if (!_leftArrow) 
+        {
+            _playerControllerExperimental.OnDownDirection();
+        }
+    }
+
 	public void OnLeft()
 	{
+        _leftArrow = true;
+        _rightArrow = false;
 		_playerControllerExperimental.OnLeftDirection();
 	}
 
 	public void OnRight()
 	{
+        _rightArrow = true;
+        _leftArrow = false;
 		_playerControllerExperimental.OnRightDirection();
 	}
 
