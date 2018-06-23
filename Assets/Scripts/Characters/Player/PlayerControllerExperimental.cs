@@ -384,6 +384,10 @@ public class PlayerControllerExperimental : MonoBehaviour
                     {
                         OnKeyLeft();
                     }
+                    if (Input.GetKeyDown(KeyCode.DownArrow))
+                    {
+                        OnKeyDown();
+                    } 
                     if (Input.GetKeyDown(KeyCode.Space) || _onTopDirection)
                     {
                         if (_moveDirection == 0 && !Physics2D.IsTouchingLayers(_colliderBody, Wall)) _animator.SetBool("JumpIdle", true);
