@@ -23,6 +23,7 @@ TagManager:
   - tubeMarker
   - ViewTrigger
   - Food
+  - EnemyHead
   layers:
   - Default
   - TransparentFX
@@ -45,8 +46,8 @@ TagManager:
   - LadderEdge
   - LadderEdge1
   - Enemy
-  - 
-  - 
+  - Player
+  - Head
   - 
   - 
   - 

@@ -1085,12 +1085,14 @@ public class PlayerControllerExperimental : MonoBehaviour
         CurrentState = PlayerState.Attacking;
     }
 
-    public IEnumerator UnsetAttackingState()
+    public void UnsetAttackingState()
     {
-        Debug.Log("unset");
-        yield return new WaitForSecondsRealtime(0.5f);
         CurrentState = PlayerState.Grounded;
-        Debug.Log("grounded");
+    }
+
+    public void SetMoveDirection()
+    {
+        _moveDirection = 0f;
     }
 
     public IEnumerator InertTimerZero()

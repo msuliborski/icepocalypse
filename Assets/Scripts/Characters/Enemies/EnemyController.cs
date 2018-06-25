@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour {
 
-    private float _attackDelay = 1.5f;
+    public float QTECircleLifeTime;
 
-    private float _attackDelayTimeStamp = 0f;
+    private bool _vulnerable;
 
     public GameObject CanvasObject;
 
@@ -54,11 +54,13 @@ public class EnemyController : MonoBehaviour {
     private bool _canHeFight = true;
     private bool _sideFlag = false;
 
-    public GameObject WeaponCollider;
+    public Collider2D WeaponCollider;
 
     private bool _wait = false;
-    private float _waitTime = 1.0f;
+    private float _waitTime = 2.0f;
     private float _waitFlag;
+
+    private bool _dead = false;
 
     //public GameObject HitFlag;
 
@@ -80,20 +82,6 @@ public class EnemyController : MonoBehaviour {
 
 	private PlayerState _playerState = PlayerState.Walking;
 
-
-    bool _gameStarted = false;
-
-    public void OnGameStarted()
-    {
-        _gameStarted = true;
-    }
-
-    public void OnPlayerDeath()
-    {
-        _gameStarted = false;
-    }
-
-
 	
 	void Start ()
 	{
@@ -101,7 +89,7 @@ public class EnemyController : MonoBehaviour {
 
         //HitFlag.SetActive(false);
 
-        WeaponCollider.SetActive(false);
+        WeaponCollider.enabled = false;
 
         _timeStamp = 0f;
 
@@ -127,10 +115,8 @@ public class EnemyController : MonoBehaviour {
 
 	void Update () 
 	{
-        if (!_gameStarted)
-        {
+        if (_dead)
             return;
-        }
 
         var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
@@ -143,7 +129,7 @@ public class EnemyController : MonoBehaviour {
         {
             _canHeFight = true;
             _sideFlag = false;
-            //WeaponCollider.enabled = false;
+            WeaponCollider.enabled = false;
             _isDefending = false;
         }
 
@@ -166,10 +152,17 @@ public class EnemyController : MonoBehaviour {
                 }
                 else
                 {
-                    CancelQTE();
                     _playerObject.GetComponent<FightSystem>().KillTheGuyFinisher();
-                    _playerObject.GetComponent<FightSystem>().CancelQTE();
-                    Destroy(gameObject);
+                    StartCoroutine(DestroyItself());
+
+                    //Destroy(gameObject);
+                    /*
+                    GetComponent<SpriteRenderer>().enabled = false;
+                    GetComponent<BoxCollider2D>().isTrigger = true;
+                    _rb.isKinematic = true;
+                    _anim.SetBool("dead", true);
+                    _dead = true;
+                    */
                 }
             }
 
@@ -199,12 +192,27 @@ public class EnemyController : MonoBehaviour {
        
 	}
 
+    public void DestroyYourself()
+    {
+        StartCoroutine(DestroyItself());
+    }
+
+    IEnumerator DestroyItself()
+    {
+        yield return new WaitForSecondsRealtime(0.2f);
+        Destroy(gameObject);
+    }
+
     IEnumerator Wait()
     {
         yield return new WaitForSecondsRealtime(_waitTime);
         _anim.SetBool("stand", false);
-        ChangeFacingDirection();
-        _playerState = PlayerState.Walking;
+
+        if( _playerState == PlayerState.Idle )
+        {
+            ChangeFacingDirection();
+            _playerState = PlayerState.Walking;
+        }
     }
 
     void OnCollisionEnter2D( Collision2D col )
@@ -220,14 +228,7 @@ public class EnemyController : MonoBehaviour {
             {
                 ChangeFacingDirection();
             }
-
-            //_playerState = PlayerState.Running;
         }
-
-       // if (col.gameObject.tag == "Wall")
-        //{
-          //  ChangeFacingDirection();
-        //}
     }
 
     void OnTriggerEnter2D( Collider2D col )
@@ -238,7 +239,9 @@ public class EnemyController : MonoBehaviour {
 
             _anim.SetBool("gotHit", true);
 
-            SetHealth(-20);
+            if (_vulnerable)
+            SetHealth(-10);
+
             Debug.Log("enemy health: " + _enemyHealthPoints);
             _isUnderAttack = false;
 
@@ -249,7 +252,6 @@ public class EnemyController : MonoBehaviour {
                 Destroy(gameObject);
             }
 
-            //th7 was here : MOVIE CHANGES
             if ( _enemyHealthPoints <= 20 && !_isHurt && !_didQTE)
             {
                 _didQTE = true;
@@ -286,6 +288,7 @@ public class EnemyController : MonoBehaviour {
         switch( _playerState )
         {
             case PlayerState.Idle:
+               // Debug.Log("idldeldleldldl");
                 Stay();
                 break;
 
@@ -297,6 +300,26 @@ public class EnemyController : MonoBehaviour {
             case PlayerState.Running:
                // Debug.Log("running");
                 Run(EnemyRunningSpeed);
+
+                if (Mathf.Abs(transform.position.y - _playerObject.transform.position.y) >= 3.0f)
+                {
+                    _playerState = PlayerState.Walking;
+                    _anim.SetBool( "run", false );
+
+                    Debug.Log(" z biegu przechodzi do spacerku");
+
+                    if ( _playerObject.transform.position.x > transform.position.x )
+                    {
+                        _patrolRangeB = transform.position.x;
+                        _patrolRangeA = transform.position.x - 2.0f;
+                    }
+                    else
+                    {
+                        _patrolRangeA = transform.position.x;
+                        _patrolRangeB = transform.position.x + 2.0f;
+                    }
+                }
+
                 if (Mathf.Abs(_playerEnemyDistance) <= FightingDeadZone)
                 {
                     _playerState = PlayerState.Attacking;
@@ -307,14 +330,29 @@ public class EnemyController : MonoBehaviour {
                 break;
 
             case PlayerState.Attacking:
-             //   Debug.Log("attacking");
-                _rb.velocity = new Vector2(0f, _rb.velocity.y);
-                
-                if( Time.time - _attackDelayTimeStamp >= _attackDelay )
+                //   Debug.Log("attacking");
+
+                if (Mathf.Abs(transform.position.y - _playerObject.transform.position.y) >= 3.0f)
                 {
-                    Attack();
+                    _playerState = PlayerState.Walking;
+                    _anim.SetBool("run", false);
+
+                    Debug.Log(" z ataku przechodzi do spacerku");
+
+                    if (_playerObject.transform.position.x > transform.position.x)
+                    {
+                        _patrolRangeB = transform.position.x;
+                        _patrolRangeA = transform.position.x - 2.0f;
+                    }
+                    else
+                    {
+                        _patrolRangeA = transform.position.x;
+                        _patrolRangeB = transform.position.x + 2.0f;
+                    }
                 }
 
+                _rb.velocity = new Vector2(0f, _rb.velocity.y);
+                Attack();
                 if (Mathf.Abs(_playerEnemyDistance) > FightingDeadZone)
                 {
                     _playerState = PlayerState.Running;
@@ -373,71 +411,47 @@ public class EnemyController : MonoBehaviour {
         circle.GetComponent<QTECircleScript>().FatherObject = gameObject;
         //Instantiate(QteButton, CanvasObject.transform);
         circle.GetComponent<QTECircleScript>()._qteType = "Enemy";
-        circle.GetComponent<QTECircleScript>().LifeTime = 2.0f;
+        circle.GetComponent<QTECircleScript>().LifeTime = QTECircleLifeTime;
         return circle;
     }
 
     public void CancelQTE()
     {
         _isHurt = false;
-        _playerObject.GetComponent<FightSystem>().CancelQTE();
+        StartCoroutine(_playerObject.GetComponent<FightSystem>().CancelQTE("now"));
+        Debug.Log("anuluje qte");
         _qteCircleIterator = 0;
     }
 
     void Attack()
     {
-        //float x = Random.Range(1.0f, 3.0f);
 
-        _attackDelay = Random.Range(1.0f, 8.0f);
-        Debug.Log(_attackDelay);
+        float x = Random.Range(0f, 3.0f);
 
         if (_isDefending)
         {
             //_anim.SetBool("defend", true);
         }
 
-        _canHeFight = false;
-        //WeaponCollider.enabled = true;
-        _anim.SetBool("attack", true);
+        //Debug.Log(x);
 
-        _playerObject.GetComponent<FightSystem>().IsUnderAttack = true;
-        _attackDelayTimeStamp = Time.time;
-       
-       // StartCoroutine(PerformAttack());
+        if ( x < 0.1f && _canHeFight )
+        {
+            _canHeFight = false;
+            WeaponCollider.enabled = true;
+            _playerObject.GetComponent<FightSystem>().IsUnderAttack = true;
+            _anim.SetBool("attack", true);
+        }
     }
 
-    IEnumerator PerformAttack()
-    {
-        yield return new WaitForSecondsRealtime(0.7f);
-
-        _canHeFight = false;
-        //WeaponCollider.enabled = true;
-        _anim.SetBool("attack", true);
-        _playerObject.GetComponent<FightSystem>().IsUnderAttack = true;
-    }
-
-    public void Defend()
+    public void Defend(bool shouldTakeDamage)
     {
         if ( _playerState == PlayerState.Attacking )
         {
             _isUnderAttack = true;
-            float x = Random.Range(0f, 2.0f);
 
-            if (!_canHeFight)
-            {
-               // Debug.Log("pownien muc");
-            }
-
-            if (x <= 0.8f)
-            {
-                //Time.timeScale = 0.1f;
-                //_canHeFight = false;
-               // _anim.SetBool("defend", true);
-                //_animatingTime = Time.time;
-                //_isDefending = true;
-            }
+            _vulnerable = shouldTakeDamage;
         }
-        
     }
 
     public void CatchPlayer()
