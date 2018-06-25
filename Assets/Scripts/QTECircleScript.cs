@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class QTECircleScript : MonoBehaviour {
 
-    public float LifeTime = 1.0f;
+    public float LifeTime;
     private float _startTime;
 
     [HideInInspector]

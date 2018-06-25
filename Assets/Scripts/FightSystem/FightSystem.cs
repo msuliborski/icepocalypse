@@ -36,14 +36,23 @@ public class FightSystem : MonoBehaviour {
         _healthPoints = HealthPointsMax;
     }
 
-    public void CancelQTE()
+    public IEnumerator CancelQTE( string guy_dog_now )
     {
+        if (guy_dog_now == "guy" )
+        {
+            yield return new WaitForSecondsRealtime(2.0f);
+        }
+        else if (guy_dog_now == "dog")
+        {
+            yield return new WaitForSecondsRealtime(1.0f);
+        }
+
+        Debug.Log("nastepuje anulacja");
         _canIFight = true;
         IsQTE = false;
         IsDogQTE = false;
-        StartCoroutine(GetComponent<PlayerControllerExperimental>().UnsetAttackingState());
+        GetComponent<PlayerControllerExperimental>().UnsetAttackingState();
         AttackButtonToDisableWhenQTE.SetActive(true);
-        //GetComponent<PlayerControllerExperimental>().UnsetAttackingState();
     }
 
     public void ProceedToQTE()
@@ -59,9 +68,10 @@ public class FightSystem : MonoBehaviour {
         {
             if ( ClickedTheCircle )
             {
-                Debug.Log("super atak");
                 ClickedTheCircle = false;
                 _anim.SetBool("SuperAttack", true);
+
+                ShootRay(false);
             }
 
             return;
@@ -70,11 +80,10 @@ public class FightSystem : MonoBehaviour {
             {
             if (ClickedTheCircle)
                 {
-                    Debug.Log("super atak");
                     ClickedTheCircle = false;
                     _anim.SetBool("SuperAttack", true);
                     _anim.SetBool("WatchOut", false);
-                CancelQTE();
+                    CancelQTE( "now" );
             }
 
             return;
@@ -82,12 +91,12 @@ public class FightSystem : MonoBehaviour {
 
         var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
-        if (stateInfo.IsName("Base Layer.PlayerPunchBare") || stateInfo.IsName("Base Layer.PlayerDefend") || stateInfo.IsName("Base Layer.PlayerSuperPunchBare"))
+        if (stateInfo.IsName("Base Layer.PlayerPunchBare") || stateInfo.IsName("Base Layer.PlayerGotHitAnimation") || stateInfo.IsName("Base Layer.PlayerSuperPunchBare") || stateInfo.IsName("Base Layer.PlayerGotHitAnimation"))
         {
             _sideFlag = true;
         }
 
-        if (_sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunchBare") && !stateInfo.IsName("Base Layer.PlayerDefend") && !stateInfo.IsName("Base Layer.PlayerSuperPunchBare"))
+        if (_sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunchBare") && !stateInfo.IsName("Base Layer.PlayerGotHitAnimation") && !stateInfo.IsName("Base Layer.PlayerSuperPunchBare") && !stateInfo.IsName("Base Layer.PlayerGotHitAnimation"))
         {
             _sideFlag = false;
             _isDefending = false;
@@ -96,11 +105,11 @@ public class FightSystem : MonoBehaviour {
         }
 
         
-        if (true)//_canIFight)
+        if (_canIFight)
         {
-            if ( ClickedAttack || Input.GetKey(KeyCode.F) )
+            if ( ClickedAttack || Input.GetKeyDown(KeyCode.F) )
             {
-                ShootRay();
+                ShootRay(true);
 
                 ClickedAttack = false;
                 _canIFight = false;
@@ -123,13 +132,24 @@ public class FightSystem : MonoBehaviour {
     public void KillTheGuyFinisher()
     {
         _anim.SetBool("KillTheGuy", true);
+        StartCoroutine(CancelQTE("guy"));
     }
 
-    void ShootRay()
+    void ShootRay( bool shouldGiveDamage )
     {
         RaycastHit2D hit;
 
-        Vector2 RayDirection = new Vector2(transform.position.x + 0.7f, transform.position.y + 0.5f);
+        Vector2 RayDirection;
+
+        if ( transform.localScale.x > 0f )
+        {
+            RayDirection = new Vector2(transform.position.x + 0.7f, transform.position.y + 0.5f);
+        }
+        else
+        {
+            RayDirection = new Vector2(transform.position.x - 0.7f, transform.position.y + 0.5f);
+        }
+
         Debug.DrawRay(RayDirection, transform.localScale.x * Vector3.right * 5.0f, Color.yellow, 2.0f);
         int layerMask = LayerMask.GetMask("Enemy");
         hit = Physics2D.Raycast(RayDirection, transform.localScale.x * Vector3.right, 5.0f,layerMask );
@@ -137,9 +157,16 @@ public class FightSystem : MonoBehaviour {
         {
             if (hit.collider.tag == "Enemy")
             {
-                hit.collider.gameObject.SendMessage("Defend");
-               // Debug.Log("wyslalaem");
+                hit.collider.gameObject.SendMessage("Defend", shouldGiveDamage);
             }
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        if ( col.gameObject.tag == "Enemy" )
+        {
+            GetComponent<PlayerControllerExperimental>().SetMoveDirection();
         }
     }
 
@@ -147,19 +174,8 @@ public class FightSystem : MonoBehaviour {
     {
         if ( col.gameObject.tag == "EnemyFist" )
         {
-            //SetHealth(-10);
-
-            //Debug.Log("dostales bulawa");
             _anim.SetBool("GotHit", true);
-
-            if ( _healthPoints <= 0 )
-            {
-                //Debug.Log("umrales");
-            }
-        }
-        else if (col.gameObject.tag == "EnemyFist" && _isDefending)
-        {
-            //Debug.Log("obrona");
+            _canIFight = false;
         }
 
     }
@@ -191,7 +207,6 @@ public class FightSystem : MonoBehaviour {
             transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
         }
 
-        Debug.Log("wywoluje");
         _anim.SetBool("WatchOut", true);
         _anim.SetBool("Movement", false);
         GetComponent<PlayerControllerExperimental>().StopMovement();
@@ -199,9 +214,6 @@ public class FightSystem : MonoBehaviour {
 
     public void FallDown()
     {
-        //GetComponent<BoxCollider2D>().isTrigger = true;
-        //GetComponent<Rigidbody2D>().isKinematic = true;
-        Debug.Log("upadam");
         //GetComponent<PlayerControllerExperimental>().SetAttackingState();
         _anim.SetBool("FallDown", true);
         _anim.SetBool("WatchOut", false);
@@ -209,10 +221,10 @@ public class FightSystem : MonoBehaviour {
 
     public void DogIsDead()
     {
-        Debug.Log("dajemy animacje zabijania psa");
+        IsDogQTE = false;
         _anim.SetBool("KillTheDog", true);
         _anim.SetBool("FallDown", false);
-        CancelQTE();
+        StartCoroutine(CancelQTE("dog"));
     }
 
 }

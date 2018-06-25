@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class WildDogScript : MonoBehaviour
 {
+    private bool _dead = false;
+
     public GameObject CanvasObject;
 
     public BoxCollider2D PlayerCollider;
@@ -72,6 +74,8 @@ public class WildDogScript : MonoBehaviour
 
     void Update()
     {
+        if (_dead)
+            return;
 
         if ( !_isClutching )
         {
@@ -130,10 +134,22 @@ public class WildDogScript : MonoBehaviour
         if ( _keyPressesIterator >= 10 )
         {
             _playerObject.GetComponent<FightSystem>().DogIsDead();
-            _playerObject.GetComponent<FightSystem>().IsDogQTE = false;
             Destroy(_circle);
             Destroy(gameObject);
+            //Put dead dog in the background
+
+            _dead = true;
+            _rb.isKinematic = true;
+            GetComponent<BoxCollider2D>().isTrigger = true;
+            transform.position = new Vector3(_playerObject.transform.position.x, _playerObject.transform.position.y - 0.5f, _playerObject.transform.position.z);
+            //StartCoroutine(TurnSpriteOn());
         }
+    }
+
+    IEnumerator TurnSpriteOn()
+    {
+        yield return new WaitForSecondsRealtime(1.0f);
+        GetComponent<SpriteRenderer>().enabled = true;
     }
 
     void OnCollisionEnter2D(Collision2D col)
@@ -200,15 +216,15 @@ public class WildDogScript : MonoBehaviour
                 }
 
 
-                StartCoroutine(FreezeTimeForAWhile());
-
+                //StartCoroutine(FreezeTimeForAWhile());
+                /*
                 Vector2 vector = new Vector2(transform.position.x, transform.position.y + 0.5f);
 
                 _circle = Instantiate(QTECircle, CanvasObject.transform);
                 _circle.GetComponent<QTECircleScript>().FatherObject = gameObject;
                 _circle.GetComponent<QTECircleScript>()._qteType = "Dog";
-                _circle.GetComponent<QTECircleScript>().LifeTime = 0.01f;
-
+                _circle.GetComponent<QTECircleScript>().LifeTime = 0.3f;
+                */
                 _dogState = PlayerState.Attacking;
                 break;
 
@@ -265,6 +281,7 @@ public class WildDogScript : MonoBehaviour
     public void CatchPlayer()
     {
         _dogState = PlayerState.Running;
+        _anim.SetBool("run", true);
     }
 
 }

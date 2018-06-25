@@ -114,7 +114,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1508442799789786}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 42.69, y: -8.73, z: 0}
+  m_LocalPosition: {x: 83.9, y: 1.6, z: 0}
   m_LocalScale: {x: 0.38, y: 0.39012763, z: 1}
   m_Children:
   - {fileID: 4101178692454944}
@@ -131,7 +131,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1604964375412896}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 27.5, y: 0, z: 0}
+  m_LocalPosition: {x: 4.05, y: 0, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1.000006, z: 1}
   m_Children: []
   m_Father: {fileID: 4215606399853642}
@@ -145,7 +145,7 @@ Transform:
   m_GameObject: {fileID: 1333696215088756}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.94, y: 0.78, z: 0}
-  m_LocalScale: {x: 0.38182592, y: -0.999627, z: 1}
+  m_LocalScale: {x: 0.11, y: -0.999627, z: 1}
   m_Children: []
   m_Father: {fileID: 4215606399853642}
   m_RootOrder: 1
@@ -157,7 +157,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1365654369490326}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -19.5, y: 0, z: 0}
+  m_LocalPosition: {x: -13.91, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4215606399853642}
@@ -287,7 +287,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc2862b86ada066439361f4296c3f8f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EnemyObject: {fileID: 1508442799789786}
+  FatherObject: {fileID: 1508442799789786}
 --- !u!114 &114671938316141478
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -299,6 +299,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac485f1824bb0ea40b306ffbe119ce83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  QTECircleLifeTime: 0.6
   CanvasObject: {fileID: 0}
   QteButton: {fileID: 1581814255972552, guid: 5cb9cd2f0d5969c48841a87e4085ec70, type: 2}
   EnemyHealthPointsMax: 100
@@ -314,7 +315,7 @@ MonoBehaviour:
   - 1.5
   - 1.5
   - 1.5
-  QTECircleInterval: 1
+  QTECircleInterval: 0.5
   WeaponCollider: {fileID: 61765516519928676}
 --- !u!212 &212878665276077928
 SpriteRenderer:

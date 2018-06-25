@@ -553,7 +553,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07c53fba3f085ac4ca0362c904170606, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LifeTime: 1
+  LifeTime: 0.4
   _qteType: 
   FatherObject: {fileID: 0}
 --- !u!114 &114366099276471100
