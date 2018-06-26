@@ -138,11 +138,11 @@ public class FightSystem : MonoBehaviour {
 
         if ( transform.localScale.x > 0f )
         {
-            RayDirection = new Vector2(transform.position.x + 0.7f, transform.position.y + 0.5f);
+            RayDirection = new Vector2(transform.position.x + 0.7f, transform.position.y - 0.3f);
         }
         else
         {
-            RayDirection = new Vector2(transform.position.x - 0.7f, transform.position.y + 0.5f);
+            RayDirection = new Vector2(transform.position.x - 0.7f, transform.position.y -0.3f);
         }
 
         Debug.DrawRay(RayDirection, transform.localScale.x * Vector3.right * 5.0f, Color.yellow, 2.0f);
@@ -216,6 +216,7 @@ public class FightSystem : MonoBehaviour {
     public void FinisherFromAir()
     {
         _anim.SetBool("FinisherFromAir", true);
+        //Time.timeScale = 0.2f;
     }
 
 }

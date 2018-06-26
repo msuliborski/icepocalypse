@@ -68,6 +68,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4704620907669018}
   - component: {fileID: 61448418963490182}
+  - component: {fileID: 114192866637192486}
   m_Layer: 20
   m_Name: HeadTrigger
   m_TagString: EnemyHead
@@ -174,7 +175,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1460197052685460}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.15, y: 1.12, z: 0}
+  m_LocalPosition: {x: 0.11, y: 1.19, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4215606399853642}
@@ -222,10 +223,10 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.019203618, y: 0.271264}
+  m_Offset: {x: 0.03516507, y: 0.037454993}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -236,7 +237,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.69270885, y: 0.45747203}
+  m_Size: {x: 1.4278612, y: 0.7081911}
   m_EdgeRadius: 0
 --- !u!61 &61753593249853364
 BoxCollider2D:
@@ -250,7 +251,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.12819141, y: -0.20451784}
+  m_Offset: {x: 0.12819141, y: -0.7281368}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -261,7 +262,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.3980764, y: 4.477728}
+  m_Size: {x: 1.3980764, y: 3.43049}
   m_EdgeRadius: 0
 --- !u!61 &61765516519928676
 BoxCollider2D:
@@ -331,6 +332,17 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114192866637192486
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1460197052685460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08f2cda2fa5486648897f4b80fce1953, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114213011312328732
 MonoBehaviour:
   m_ObjectHideFlags: 1

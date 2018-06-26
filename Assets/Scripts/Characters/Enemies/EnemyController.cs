@@ -194,7 +194,14 @@ public class EnemyController : MonoBehaviour {
 
     public void DestroyYourself()
     {
-        StartCoroutine(DestroyItself());
+        //StartCoroutine(DestroyItself());
+        Destroy(gameObject);
+    }
+
+    public void TurnOffYourPhysics()
+    {
+        _rb.isKinematic = true;
+        GetComponent<BoxCollider2D>().isTrigger = true;
     }
 
     IEnumerator DestroyItself()
