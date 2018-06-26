@@ -24,6 +24,7 @@ TagManager:
   - ViewTrigger
   - Food
   - EnemyHead
+  - dialogPanel
   layers:
   - Default
   - TransparentFX
@@ -48,7 +49,7 @@ TagManager:
   - Enemy
   - Player
   - Head
-  - 
+  - Sign
   - 
   - 
   - 

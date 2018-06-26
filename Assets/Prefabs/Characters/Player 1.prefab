@@ -32,7 +32,7 @@ GameObject:
   - component: {fileID: 114266483244123828}
   - component: {fileID: 114222751568785358}
   - component: {fileID: 114664712860946064}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Player 1
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -49,7 +49,8 @@ GameObject:
   - component: {fileID: 4543369311411246}
   - component: {fileID: 212092174576018086}
   - component: {fileID: 95401490551610110}
-  m_Layer: 0
+  - component: {fileID: 114644998167312348}
+  m_Layer: 21
   m_Name: SpriteAnimation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65,7 +66,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4248268080642920}
   - component: {fileID: 61085884734708986}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: corner_collider
   m_TagString: corner_collider
   m_Icon: {fileID: 0}
@@ -81,7 +82,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4768795708464234}
   - component: {fileID: 61979928485215980}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: legs_collider
   m_TagString: legs_collider
   m_Icon: {fileID: 0}
@@ -97,7 +98,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4527537010833514}
   - component: {fileID: 61250802627469764}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: body_collider
   m_TagString: body_collider
   m_Icon: {fileID: 0}
@@ -113,7 +114,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4298552504878676}
   - component: {fileID: 61918255257993346}
-  m_Layer: 20
+  m_Layer: 21
   m_Name: AttackCollider
   m_TagString: PlayerFist
   m_Icon: {fileID: 0}
@@ -193,7 +194,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1121157264945870}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 244.2, y: 19.8, z: 0}
+  m_LocalPosition: {x: 15.7, y: 2.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4248268080642920}
@@ -503,9 +504,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0b51bf3fb7cc81498bfdf423771a67e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsUnderAttack: 0
   AttackButtonToDisableWhenQTE: {fileID: 0}
-  HealthPointsMax: 100
+  IsUnderAttack: 0
   IsQTE: 0
   IsDogQTE: 0
   ClickedTheCircle: 0
@@ -552,6 +552,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LineLength: 5
   LineVisibilityTime: 1
+--- !u!114 &114644998167312348
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1237946902400446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23756d30681b47545b5c6d435082ed7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Head: {fileID: 1900280790192146, guid: 4629b06be073b954c86d28846c9e7cf4, type: 2}
+  Corpse: {fileID: 1066211905012096, guid: 7b6426242e7da30468717e57822ab64c, type: 2}
 --- !u!114 &114664712860946064
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -688,13 +701,13 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.1431372, y: 1.9607843}
+  m_Size: {x: 0.98039216, y: 1.9607843}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0

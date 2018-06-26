@@ -7,40 +7,28 @@ public class DialogMessage : MonoBehaviour {
 
 	Text textBox;
 	Image imageBox;
-	Button button;
-
-
-	float timeScaleBackup;
-	bool freezDisplay = false;
 
 
 	void Start() {
 			
 		textBox = GetComponentsInChildren<Text>()[0];
 		imageBox = GetComponentsInChildren<Image>()[0];
-		button = GetComponentsInChildren<Button>()[0];
-		
 
-		DisplayMessage("chuj");
+		GetComponent<CanvasGroup>().alpha = 0.0f;
     }
 	
-	public void DisplayMessage(string msg){
-
-		Time.timeScale = 0.0f;
-		
-		//imageBox.enabled = true;
-		//textBox.enabled = true;
-		//button.enabled = true;
+	public void DisplayMessage(string msg, int duration){
 		textBox.text = msg;
-		GetComponent<CanvasGroup>().alpha = 1.0f;
-
+		StartCoroutine(dsp(msg, duration));
 	}
 
+	IEnumerator dsp(string msg, int duration){
+		GetComponent<CanvasGroup>().alpha = 1.0f;
+        yield return new WaitForSeconds(duration);	
+		DismissMessage();
+    }
+
 	public void DismissMessage() {
-		Time.timeScale = 1.0f;
-		//GetComponentsInChildren<Text>()[0].enabled = false;
-		//GetComponentsInChildren<Image>()[0].enabled = false; 
-		//GetComponentsInChildren<Button>()[0].enabled = false; 
 		GetComponent<CanvasGroup>().alpha = 0.0f;
 	}
 	
