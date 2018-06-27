@@ -35,6 +35,7 @@ public class UIController : MonoBehaviour
     {
         _playerControllerExperimental = Player.GetComponent<PlayerControllerExperimental>();
         _fightSystem = Player.GetComponent<FightSystem>();
+        DialogPanel.SetActive(false);
     }
 
     public void OnLeftExit()
@@ -145,6 +146,7 @@ public class UIController : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
 
         StartPanel.SetActive(false);
+        DialogPanel.SetActive(true);
 
         GameStartedEvent.Raise();
 
@@ -176,7 +178,8 @@ public class UIController : MonoBehaviour
 
         DeathPanel.SetActive(false);
 
-        GameStartedEvent.Raise(); 
+        GameStartedEvent.Raise();
+        DialogPanel.SetActive(true);
 
         yield return null;
     }
