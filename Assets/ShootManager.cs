@@ -21,7 +21,7 @@ public class ShootManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if (Input.GetKeyDown(KeyCode.F) && !_shoot)
+        if (Input.GetKeyDown(KeyCode.Q) && !_shoot)
         {
             Vector3[] _vectors = new Vector3[2];
 
@@ -43,10 +43,10 @@ public class ShootManager : MonoBehaviour {
             }
 
             _shootLine.SetPositions(_vectors);
-            Debug.Log("afwawf");
             RaycastHit2D hit = Physics2D.Raycast(_start, new Vector2(1.0f, 0f), LineLength);
             if (hit.collider != null)
             {
+                if( hit.collider.gameObject.tag == "EnemyHead" )
                 Debug.Log("hit");
             }
             _shootLine.enabled = true;

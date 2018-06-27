@@ -68,9 +68,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4704620907669018}
   - component: {fileID: 61448418963490182}
-  - component: {fileID: 114192866637192486}
+  - component: {fileID: 114384412736237880}
   m_Layer: 20
-  m_Name: HeadTrigger
+  m_Name: DickTrigger
   m_TagString: EnemyHead
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,7 +95,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1604964375412896
 GameObject:
   m_ObjectHideFlags: 0
@@ -107,6 +107,23 @@ GameObject:
   m_Layer: 20
   m_Name: PatrolPointRight
   m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1742154318495602
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4590791517800810}
+  - component: {fileID: 61057616378155508}
+  - component: {fileID: 114192866637192486}
+  m_Layer: 20
+  m_Name: HeadTrigger
+  m_TagString: EnemyHead
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -131,13 +148,14 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1508442799789786}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 126.74739, y: -9.432941, z: 0}
+  m_LocalPosition: {x: 41.18, y: 1.87, z: 0}
   m_LocalScale: {x: 0.38, y: 0.39012763, z: 1}
   m_Children:
   - {fileID: 4101178692454944}
   - {fileID: 4578445993832036}
   - {fileID: 4853587847950624}
   - {fileID: 4254895276698654}
+  - {fileID: 4590791517800810}
   - {fileID: 4704620907669018}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -149,7 +167,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1604964375412896}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 20.24, y: 0, z: 0}
+  m_LocalPosition: {x: 7.9, y: 0, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1.000006, z: 1}
   m_Children: []
   m_Father: {fileID: 4215606399853642}
@@ -168,18 +186,31 @@ Transform:
   m_Father: {fileID: 4215606399853642}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4704620907669018
+--- !u!4 &4590791517800810
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1460197052685460}
+  m_GameObject: {fileID: 1742154318495602}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.11, y: 1.19, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4215606399853642}
   m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4704620907669018
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1460197052685460}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.11000383, y: -2.65, z: 0}
+  m_LocalScale: {x: 1.0000001, y: 1.000006, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4215606399853642}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4853587847950624
 Transform:
@@ -214,6 +245,31 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!61 &61057616378155508
+BoxCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1742154318495602}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.03516507, y: 0.037454993}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1.4278612, y: 0.7081911}
+  m_EdgeRadius: 0
 --- !u!61 &61448418963490182
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -337,12 +393,13 @@ MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1460197052685460}
+  m_GameObject: {fileID: 1742154318495602}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 08f2cda2fa5486648897f4b80fce1953, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DickTrigger: {fileID: 1460197052685460}
 --- !u!114 &114213011312328732
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -355,6 +412,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EnemyObject: {fileID: 1508442799789786}
+--- !u!114 &114384412736237880
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1460197052685460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05a9b473f47f0804cb419d7ecc921994, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114671938316141478
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -366,7 +434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac485f1824bb0ea40b306ffbe119ce83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  QTECircleLifeTime: 2
+  QTECircleLifeTime: 1
   CanvasObject: {fileID: 0}
   QteButton: {fileID: 1581814255972552, guid: 5cb9cd2f0d5969c48841a87e4085ec70, type: 2}
   EnemyHealthPointsMax: 100
@@ -379,8 +447,6 @@ MonoBehaviour:
   PatrolDistanceTransformRight: {fileID: 4254895276698654}
   QTECirclePositionsArray:
   - 1
-  - 1.5
-  - 1.5
   - 1.5
   QTECircleInterval: 0.5
   WeaponCollider: {fileID: 61765516519928676}

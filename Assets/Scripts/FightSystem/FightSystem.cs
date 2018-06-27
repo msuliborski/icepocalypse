@@ -43,7 +43,6 @@ public class FightSystem : MonoBehaviour {
             yield return new WaitForSecondsRealtime(1.0f);
         }
 
-        Debug.Log("nastepuje anulacja");
         _canIFight = true;
         IsQTE = false;
         IsDogQTE = false;
@@ -217,6 +216,11 @@ public class FightSystem : MonoBehaviour {
     {
         _anim.SetBool("FinisherFromAir", true);
         //Time.timeScale = 0.2f;
+    }
+
+    public void KeepFalling()
+    {
+        _anim.SetBool("KeepFalling", true);
     }
 
 }

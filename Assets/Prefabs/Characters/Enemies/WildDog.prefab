@@ -178,7 +178,7 @@ MonoBehaviour:
   PlayerCollider: {fileID: 0}
   EnemyRunningSpeed: 5
   EnemyWalkingSpeed: 2.5
-  FightingDeadZone: 2.3
+  FightingDeadZone: 1.8
   ViewRangeTrigger: {fileID: 61399655163562450}
   QTECircle: {fileID: 1581814255972552, guid: 5cb9cd2f0d5969c48841a87e4085ec70, type: 2}
   ClickedTheCircle: 0

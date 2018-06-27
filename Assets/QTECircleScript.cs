@@ -47,7 +47,6 @@ public class QTECircleScript : MonoBehaviour {
 
     void OnMouseUp()
     {
-        Debug.Log("klik");
 
         if ( _qteType == "Enemy" )
         {
@@ -56,7 +55,6 @@ public class QTECircleScript : MonoBehaviour {
         else if (_qteType == "Dog")
         {
             FatherObject.GetComponent<WildDogScript>().ClickedTheCircle = true;
-            Time.timeScale = 1.0f;
         }
 
         if (LifeTime != 0f)

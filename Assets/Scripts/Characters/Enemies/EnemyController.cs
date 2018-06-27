@@ -118,29 +118,11 @@ public class EnemyController : MonoBehaviour {
         if (_dead)
             return;
 
-        var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
-
-        if (stateInfo.IsName("Base Layer.Attack") || stateInfo.IsName("Base Layer.EnemyDefendAnimation"))
-        {
-            _sideFlag = true;
-        }
-
-        if ( _sideFlag && !stateInfo.IsName("Base Layer.Attack") && !stateInfo.IsName("Base Layer.EnemyDefendAnimation") )
-        {
-            _canHeFight = true;
-            _sideFlag = false;
-            WeaponCollider.enabled = false;
-            _isDefending = false;
-        }
-
         if (_isHurt)
         {
-            //Time.timeScale = 0.3f;
-
             if (_qteCircle == null)
             {
-                //Debug.Log("czas: "+ (Time.time - _timeStamp));
-                if ( Time.time - _timeStamp < QTECircleInterval )
+                if (Time.time - _timeStamp < QTECircleInterval)
                 {
                     return;
                 }
@@ -168,6 +150,21 @@ public class EnemyController : MonoBehaviour {
 
             return;
 
+        }
+
+        var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
+
+        if (stateInfo.IsName("Base Layer.Attack") || stateInfo.IsName("Base Layer.EnemyDefendAnimation"))
+        {
+            _sideFlag = true;
+        }
+
+        if ( _sideFlag && !stateInfo.IsName("Base Layer.Attack") && !stateInfo.IsName("Base Layer.EnemyDefendAnimation") )
+        {
+            _canHeFight = true;
+            _sideFlag = false;
+            WeaponCollider.enabled = false;
+            _isDefending = false;
         }
 
         if ( Input.GetKey(KeyCode.Space) )
@@ -344,8 +341,6 @@ public class EnemyController : MonoBehaviour {
                     _playerState = PlayerState.Walking;
                     _anim.SetBool("run", false);
 
-                    Debug.Log(" z ataku przechodzi do spacerku");
-
                     if (_playerObject.transform.position.x > transform.position.x)
                     {
                         _patrolRangeB = transform.position.x;
@@ -359,7 +354,10 @@ public class EnemyController : MonoBehaviour {
                 }
 
                 _rb.velocity = new Vector2(0f, _rb.velocity.y);
-                Attack();
+
+                if (_canHeFight)
+                    StartCoroutine(Attack());
+
                 if (Mathf.Abs(_playerEnemyDistance) > FightingDeadZone)
                 {
                     _playerState = PlayerState.Running;
@@ -426,25 +424,18 @@ public class EnemyController : MonoBehaviour {
     {
         _isHurt = false;
         StartCoroutine(_playerObject.GetComponent<FightSystem>().CancelQTE("now"));
-        Debug.Log("anuluje qte");
         _qteCircleIterator = 0;
     }
 
-    void Attack()
+    IEnumerator Attack()
     {
+        float x = Random.Range(0.5f, 2.0f);
+        _canHeFight = false;
 
-        float x = Random.Range(0f, 3.0f);
+        yield return new WaitForSecondsRealtime(x);
 
-        if (_isDefending)
+        if ( !_isHurt )
         {
-            //_anim.SetBool("defend", true);
-        }
-
-        //Debug.Log(x);
-
-        if ( x < 0.1f && _canHeFight )
-        {
-            _canHeFight = false;
             WeaponCollider.enabled = true;
             _playerObject.GetComponent<FightSystem>().IsUnderAttack = true;
             _anim.SetBool("attack", true);
