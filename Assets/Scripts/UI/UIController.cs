@@ -16,7 +16,7 @@ public class UIController : MonoBehaviour
     public GameObject GameTopPanel;
     public GameObject GameControlsPanel;
     public GameObject StartPanel;
-
+    public GameObject DialogPanel;
     public Transform PlayerStartPosition;
 
     public GameEvent GameStartedEvent;
@@ -101,6 +101,7 @@ public class UIController : MonoBehaviour
 
     public void OnPlayerDeath()
     {
+        DialogPanel.SetActive(false);
         StartCoroutine(PlayerDeath());
 
     }
