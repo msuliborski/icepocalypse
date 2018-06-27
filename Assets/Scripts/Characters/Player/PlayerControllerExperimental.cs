@@ -22,6 +22,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     public bool FacingRight = true;
     private float _moveDirection = 0;
     public bool InEndOfTube = false;
+    private bool _inCorner = false;
     private bool _ignoreLedderEdge = false;
     private bool _inertDown = false;
     private List<Vector3> _scriptDestinations;
@@ -150,7 +151,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
         else
         {
-            if (_gameStarted && (CurrentState == PlayerState.Inert || CurrentState == PlayerState.Grounded || (CurrentState == PlayerState.Laddering && FacingRight)))
+            if (_gameStarted && (CurrentState == PlayerState.Inert || CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Laddering))
             {
                 _onLeftDirection = true;
             }
@@ -165,7 +166,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
         else
         {
-            if (_gameStarted && (CurrentState == PlayerState.Inert || CurrentState == PlayerState.Grounded || (CurrentState == PlayerState.Laddering && !FacingRight)))
+            if (_gameStarted && (CurrentState == PlayerState.Inert || CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Laddering))
             {
                 _onRightDirection = true;
             }
@@ -415,23 +416,24 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                 case PlayerState.Laddering:
 
-                    if (_rigidbody.velocity.y <= 0 && Physics2D.IsTouchingLayers(_colliderLegs, Ground)) _animator.SetBool("LadderMovement", false);
+                    if (_rigidbody.velocity.y <= 0 && Physics2D.IsTouchingLayers(_colliderLegs, Ground))
+                    {
+                        _animator.SetBool("LadderMovement", false);
+                        _inCorner = true;
+                    }
                     if (Input.GetKeyDown(KeyCode.Space) || _onTopDirection)
                     {
                         _onTopDirection = false;
                         OnKeySpace();
                     } 
-                    if (Input.GetKeyDown(KeyCode.DownArrow) || _onDownDirection)
+                    if ((Input.GetKeyDown(KeyCode.RightArrow) || _onRightDirection))
                     {
                         _onDownDirection = false;
-                        OnKeyDown();
-                    } 
-                    if ((Input.GetKeyDown(KeyCode.RightArrow) || _onRightDirection) && !FacingRight)
-                    {
                         OnKeyRight();
                     }
-                    if ((Input.GetKeyDown(KeyCode.LeftArrow) || _onLeftDirection) && FacingRight) 
+                    if ((Input.GetKeyDown(KeyCode.LeftArrow) || _onLeftDirection)) 
                     {
+                        _onDownDirection = false;
                         OnKeyLeft();
                     }
                     break;
@@ -462,15 +464,6 @@ public class PlayerControllerExperimental : MonoBehaviour
             _animListExecuted = false;
             switch (CurrentState)
             {
-                case PlayerState.EdgeLaddering:
-                    _scriptInputBlocade = true;
-                    _isScripting = false;
-                    _rigidbody.isKinematic = false;
-                    if (FacingRight) _rigidbody.velocity = new Vector2(0.5f, -3f);
-                    else _rigidbody.velocity = new Vector2(-0.5f, -3f);
-                    _ignoreLedderEdge = true;
-                    break;
-
                 case PlayerState.TubeSliding:
                     _scriptInputBlocade = true;
                     _animator.SetBool("Tube Idle", false);
@@ -478,17 +471,13 @@ public class PlayerControllerExperimental : MonoBehaviour
                     _animator.SetBool("Inert Down", true);
                     _index++;
                     break;
-
             }
         }
         else
         {
             switch (CurrentState)
             {
-                case PlayerState.Laddering:
-                    MoveDownOnLadder();
-                    break;
-                default:
+               default:
                     StopMovement();
                     break;
             }
@@ -503,16 +492,28 @@ public class PlayerControllerExperimental : MonoBehaviour
             switch (CurrentState)
             {
                 case PlayerState.EdgeLaddering:
-                    if (!FacingRight)
+                    if (FacingRight)
+                    {
+                        _scriptInputBlocade = true;
+                        _index++;
+                        _animator.SetBool("UpLadder", true);
+                    }
+                    else
                     {
                         _scriptInputBlocade = true;
                         _isScripting = false;
                         _rigidbody.isKinematic = false;
-                        _rigidbody.velocity = new Vector2(3f, 0);
-                        SetFacingRight(true);
+                        _rigidbody.velocity = new Vector2(-0.5f, -3f);
                         _ignoreLedderEdge = true;
-                        _animator.SetBool("Ladder", false);
-                        _animator.SetBool("LadderMovement", false);
+                    }
+                    break;
+
+                case PlayerState.EgdeClimbingCorner:
+                    if (FacingRight)
+                    {
+                        _scriptInputBlocade = true;
+                        _index++;
+                        _animator.SetBool("UpWall", true);
                     }
                     break;
             }
@@ -522,7 +523,17 @@ public class PlayerControllerExperimental : MonoBehaviour
             switch (CurrentState)
             {
                 case PlayerState.Laddering:
-                    MoveRightOnLadder();
+                    
+                    if (FacingRight) MoveUpOnLadder();
+                    else
+                    {
+                        if (!_inCorner) MoveDownOnLadder();
+                        else
+                        {
+                            MoveRightOnLadder();
+                            _inCorner = false;
+                        }
+                    }
                     break;
                 default:
                     SetFacingRight(true);
@@ -539,16 +550,28 @@ public class PlayerControllerExperimental : MonoBehaviour
             switch (CurrentState)
             {
                 case PlayerState.EdgeLaddering:
-                    if (FacingRight)
+                    if (!FacingRight)
+                    {
+                        _scriptInputBlocade = true;
+                        _index++;
+                        _animator.SetBool("UpLadder", true);
+                        
+                    }
+                    else
                     {
                         _scriptInputBlocade = true;
                         _isScripting = false;
                         _rigidbody.isKinematic = false;
-                        _rigidbody.velocity = new Vector2(-3f, 0);
-                        SetFacingRight(false);
+                        _rigidbody.velocity = new Vector2(0.5f, -3f);
                         _ignoreLedderEdge = true;
-                        _animator.SetBool("Ladder", false);
-                        _animator.SetBool("LadderMovement", false);
+                    }
+                    break;
+                case PlayerState.EgdeClimbingCorner:
+                    if (!FacingRight)
+                    {
+                        _scriptInputBlocade = true;
+                        _index++;
+                        _animator.SetBool("UpWall", true);
                     }
                     break;
             }
@@ -558,7 +581,16 @@ public class PlayerControllerExperimental : MonoBehaviour
             switch (CurrentState)
             {
                 case PlayerState.Laddering:
-                    MoveLeftOnLadder();
+                    if (!FacingRight) MoveUpOnLadder();
+                    else
+                    {
+                        if (!_inCorner) MoveDownOnLadder();
+                        else
+                        {
+                            MoveLeftOnLadder();
+                            _inCorner = false;
+                        }
+                    }
                     break;
                 default:
                     SetFacingRight(false);
@@ -576,25 +608,25 @@ public class PlayerControllerExperimental : MonoBehaviour
             {
                 case PlayerState.EdgeLaddering:
                     _scriptInputBlocade = true;
-                    _index++;
-                    _animator.SetBool("UpLadder", true);
-                    break;
-
-                case PlayerState.EgdeClimbingCorner:
-                    _scriptInputBlocade = true;
-                    _index++;
-                    _animator.SetBool("UpWall", true);
+                    _isScripting = false;
+                    _rigidbody.isKinematic = false;
+                    _rigidbody.velocity = new Vector2(3f, 0);
+                    if (FacingRight) SetFacingRight(false);
+                    else SetFacingRight(true);
+                    _ignoreLedderEdge = true;
+                    _animator.SetBool("Ladder", false);
+                    _animator.SetBool("LadderMovement", false);
                     break;
             }
         }
         else
         {
-            if (CurrentState == PlayerState.Grounded) _rigidbody.AddForce(new Vector2(0, 450*JumpForce));//_rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
+            if (CurrentState == PlayerState.Grounded) _rigidbody.AddForce(new Vector2(0, 450 * JumpForce));//_rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
             else if (CurrentState == PlayerState.WallHugging)
             {
                 if (FacingRight)
                 {
-                    _rigidbody.AddForce(new Vector2(-300*WallReflectionForce, 400*WallJumpForce));
+                    _rigidbody.AddForce(new Vector2(-300 * WallReflectionForce, 400 * WallJumpForce));
                     SetFacingRight(false);
                 }
                 else
@@ -607,7 +639,11 @@ public class PlayerControllerExperimental : MonoBehaviour
                 _animator.SetBool("Movement", true);
                 _animator.SetBool("WallReflection", true);
             }
-            else if (CurrentState == PlayerState.Laddering) MoveUpOnLadder();
+            else if (CurrentState == PlayerState.Laddering)
+            {
+                if (FacingRight) MoveLeftOnLadder();
+                else MoveRightOnLadder();
+            }
         }
     }
 
@@ -659,6 +695,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
         _rigidbody.velocity = new Vector2(0f, 3f);
         _animator.SetBool("LadderMovement", true);
+        _inCorner = false;
     }
     #endregion
 
