@@ -62,6 +62,8 @@ public class EnemyController : MonoBehaviour {
 
     private bool _dead = false;
 
+    bool _gameStarted = false;
+
     //public GameObject HitFlag;
 
     enum Facing
@@ -108,6 +110,16 @@ public class EnemyController : MonoBehaviour {
 
 	}
 
+    public void OnGameStarted()
+    {
+        _gameStarted = true;
+    }
+
+    public void OnPlayerDeath()
+    {
+        _gameStarted = false;
+    }
+
     public void SetQTETimeStamp()
     {
         _timeStamp = Time.time;
@@ -115,7 +127,7 @@ public class EnemyController : MonoBehaviour {
 
 	void Update () 
 	{
-        if (_dead)
+        if (_dead || !_gameStarted)
             return;
 
         if (_isHurt)
