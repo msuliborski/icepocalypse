@@ -9,6 +9,7 @@ public class FoodController : MonoBehaviour
     {
         if (col.gameObject.tag == "Player")
         {
+            Debug.Log("Player enters food area!");
             _canBeEaten = true;
         } 
     }
@@ -17,14 +18,17 @@ public class FoodController : MonoBehaviour
     {
         if (col.gameObject.tag == "Player") 
         {
+            Debug.Log("Player exits food area!");
             _canBeEaten = false;
         }
     }
 
     private void OnMouseDown()
     {
+        Debug.Log("food clicked!");
         if (_canBeEaten)
         {
+            Debug.Log("food eaten!");
             PlayerEatEvent.Raise();
             Destroy(gameObject);
         }
