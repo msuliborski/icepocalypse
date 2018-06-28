@@ -176,6 +176,24 @@ public class FightSystem : MonoBehaviour {
 
     public void GetReady( int side )
     {
+        _anim.SetBool("Movement", false);
+        _anim.SetBool("Ladder", false);
+        _anim.SetBool("LadderMovement", false);
+        _anim.SetBool("Tube", false);
+        _anim.SetBool("Inert Down", false);
+        _anim.SetBool("Slope", false);
+        _anim.SetBool("Tube Idle", false);
+        _anim.SetBool("Czekaning", false);
+        _anim.SetBool("WallReflection", false);
+        _anim.SetBool("JumpToWall", false);
+        _anim.SetBool("Up", false);
+        _anim.SetBool("Up1", false);
+        _anim.SetBool("Up2", false);
+        _anim.SetBool("UpLadder", false);
+        _anim.SetBool("UpWall", false);
+        _anim.SetBool("JumpIdle", false);
+        _anim.SetBool("InertDown2", false);
+
         GetComponent<PlayerControllerExperimental>().SetAttackingState();
 
         if ( side == 1  && transform.localScale.x < 0f )
