@@ -6,10 +6,15 @@ public class WinPanelController : MonoBehaviour {
     public IntVariable PlayTime;
     public Text WinTime;
     public Text BestTime;
-
+    public GameEvent GameRestartEvent;
     public void UpdatePanel()
     {
         UpdateTime();
+    }
+
+    public void OnGameRestart()
+    {
+        GameRestartEvent.Raise();
     }
 
     void UpdateTime()
