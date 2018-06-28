@@ -381,19 +381,12 @@ public class PlayerControllerExperimental : MonoBehaviour
                 case PlayerState.Grounded:
 
                     movement();
-                    if (_shouldPlayRun)
-                    {
-                        _shouldPlayRun = false;
-                        StartCoroutine(PlayingRunSound());
-                    }
                     if (Input.GetKeyDown(KeyCode.RightArrow) || _onRightDirection)  
                     {
-                        //if (_moveDirection == 0) _shouldPlayRun = true;
                         OnKeyRight();
                     }
                     if (Input.GetKeyDown(KeyCode.LeftArrow) || _onLeftDirection) 
                     {
-                        //if (_moveDirection == 0) _shouldPlayRun = true;
                         OnKeyLeft();
                     }
                     if (Input.GetKeyDown(KeyCode.DownArrow))
@@ -408,17 +401,15 @@ public class PlayerControllerExperimental : MonoBehaviour
                         OnKeySpace();
                     }
                     if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) _animator.SetBool("Movement", false);
-                    else
+                    else _animator.SetBool("Movement", (_moveDirection != 0) ? true : false);
+                    
+                    if (_shouldPlayRun && _moveDirection != 0)
                     {
-                        if (_moveDirection != 0) _animator.SetBool("Movement", true);
-                        else
-                        {
-                            _shouldPlayRun = false;
-                            _animator.SetBool("Movement", false);
-                        }
-                        //_animator.SetBool("Movement", (_moveDirection != 0) ? true : false);
+                        _shouldPlayRun = false;
+                        StartCoroutine(PlayingRunSound());
                     }
                     break;
+
 
                 case PlayerState.Inert:
 
@@ -1174,9 +1165,11 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     public IEnumerator PlayingRunSound()
     {
+        
         yield return new WaitForSeconds(0.4f);
         _source.PlayOneShot(RunSound, 0.05f);
         _shouldPlayRun = true;
+        
     }
     #endregion
 }
