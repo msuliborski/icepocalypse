@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 212991530637929456}
   - component: {fileID: 50466871097271090}
   - component: {fileID: 58035771639229792}
+  - component: {fileID: 114028636251793598}
   m_Layer: 22
   m_Name: EnemyHead
   m_TagString: Untagged
@@ -77,6 +78,17 @@ CircleCollider2D:
   m_Offset: {x: 0.0027756393, y: 0.06662351}
   serializedVersion: 2
   m_Radius: 0.14727166
+--- !u!114 &114028636251793598
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1900280790192146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b194de65f94ecc94a8e552b2ddfe4f2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &212991530637929456
 SpriteRenderer:
   m_ObjectHideFlags: 1
