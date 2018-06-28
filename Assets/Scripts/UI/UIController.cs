@@ -17,6 +17,7 @@ public class UIController : MonoBehaviour
     public GameObject GameControlsPanel;
     public GameObject StartPanel;
     public GameObject WinPanel;
+    public GameObject DialogPanel;
 
     public Transform PlayerStartPosition;
 
@@ -35,6 +36,7 @@ public class UIController : MonoBehaviour
 
     public void Start()
     {
+        //DialogPanel.SetActive(false);
         _playerControllerExperimental = Player.GetComponent<PlayerControllerExperimental>();
         _fightSystem = Player.GetComponent<FightSystem>();
     }
@@ -98,11 +100,13 @@ public class UIController : MonoBehaviour
 
     public void OnGameStart()
     {
+        DialogPanel.SetActive(true);
         StartCoroutine(GameStart());
     }
 
     public void OnPlayerDeath()
     {
+        DialogPanel.SetActive(false);
         StartCoroutine(PlayerDeath());
 
     }

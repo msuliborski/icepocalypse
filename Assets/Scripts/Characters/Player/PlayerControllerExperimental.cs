@@ -120,10 +120,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     #region Start&Update
     void Start()
      {
-        AudioSource[] audios = GetComponents<AudioSource>();
-        _sourceRun = audios[0];
-        _sourceJump = audios[1];
-        _sourceRun.clip = RunSound;
+
         _rigidbody = gameObject.GetComponent<Rigidbody2D>();
         _renderer = gameObject.transform.Find("SpriteAnimation").gameObject;
         _animator = _renderer.GetComponent<Animator>();
@@ -149,6 +146,11 @@ public class PlayerControllerExperimental : MonoBehaviour
         _onRightDirection = false;
         _onTopDirection = false;
         _onDownDirection = false;
+
+        AudioSource[] audios = GetComponents<AudioSource>();
+        _sourceRun = audios[0];
+        _sourceJump = audios[1];
+        _sourceRun.clip = RunSound;
     }
 
     public void OnLeftDirection() 
