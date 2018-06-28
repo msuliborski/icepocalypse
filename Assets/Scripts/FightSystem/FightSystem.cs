@@ -51,7 +51,7 @@ public class FightSystem : MonoBehaviour {
         IsDogQTE = false;
         GetComponent<PlayerControllerExperimental>().UnsetAttackingState();
         AttackButtonToDisableWhenQTE.SetActive(true);
-        superFlaga = false;
+        superFlaga = true;
     }
 
     public void ProceedToQTE()
@@ -205,6 +205,7 @@ public class FightSystem : MonoBehaviour {
         _anim.SetBool("KillTheDog", true);
         _anim.SetBool("FallDown", false);
         StartCoroutine(CancelQTE("dog"));
+        superFlaga = true; 
     }
 
     public void FinisherFromAir()
