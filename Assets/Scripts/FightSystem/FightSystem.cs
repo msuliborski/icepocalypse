@@ -14,6 +14,7 @@ public class FightSystem : MonoBehaviour {
     private float _timeSinceGettingHit = 0f;
 
     public bool IsUnderAttack = false;
+    private bool superFlaga = true;
 
     [HideInInspector]
     public bool IsQTE;
@@ -50,6 +51,7 @@ public class FightSystem : MonoBehaviour {
         IsDogQTE = false;
         GetComponent<PlayerControllerExperimental>().UnsetAttackingState();
         AttackButtonToDisableWhenQTE.SetActive(true);
+        superFlaga = false;
     }
 
     public void ProceedToQTE()
@@ -89,7 +91,7 @@ public class FightSystem : MonoBehaviour {
         }
 
         
-        if (_canIFight)
+        if (_canIFight && superFlaga)
         {
             if ( ClickedAttack || Input.GetKeyDown(KeyCode.F) )
             {
@@ -115,6 +117,7 @@ public class FightSystem : MonoBehaviour {
 
     public void KillTheGuyFinisher()
     {
+        superFlaga = false;
         _anim.SetBool("KillTheGuy", true);
         StartCoroutine(CancelQTE("guy"));
     }
