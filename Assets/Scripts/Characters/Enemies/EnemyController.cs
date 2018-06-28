@@ -378,7 +378,7 @@ public class EnemyController : MonoBehaviour {
     {
         _anim.SetBool("shootDie", true);
         _rb.velocity = new Vector2(0f, 0f);
-        StartCoroutine(DestroyItself(1.5f));
+        StartCoroutine(DestroyItself(2.0f));
         _dead = true;
         // Destroy(gameObject);
     }
