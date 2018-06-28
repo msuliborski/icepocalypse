@@ -510,6 +510,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                     _animator.SetBool("Inert Down", true);
                     _moveDirection = 0;
                     _index++;
+                    transform.position = new Vector3(transform.position.x + 0.01f, transform.position.y, transform.position.z);
                     break;
             }
         }
@@ -830,7 +831,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (transform.position.x < Start.transform.position.x) SetFacingRight(true);
         else SetFacingRight(false);
         _scriptDestinations.Add(new Vector3(Start.transform.position.x, transform.position.y, 0f));
-        _scriptDestinations.Add(new Vector3(End.transform.position.x + playerWidth + 0.01f, End.transform.position.y + playerHeight / 4, 0f));
+        _scriptDestinations.Add(new Vector3(End.transform.position.x + playerWidth, End.transform.position.y + playerHeight / 4, 0f));
         _scriptSpeed = 3.0f;
         _indexToReact = 1;
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.MovementFalse, animScriptCommands.TubeTrue });
