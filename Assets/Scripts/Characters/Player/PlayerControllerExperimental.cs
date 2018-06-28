@@ -762,6 +762,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         InEndOfTube = false;
         _inertDown = false;
         _ignoreLedderEdge = false;
+        _animator.SetBool("KeepFalling", false);
         _animator.SetBool("JumpIdle", false);
         _animator.SetBool("Ladder", false);
         _animator.SetBool("LadderMovement", false);
