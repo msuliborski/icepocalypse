@@ -9,6 +9,10 @@ using Scripts.Variables;
 public class PlayerControllerExperimental : MonoBehaviour
 {
     #region Variables
+    private bool _shouldPlayRun = false;
+    public AudioClip RunSound;
+    public AudioClip JumpSound;
+    private AudioSource _source;
     public GameEvent PlayerHealEvent;
     public GameEvent PlayerDamageEvent;
     public GameEvent PlayerDeathEvent;
@@ -136,7 +140,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         _scriptDestinations = new List<Vector3>();
         _animScriptCommands = new List<List<animScriptCommands>>();
         _rendererPosDif = new List<Vector3>();
-
+        _source = GetComponent<AudioSource>();
         _onLeftDirection = false;
         _onRightDirection = false;
         _onTopDirection = false;
@@ -377,6 +381,11 @@ public class PlayerControllerExperimental : MonoBehaviour
                 case PlayerState.Grounded:
 
                     movement();
+                    if (_shouldPlayRun)
+                    {
+                        _shouldPlayRun = false;
+                        StartCoroutine(PlayingRunSound());
+                    }
                     if (Input.GetKeyDown(KeyCode.RightArrow) || _onRightDirection)  
                     {
                         OnKeyRight();
@@ -391,12 +400,22 @@ public class PlayerControllerExperimental : MonoBehaviour
                     } 
                     if (Input.GetKeyDown(KeyCode.Space) || _onTopDirection)
                     {
+                        _source.PlayOneShot(JumpSound);
                         if (_moveDirection == 0 && !Physics2D.IsTouchingLayers(_colliderBody, Wall)) _animator.SetBool("JumpIdle", true);
                         _onTopDirection = false;
                         OnKeySpace();
-                    } 
+                    }
                     if (Physics2D.IsTouchingLayers(_colliderBody, Wall)) _animator.SetBool("Movement", false);
-                    else _animator.SetBool("Movement", (_moveDirection != 0) ? true : false);
+                    else
+                    {
+                        if (_moveDirection != 0) _animator.SetBool("Movement", true);
+                        else
+                        {
+                            _shouldPlayRun = false;
+                            _animator.SetBool("Movement", false);
+                        }
+                        //_animator.SetBool("Movement", (_moveDirection != 0) ? true : false);
+                    }
                     break;
 
                 case PlayerState.Inert:
@@ -409,6 +428,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                     manageWallTimer();
                     if (Input.GetKeyDown(KeyCode.Space) || _onTopDirection)
                     {
+                        _source.PlayOneShot(JumpSound);
                         _onTopDirection = false;
                         OnKeySpace();
                     } 
@@ -511,6 +531,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                 case PlayerState.EgdeClimbingCorner:
                     if (FacingRight)
                     {
+                        _source.PlayOneShot(JumpSound);
                         _scriptInputBlocade = true;
                         _index++;
                         _animator.SetBool("UpWall", true);
@@ -569,6 +590,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                 case PlayerState.EgdeClimbingCorner:
                     if (!FacingRight)
                     {
+                        _source.PlayOneShot(JumpSound);
                         _scriptInputBlocade = true;
                         _index++;
                         _animator.SetBool("UpWall", true);
@@ -703,6 +725,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onBeingInert()
     {
+        _shouldPlayRun = false;
         if (PreviousState == PlayerState.WallHugging) StartCoroutine(InertTimerZero());
         if (!_ignoreLedderEdge)
         {
@@ -716,6 +739,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onGroundImpact()
     {
+        _shouldPlayRun = true;
         InEndOfTube = false;
         _inertDown = false;
         _ignoreLedderEdge = false;
@@ -736,6 +760,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onLadderImpact()
     {
+        _shouldPlayRun = false;
         _animator.SetBool("WallReflection", false);
         _animator.SetBool("Ladder", true);
         _rigidbody.gravityScale = 0;
@@ -751,6 +776,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onSlopeImpact()
     {
+        _shouldPlayRun = false;
         _animator.SetBool("Tube Idle", false);
         _animator.SetBool("Ladder", false);
         _animator.SetBool("LadderMovement", false);
@@ -771,6 +797,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onTubeImpact()
     {
+        _shouldPlayRun = false;
         resetScripting();
         _animator.SetBool("Ladder", false);
         _animator.SetBool("LadderMovement", false);
@@ -794,6 +821,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void onEdgeCornerImpact()
     {
+        _shouldPlayRun = false;
         resetScripting();
         _animator.SetBool("WallReflection", false);
         GameObject go = findClosestObjectWithTag("WallEdge", 1);
@@ -822,6 +850,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void onLadderEdgeImpact()
     {
+        _shouldPlayRun = false;
         resetScripting();
         _animator.SetBool("LadderMovement", false);
         _animator.SetBool("WallReflection", false);
@@ -852,6 +881,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void onLadderEdge1Impact()
     {
+        _shouldPlayRun = false;
         resetScripting();
         GameObject go = findClosestObjectWithTag("ladderEdge", 5);
         if (FacingRight)
@@ -874,6 +904,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void onEdgeBodyImpact()
     {
+        _shouldPlayRun = false;
         resetScripting();
         _animator.SetBool("WallReflection", false);
         GameObject go = findClosestObjectWithTag("WallEdge", 1);
@@ -893,6 +924,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onWallImpact()
     {
+        _shouldPlayRun = false;
         if (PreviousState == PlayerState.Grounded)
         {
             _rigidbody.velocity = new Vector2(0, 6);
@@ -1136,6 +1168,13 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
         yield return new WaitForSeconds(0.2f);
         _inertTimer = 0;
+    }
+
+    public IEnumerator PlayingRunSound()
+    {
+        yield return new WaitForSeconds(0.4f);
+        _source.PlayOneShot(RunSound, 0.2f);
+        _shouldPlayRun = true;
     }
     #endregion
 }
