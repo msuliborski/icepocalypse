@@ -33,7 +33,7 @@ public class TouchedEnemy : MonoBehaviour {
             _playerObject.GetComponent<FightSystem>().KeepFalling();
             _enemyObject.GetComponent<EnemyController>().TurnOffYourPhysics();
             DickTrigger.SetActive(true);
-            //StartCoroutine(TurnDickOff());
+            StartCoroutine(TurnDickOff());
             //tube finiszer
         }
     }
