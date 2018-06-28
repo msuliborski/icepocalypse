@@ -16,6 +16,7 @@ public class UIController : MonoBehaviour
     public GameObject GameTopPanel;
     public GameObject GameControlsPanel;
     public GameObject StartPanel;
+    public GameObject WinPanel;
 
     public Transform PlayerStartPosition;
 
@@ -105,6 +106,31 @@ public class UIController : MonoBehaviour
 
     }
 
+    public void OnPlayerWin()
+    {
+        WinPanel.GetComponent<WinPanelController>().UpdatePanel();
+        StartCoroutine(PlayerWin());
+
+    }
+
+    IEnumerator PlayerWin()
+    {
+        CanvasGroup winCanvasGroup = WinPanel.GetComponent<CanvasGroup>();
+        CanvasGroup gameTopCanvasGroup = GameTopPanel.GetComponent<CanvasGroup>();
+        CanvasGroup gameControlsCanvasGroup = GameControlsPanel.GetComponent<CanvasGroup>();
+
+        WinPanel.SetActive(true);
+        winCanvasGroup.alpha = 0;
+        StartCoroutine(FadeInCanvas(winCanvasGroup, 0.5f));
+        StartCoroutine(FadeOutCanvas(gameTopCanvasGroup, 0.3f));
+        StartCoroutine(FadeOutCanvas(gameControlsCanvasGroup, 0.3f));
+
+        yield return new WaitForSeconds(0.5f);
+        gameTopCanvasGroup.alpha = 0;
+        gameControlsCanvasGroup.alpha = 0;
+        yield return null;
+    }
+
     IEnumerator PlayerDeath()
     {
         CanvasGroup deathCanvasGroup = DeathPanel.GetComponent<CanvasGroup>();
@@ -118,6 +144,8 @@ public class UIController : MonoBehaviour
         StartCoroutine(FadeOutCanvas(gameControlsCanvasGroup, 0.3f));
 
         yield return new WaitForSeconds(0.5f);
+        gameTopCanvasGroup.alpha = 0;
+        gameControlsCanvasGroup.alpha = 0;
         yield return null;
     }
 
