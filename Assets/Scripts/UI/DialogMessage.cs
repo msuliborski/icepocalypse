@@ -25,7 +25,7 @@ public class DialogMessage : MonoBehaviour {
 	IEnumerator dsp(string msg, int duration){
 		GetComponent<CanvasGroup>().alpha = 1.0f;
         yield return new WaitForSeconds(duration);	
-		DismissMessage();
+		//DismissMessage();
     }
 
 	public void DismissMessage() {
