@@ -121,7 +121,7 @@ public class WildDogScript : MonoBehaviour
             _isClutching = false;
             _dogState = PlayerState.Idle;
             Destroy(_circle);
-
+            Destroy(gameObject);
             return;
         }
 
@@ -150,12 +150,14 @@ public class WildDogScript : MonoBehaviour
         yield return new WaitForSecondsRealtime(1.0f);
         GetComponent<SpriteRenderer>().enabled = true;
     }
+
     /*
     void OnCollisionEnter2D(Collision2D col)
     {
        
     }
     */
+
     void ChangeFacingDirection()
     {
         if (_facingD == Facing.Right)

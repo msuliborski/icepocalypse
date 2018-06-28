@@ -39,11 +39,11 @@ public class FightSystem : MonoBehaviour {
     {
         if (guy_dog_now == "guy" )
         {
-            yield return new WaitForSecondsRealtime(2.0f);
+            yield return new WaitForSecondsRealtime(1.5f);
         }
         else if (guy_dog_now == "dog")
         {
-            yield return new WaitForSecondsRealtime(1.0f);
+            yield return new WaitForSecondsRealtime(1.5f);
         }
 
         _canIFight = true;
@@ -118,6 +118,7 @@ public class FightSystem : MonoBehaviour {
     public void KillTheGuyFinisher()
     {
         superFlaga = false;
+        GetComponent<PlayerControllerExperimental>().SetAttackingState();
         _anim.SetBool("KillTheGuy", true);
         StartCoroutine(CancelQTE("guy"));
     }
@@ -228,7 +229,26 @@ public class FightSystem : MonoBehaviour {
 
     public void FinisherFromAir()
     {
+        Debug.Log("huj");
         _anim.SetBool("FinisherFromAir", true);
+        _anim.SetBool("KeepFalling", false);
+        _anim.SetBool("Movement", false);
+        _anim.SetBool("Ladder", false);
+        _anim.SetBool("LadderMovement", false);
+        _anim.SetBool("Tube", false);
+        _anim.SetBool("Inert Down", false);
+        _anim.SetBool("Slope", false);
+        _anim.SetBool("Tube Idle", false);
+        _anim.SetBool("Czekaning", false);
+        _anim.SetBool("WallReflection", false);
+        _anim.SetBool("JumpToWall", false);
+        _anim.SetBool("Up", false);
+        _anim.SetBool("Up1", false);
+        _anim.SetBool("Up2", false);
+        _anim.SetBool("UpLadder", false);
+        _anim.SetBool("UpWall", false);
+        _anim.SetBool("JumpIdle", false);
+        _anim.SetBool("InertDown2", false);
         //Time.timeScale = 0.2f;
     }
 
