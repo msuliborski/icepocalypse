@@ -54,7 +54,7 @@ public class WildDogScript : MonoBehaviour
     void Start()
     {
         _anim = GetComponent<Animator>();
-
+        CanvasObject = GameObject.Find("Canvas");
         _isClutching = false;
         _rb = GetComponent<Rigidbody2D>();
 

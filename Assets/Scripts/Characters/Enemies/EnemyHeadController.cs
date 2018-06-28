@@ -11,6 +11,8 @@ public class EnemyHeadController : MonoBehaviour {
     {
         if (coll.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
+            _rb.freezeRotation = true;
+            //transform.rotation = Quaternion.Euler(0f, 0f, 0f);
             _rb.velocity = new Vector3(0f, 0f, 0f);
             _rb.isKinematic = true;
             _col.isTrigger = true;
