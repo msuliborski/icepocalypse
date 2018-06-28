@@ -21,6 +21,7 @@ public class UIController : MonoBehaviour
     public Transform PlayerStartPosition;
 
     public GameEvent GameStartedEvent;
+    public IntVariable PlayTime;
 
 
 
@@ -108,7 +109,13 @@ public class UIController : MonoBehaviour
 
     public void OnPlayerWin()
     {
+        // order matters
+        int currTime = PlayTime.Value;
         WinPanel.GetComponent<WinPanelController>().UpdatePanel();
+        if (currTime < PlayerPrefs.GetInt("bestTime", 500))
+        {
+            PlayerPrefs.SetInt("bestTime", currTime);
+        }
         StartCoroutine(PlayerWin());
 
     }

@@ -4,7 +4,8 @@ using Scripts.Variables;
 
 public class WinPanelController : MonoBehaviour {
     public IntVariable PlayTime;
-    public Text WinTimeText;
+    public Text WinTime;
+    public Text BestTime;
 
     public void UpdatePanel()
     {
@@ -13,9 +14,15 @@ public class WinPanelController : MonoBehaviour {
 
     void UpdateTime()
     {
-        int minutes = PlayTime.Value / 60;
-        int seconds = PlayTime.Value % 60;
+        WinTime.text = GetFormattedTime(PlayTime.Value);
+        BestTime.text = GetFormattedTime(PlayerPrefs.GetInt("bestTime", 500));
+    }
+
+    string GetFormattedTime(int whole)
+    {
+        int minutes = whole / 60;
+        int seconds = whole % 60;
         string time = minutes.ToString("D2") + ":" + seconds.ToString("D2");
-        WinTimeText.text = time;
+        return time;
     }
 }
