@@ -265,9 +265,11 @@ public class PlayerControllerExperimental : MonoBehaviour
         {
             amount = 100 - Hp;
         }
+        Debug.Log("healing amount " + amount);
         Hp += amount;
         for (int i = amount / 10; i >= 1; i--)
         {
+            Debug.Log("raising");
             PlayerHealEvent.Raise();
         }
 
