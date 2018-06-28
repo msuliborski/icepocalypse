@@ -72,6 +72,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   msg: Jaki zajebisty znak!
   duration: 1
+  onTop: 1
 --- !u!212 &212020365595811694
 SpriteRenderer:
   m_ObjectHideFlags: 1

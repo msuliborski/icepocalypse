@@ -25,6 +25,7 @@ TagManager:
   - Food
   - EnemyHead
   - dialogPanel
+  - dialogPanelBottom
   layers:
   - Default
   - TransparentFX

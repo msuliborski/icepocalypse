@@ -6,22 +6,19 @@ public class dialogMessageString : MonoBehaviour {
 	private GameObject Panel;
 	public string msg;
 	public int duration;
+	public bool onTop;
 	
 	private bool readAlready = false;
 
 	void Start(){
-		
 		Panel = GameObject.FindGameObjectWithTag("dialogPanel");
-		//Panel.GetComponentInChildren<DialogMessage>().DisplayMessage(msg, 3);
-		Debug.Log("chuj");
+		if (!onTop) Panel = GameObject.FindGameObjectWithTag("dialogPanelBottom");
 	}
 
 	void OnTriggerEnter2D(Collider2D col){
-        if (col.gameObject.tag == "Player" && !readAlready) 
-        {
+        if (col.gameObject.tag == "Player" && !readAlready) {
             readAlready = true;
-			Panel.GetComponentInChildren<DialogMessage>().DisplayMessage(msg, duration);
-			Debug.Log("cwel");
+			Panel.GetComponentInChildren<DialogMessage>().DisplayMessage(msg, duration, true);
         }
     }
 

@@ -17,7 +17,7 @@ public class DialogMessage : MonoBehaviour {
 		GetComponent<CanvasGroup>().alpha = 0.0f;
     }
 	
-	public void DisplayMessage(string msg, int duration){
+	public void DisplayMessage(string msg, int duration, bool onTop){
 		textBox.text = msg;
 		StartCoroutine(dsp(msg, duration));
 	}
