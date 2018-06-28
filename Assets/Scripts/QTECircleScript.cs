@@ -32,11 +32,7 @@ public class QTECircleScript : MonoBehaviour {
 
         if ( Time.time - _startTime >= LifeTime )
         {
-            if (_qteType == "Enemy")
-            {
-                FatherObject.GetComponent<EnemyController>().CancelQTE();
-            }
-            else if (  _qteType == "Dog")
+            if (  _qteType == "Dog")
             {
                 Time.timeScale = 1.0f;
             }
@@ -47,16 +43,10 @@ public class QTECircleScript : MonoBehaviour {
 
     void OnMouseUp()
     {
-        Debug.Log("klik");
 
-        if ( _qteType == "Enemy" )
-        {
-            FatherObject.GetComponent<EnemyController>().SetQTETimeStamp();
-        }
-        else if (_qteType == "Dog")
+        if (_qteType == "Dog")
         {
             FatherObject.GetComponent<WildDogScript>().ClickedTheCircle = true;
-            Time.timeScale = 1.0f;
         }
 
         if (LifeTime != 0f)

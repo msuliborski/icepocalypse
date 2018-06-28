@@ -46,8 +46,7 @@ public class WildDogScript : MonoBehaviour
     {
         Idle,
         Running,
-        Attack,
-        Attacking
+        Attack
     }
 
     private PlayerState _dogState = PlayerState.Idle;
@@ -116,7 +115,8 @@ public class WildDogScript : MonoBehaviour
 
         if ( Time.time - _time >= 5.0f )
         {
-            _playerObject.SetActive(false);
+            //_playerObject.SetActive(false);
+            _playerObject.GetComponent<PlayerControllerExperimental>().TakeHP(_playerObject.GetComponent<PlayerControllerExperimental>().Hp);
             GetComponent<SpriteRenderer>().enabled = true;
             _isClutching = false;
             _dogState = PlayerState.Idle;
@@ -136,7 +136,6 @@ public class WildDogScript : MonoBehaviour
             _playerObject.GetComponent<FightSystem>().DogIsDead();
             Destroy(_circle);
             Destroy(gameObject);
-            //Put dead dog in the background
 
             _dead = true;
             _rb.isKinematic = true;
@@ -151,30 +150,12 @@ public class WildDogScript : MonoBehaviour
         yield return new WaitForSecondsRealtime(1.0f);
         GetComponent<SpriteRenderer>().enabled = true;
     }
-
+    /*
     void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.tag == "Player")
-        {
-            _time = Time.time;
-            _playerObject.GetComponent<FightSystem>().FallDown();
-            _isClutching = true;
-            /*
-            if ( ClickedTheCircle )
-            {
-                Destroy(gameObject);
-                // killing jumping dog animation
-            }
-            else
-            {
-                _isClutching = true;
-                _time = Time.time;
-                _playerObject.GetComponent<FightSystem>().FallDown();
-            }
-            */
-        }
+       
     }
-
+    */
     void ChangeFacingDirection()
     {
         if (_facingD == Facing.Right)
@@ -208,19 +189,12 @@ public class WildDogScript : MonoBehaviour
                 break;
 
             case PlayerState.Attack:
-                _anim.SetBool("jump", true);
+                //_anim.SetBool("jump", true);
+                _playerObject.GetComponent<FightSystem>().FallDown();
                 _playerObject.GetComponent<FightSystem>().IsDogQTE = true;
-
-                if (transform.position.x < _playerObject.transform.position.x)
-                {
-                    _playerObject.GetComponent<FightSystem>().GetReady(-1);
-                }
-                else
-                {
-                    _playerObject.GetComponent<FightSystem>().GetReady(1);
-                }
-
-
+                GetComponent<SpriteRenderer>().enabled = false;
+                _isClutching = true;
+                _time = Time.time;
                 //StartCoroutine(FreezeTimeForAWhile());
                 /*
                 Vector2 vector = new Vector2(transform.position.x, transform.position.y + 0.5f);
@@ -230,11 +204,6 @@ public class WildDogScript : MonoBehaviour
                 _circle.GetComponent<QTECircleScript>()._qteType = "Dog";
                 _circle.GetComponent<QTECircleScript>().LifeTime = 0.3f;
                 */
-                _dogState = PlayerState.Attacking;
-                break;
-
-            case PlayerState.Attacking:
-                Attack();
                 break;
         }
     }
@@ -272,20 +241,19 @@ public class WildDogScript : MonoBehaviour
         }
     }
 
-    void Attack()
-    {
-        _rb.velocity = new Vector2( (_playerObject.transform.position.x - transform.position.x)*7.0f, ( _playerObject.transform.position.y + 0.3f - transform.position.y )*10.0f );
-    }
-
-    public void JumpYouFaggot()
-    {
-        _rb.AddForce(new Vector2((_playerObject.transform.position.x - transform.position.x) * 2000.0f, (_playerObject.transform.position.y - transform.position.y) * 3000.0f));
-        _dogState = PlayerState.Attacking;
-    }
-
     public void CatchPlayer()
     {
         _dogState = PlayerState.Running;
+
+        if (transform.position.x < _playerObject.transform.position.x)
+        {
+            _playerObject.GetComponent<FightSystem>().GetReady(-1);
+        }
+        else
+        {
+            _playerObject.GetComponent<FightSystem>().GetReady(1);
+        }
+
         _anim.SetBool("run", true);
     }
 

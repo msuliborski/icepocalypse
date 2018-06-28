@@ -30,7 +30,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1165177684333420
 GameObject:
   m_ObjectHideFlags: 0
@@ -178,7 +178,7 @@ MonoBehaviour:
   PlayerCollider: {fileID: 0}
   EnemyRunningSpeed: 5
   EnemyWalkingSpeed: 2.5
-  FightingDeadZone: 2.3
+  FightingDeadZone: 1.8
   ViewRangeTrigger: {fileID: 61399655163562450}
   QTECircle: {fileID: 1581814255972552, guid: 5cb9cd2f0d5969c48841a87e4085ec70, type: 2}
   ClickedTheCircle: 0

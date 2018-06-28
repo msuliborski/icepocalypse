@@ -2,25 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TouchedEnemy : MonoBehaviour {
+public class DickScript : MonoBehaviour {
 
     private GameObject _playerObject;
     private GameObject _enemyObject;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         _playerObject = GameObject.FindGameObjectWithTag("Player");
         _enemyObject = transform.parent.gameObject;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    }
 
-    void OnTriggerEnter2D( Collider2D col )
+    void OnTriggerEnter2D(Collider2D col)
     {
-        if( col.gameObject.tag == "legs_collider" )
+        if (col.gameObject.tag == "legs_collider")
         {
             _playerObject.GetComponent<FightSystem>().FinisherFromAir();
             _enemyObject.GetComponent<EnemyController>().DestroyYourself();
