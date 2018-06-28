@@ -161,7 +161,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
         else
         {
-            if (_gameStarted && (CurrentState == PlayerState.Inert || CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Laddering))
+            if (_gameStarted && (CurrentState == PlayerState.Inert || CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Laddering || CurrentState == PlayerState.WallHugging))
             {
                 _onLeftDirection = true;
             }
@@ -176,7 +176,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         }
         else
         {
-            if (_gameStarted && (CurrentState == PlayerState.Inert || CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Laddering))
+            if (_gameStarted && (CurrentState == PlayerState.Inert || CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Laddering || CurrentState == PlayerState.WallHugging))
             {
                 _onRightDirection = true;
             }
@@ -253,7 +253,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     public void OnEatFood()
     {
-        Heal(10);
+        Heal(20);
     }
 
     public void Heal(int amount)
@@ -401,28 +401,31 @@ public class PlayerControllerExperimental : MonoBehaviour
                     } 
                     if (Input.GetKeyDown(KeyCode.Space) || _onTopDirection)
                     {
-                        _sourceRun.Stop();
-                        _sourceJump.PlayOneShot(JumpSound, 0.1f);
+                        _animator.SetBool("Attack", false);
+                        _animator.SetBool("SuperAttack", false);
+                        _animator.SetBool("GotHit", false);
+                        //_sourceRun.Stop();
+                        //_sourceJump.PlayOneShot(JumpSound, 0.1f);
                         if (_moveDirection == 0 && !Physics2D.IsTouchingLayers(_colliderBody, Wall)) _animator.SetBool("JumpIdle", true);
                         _onTopDirection = false;
                         OnKeySpace();
                     }
                     if (Physics2D.IsTouchingLayers(_colliderBody, Wall))
                     {
-                        if (_sourceRun.isPlaying) _sourceRun.Stop();
+                       // if (_sourceRun.isPlaying) _sourceRun.Stop();
                         _animator.SetBool("Movement", false);
                     }
                     else
                     {
                         if (_moveDirection == 0)
                         {
-                            _sourceRun.Stop();
+                           // _sourceRun.Stop();
                             _animator.SetBool("Movement", false);
                         }
                         else
                         {
                             _animator.SetBool("Movement", true);
-                            if (!_sourceRun.isPlaying) _sourceRun.Play();
+                           // if (!_sourceRun.isPlaying) _sourceRun.Play();
                         }
                     }
 
@@ -441,7 +444,8 @@ public class PlayerControllerExperimental : MonoBehaviour
                     manageWallTimer();
                     if (Input.GetKeyDown(KeyCode.Space) || _onTopDirection)
                     {
-                        _sourceJump.PlayOneShot(JumpSound, 0.1f);
+                        _moveDirection = 0;
+                        // _sourceJump.PlayOneShot(JumpSound, 0.1f);
                         _onTopDirection = false;
                         OnKeySpace();
                     } 
@@ -502,6 +506,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                     _animator.SetBool("Tube Idle", false);
                     _animator.SetBool("Tube", false);
                     _animator.SetBool("Inert Down", true);
+                    _moveDirection = 0;
                     _index++;
                     break;
             }
@@ -544,7 +549,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                 case PlayerState.EgdeClimbingCorner:
                     if (FacingRight)
                     {
-                        _sourceJump.PlayOneShot(JumpSound, 0.1f);
+                        //_sourceJump.PlayOneShot(JumpSound, 0.1f);
                         _scriptInputBlocade = true;
                         _index++;
                         _animator.SetBool("UpWall", true);
@@ -602,7 +607,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                 case PlayerState.EgdeClimbingCorner:
                     if (!FacingRight)
                     {
-                        _sourceJump.PlayOneShot(JumpSound, 0.1f);
+                        //__sourceJump.PlayOneShot(JumpSound, 0.1f);
                         _scriptInputBlocade = true;
                         _index++;
                         _animator.SetBool("UpWall", true);
@@ -737,7 +742,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onBeingInert()
     {
-        _sourceRun.Stop();
+        //_sourceRun.Stop();
         if (PreviousState == PlayerState.WallHugging) StartCoroutine(InertTimerZero());
         if (!_ignoreLedderEdge)
         {
@@ -771,7 +776,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onLadderImpact()
     {
-        _sourceRun.Stop();
+        //_sourceRun.Stop();
         _animator.SetBool("WallReflection", false);
         _animator.SetBool("Ladder", true);
         _rigidbody.gravityScale = 0;
@@ -787,7 +792,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onSlopeImpact()
     {
-        _sourceRun.Stop();
+        //_sourceRun.Stop();
         _animator.SetBool("Tube Idle", false);
         _animator.SetBool("Ladder", false);
         _animator.SetBool("LadderMovement", false);
@@ -808,7 +813,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onTubeImpact()
     {
-        _sourceRun.Stop();
+        //_sourceRun.Stop();
         resetScripting();
         _animator.SetBool("Ladder", false);
         _animator.SetBool("LadderMovement", false);
@@ -832,7 +837,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void onEdgeCornerImpact()
     {
-        _sourceRun.Stop();
+        //_sourceRun.Stop();
         resetScripting();
         _animator.SetBool("WallReflection", false);
         GameObject go = findClosestObjectWithTag("WallEdge", 1);
@@ -861,7 +866,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void onLadderEdgeImpact()
     {
-        _sourceRun.Stop();
+        //_sourceRun.Stop();
         resetScripting();
         _animator.SetBool("LadderMovement", false);
         _animator.SetBool("WallReflection", false);
@@ -892,7 +897,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void onLadderEdge1Impact()
     {
-        _sourceRun.Stop();
+        //_sourceRun.Stop();
         resetScripting();
         GameObject go = findClosestObjectWithTag("ladderEdge", 5);
         if (FacingRight)
@@ -915,7 +920,7 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void onEdgeBodyImpact()
     {
-        _sourceRun.Stop();
+        //_sourceRun.Stop();
         resetScripting();
         _animator.SetBool("WallReflection", false);
         GameObject go = findClosestObjectWithTag("WallEdge", 1);
@@ -937,7 +942,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
         if (PreviousState == PlayerState.Grounded)
         {
-            _sourceRun.Stop();
+            //_sourceRun.Stop();
             _rigidbody.velocity = new Vector2(0, 6);
             _animator.SetBool("JumpToWall", true);
         }
@@ -1162,7 +1167,7 @@ public class PlayerControllerExperimental : MonoBehaviour
        
     public void SetAttackingState()
     {
-        if (_sourceRun.isPlaying) _sourceRun.Stop();
+        //if (_sourceRun.isPlaying) _sourceRun.Stop();
         CurrentState = PlayerState.Attacking;
     }
 
