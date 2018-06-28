@@ -418,7 +418,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1512117155072444
 GameObject:
   m_ObjectHideFlags: 1
@@ -2036,7 +2036,7 @@ MonoBehaviour:
   PlayerStartPosition: {fileID: 4219033105134252, guid: 56095fe5b775549cdb3a49f2fc531939,
     type: 2}
   GameStartedEvent: {fileID: 11400000, guid: c0f2611572e8c4a4d8bc7b0b0de379ae, type: 2}
-  PlayTime: {fileID: 11400000, guid: e2352bd6bff444cee948ee19643fd3fe, type: 2}
+  PlayTime: {fileID: 0}
 --- !u!114 &114553259081507468
 MonoBehaviour:
   m_ObjectHideFlags: 1
