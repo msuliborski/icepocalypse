@@ -186,7 +186,8 @@ public class UIController : MonoBehaviour
         StartCoroutine(FadeOutBg(FirstBg, 0.3f));
         StartCoroutine(FadeOutBg(SecondBg, 0.3f));
         yield return new WaitForSeconds(0.3f);
-
+        FirstBg.color = new Color(255, 255, 255, 0);
+        SecondBg.color = new Color(255, 255, 255, 0);
         StartPanel.SetActive(false);
 
         GameStartedEvent.Raise();
