@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/bezsceny.unity
     guid: cf2d45ef66af9478e90662c5b5eb300b
+  - enabled: 1
+    path: Assets/Scenes/_startScene.unity
+    guid: df27b6950a3d446d8bf9f447fcff1a85
   m_configObjects: {}
