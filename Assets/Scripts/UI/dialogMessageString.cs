@@ -11,7 +11,7 @@ public class dialogMessageString : MonoBehaviour {
 
 	void Start(){
 		
-		//Panel.GetComponentInChildren<DialogMessage>().DisplayMessage(msg, 3);
+		Panel.GetComponentInChildren<DialogMessage>().DisplayMessage(msg, 3);
 		Panel = GameObject.FindGameObjectWithTag("dialogPanel");
 		Debug.Log("chuj");
 	}
