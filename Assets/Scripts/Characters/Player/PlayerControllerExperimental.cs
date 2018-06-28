@@ -388,19 +388,21 @@ public class PlayerControllerExperimental : MonoBehaviour
                     }
                     if (Input.GetKeyDown(KeyCode.RightArrow) || _onRightDirection)  
                     {
+                        //if (_moveDirection == 0) _shouldPlayRun = true;
                         OnKeyRight();
                     }
                     if (Input.GetKeyDown(KeyCode.LeftArrow) || _onLeftDirection) 
                     {
+                        //if (_moveDirection == 0) _shouldPlayRun = true;
                         OnKeyLeft();
                     }
                     if (Input.GetKeyDown(KeyCode.DownArrow))
                     {
-                        OnKeyDown();
+                       OnKeyDown();
                     } 
                     if (Input.GetKeyDown(KeyCode.Space) || _onTopDirection)
                     {
-                        _source.PlayOneShot(JumpSound);
+                        _source.PlayOneShot(JumpSound, 0.1f);
                         if (_moveDirection == 0 && !Physics2D.IsTouchingLayers(_colliderBody, Wall)) _animator.SetBool("JumpIdle", true);
                         _onTopDirection = false;
                         OnKeySpace();
@@ -428,7 +430,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                     manageWallTimer();
                     if (Input.GetKeyDown(KeyCode.Space) || _onTopDirection)
                     {
-                        _source.PlayOneShot(JumpSound);
+                        _source.PlayOneShot(JumpSound, 0.1f);
                         _onTopDirection = false;
                         OnKeySpace();
                     } 
@@ -531,7 +533,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                 case PlayerState.EgdeClimbingCorner:
                     if (FacingRight)
                     {
-                        _source.PlayOneShot(JumpSound);
+                        _source.PlayOneShot(JumpSound, 0.1f);
                         _scriptInputBlocade = true;
                         _index++;
                         _animator.SetBool("UpWall", true);
@@ -590,7 +592,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                 case PlayerState.EgdeClimbingCorner:
                     if (!FacingRight)
                     {
-                        _source.PlayOneShot(JumpSound);
+                        _source.PlayOneShot(JumpSound, 0.1f);
                         _scriptInputBlocade = true;
                         _index++;
                         _animator.SetBool("UpWall", true);
@@ -1173,7 +1175,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     public IEnumerator PlayingRunSound()
     {
         yield return new WaitForSeconds(0.4f);
-        _source.PlayOneShot(RunSound, 0.2f);
+        _source.PlayOneShot(RunSound, 0.05f);
         _shouldPlayRun = true;
     }
     #endregion
