@@ -6,8 +6,6 @@ public class ShootManager : MonoBehaviour {
 
     public int HowManyBullets = 2;
 
-    private int _bulletsShot = 0;
-
     private LineRenderer _shootLine;
 
     public float LineLength = 5.0f;
@@ -25,9 +23,11 @@ public class ShootManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if (Input.GetKeyDown(KeyCode.Q) && !_shoot && _bulletsShot < HowManyBullets)
+        if (Input.GetKeyDown(KeyCode.Q) && !_shoot && HowManyBullets > 0)
         {
-            _bulletsShot++;
+            GetComponentInChildren<Animator>().SetBool("Shoot", true);
+
+            HowManyBullets--;
 
             Vector3[] _vectors = new Vector3[2];
 
@@ -49,7 +49,10 @@ public class ShootManager : MonoBehaviour {
             }
 
             _shootLine.SetPositions(_vectors);
-            RaycastHit2D hit = Physics2D.Raycast(_start, new Vector2(1.0f, 0f), LineLength);
+
+            int layerMask = 1 << LayerMask.NameToLayer("Enemy");
+
+            RaycastHit2D hit = Physics2D.Raycast(_start, new Vector2(1.0f, 0f), LineLength, layerMask);
             if (hit.collider != null)
             {
                 if( hit.collider.gameObject.tag == "EnemyHead" )
@@ -57,7 +60,15 @@ public class ShootManager : MonoBehaviour {
                     Debug.Log("hit");
                     hit.collider.GetComponentInParent<EnemyController>().GotShoot();
                 }
+                else
+                {
+                    Debug.Log(hit.collider.gameObject.tag);
+                }
 
+            }
+            else
+            {
+                Debug.Log(" nulllll");
             }
             _shootLine.enabled = true;
             _shoot = true;

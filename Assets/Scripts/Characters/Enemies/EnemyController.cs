@@ -201,7 +201,7 @@ public class EnemyController : MonoBehaviour {
             if (_enemyHealthPoints <= 0)
             {
                 _playerObject.GetComponent<FightSystem>().KillTheGuyFinisher();
-                StartCoroutine(DestroyItself(0.7f));
+                StartCoroutine(DestroyItself(0.8f));
             }
         }
     }
@@ -376,6 +376,8 @@ public class EnemyController : MonoBehaviour {
 
     public void GotShoot()
     {
+        Debug.Log("dostal");
+
         _anim.SetBool("shootDie", true);
         _rb.velocity = new Vector2(0f, 0f);
         StartCoroutine(DestroyItself(2.0f));
