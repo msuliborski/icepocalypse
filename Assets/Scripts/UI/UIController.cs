@@ -24,6 +24,9 @@ public class UIController : MonoBehaviour
     public GameEvent GameStartedEvent;
     public IntVariable PlayTime;
 
+    public SpriteRenderer FirstBg;
+    public SpriteRenderer SecondBg;
+
 
 
     private Vector2 _startPosition;
@@ -180,6 +183,8 @@ public class UIController : MonoBehaviour
 
         StartCoroutine(FadeInCanvas(gameTopCanvasGroup, 0.3f));
         StartCoroutine(FadeInCanvas(gameControlsCanvasGroup, 0.3f));
+        StartCoroutine(FadeOutBg(FirstBg, 0.3f));
+        StartCoroutine(FadeOutBg(SecondBg, 0.3f));
         yield return new WaitForSeconds(0.3f);
 
         StartPanel.SetActive(false);
@@ -216,6 +221,17 @@ public class UIController : MonoBehaviour
 
         GameStartedEvent.Raise(); 
 
+        yield return null;
+    }
+
+
+    IEnumerator FadeOutBg(SpriteRenderer img, float fadeTime)
+    {
+        for (float time = fadeTime; time > 0; time -= Time.unscaledDeltaTime)
+        {
+            img.color = new Color(255, 255, 255, time / fadeTime);
+            yield return null;
+        }
         yield return null;
     }
 
