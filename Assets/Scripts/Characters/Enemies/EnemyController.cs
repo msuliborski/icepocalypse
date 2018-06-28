@@ -5,19 +5,10 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour {
 
-    public float QTECircleLifeTime;
-
-    private bool _vulnerable;
-
-    public GameObject CanvasObject;
-
-    public GameObject QteButton;
-
     public int EnemyHealthPointsMax = 100;
     private int _enemyHealthPoints;
 
     public bool _isUnderAttack = false;
-    public bool _isDefending = false;
 
     private float _animatingTime = 0f;
 
@@ -41,15 +32,6 @@ public class EnemyController : MonoBehaviour {
     
     private Animator _anim;
 
-    private bool _isHurt;
-    private GameObject _qteCircle = null;
-
-    private bool _didQTE = false;
-
-    public float[] QTECirclePositionsArray;
-    public float QTECircleInterval;
-    private int _qteCircleIterator = 0;
-    private float _timeStamp;
 
     private bool _canHeFight = true;
     private bool _sideFlag = false;
@@ -93,10 +75,6 @@ public class EnemyController : MonoBehaviour {
 
         WeaponCollider.enabled = false;
 
-        _timeStamp = 0f;
-
-        _isHurt = false;
-
         _anim = GetComponent<Animator>();
         _enemyHealthPoints = EnemyHealthPointsMax;
 
@@ -120,49 +98,10 @@ public class EnemyController : MonoBehaviour {
         _gameStarted = false;
     }
 
-    public void SetQTETimeStamp()
-    {
-        _timeStamp = Time.time;
-    }
-
 	void Update () 
 	{
         if (_dead || !_gameStarted)
             return;
-
-        if (_isHurt)
-        {
-            if (_qteCircle == null)
-            {
-                if (Time.time - _timeStamp < QTECircleInterval)
-                {
-                    return;
-                }
-
-                if (_qteCircleIterator < QTECirclePositionsArray.Length)
-                {
-                    _qteCircle = PutCircle(new Vector3(transform.position.x, transform.position.y + QTECirclePositionsArray[_qteCircleIterator], transform.position.z));
-                    _qteCircleIterator++;
-                }
-                else
-                {
-                    _playerObject.GetComponent<FightSystem>().KillTheGuyFinisher();
-                    StartCoroutine(DestroyItself());
-
-                    //Destroy(gameObject);
-                    /*
-                    GetComponent<SpriteRenderer>().enabled = false;
-                    GetComponent<BoxCollider2D>().isTrigger = true;
-                    _rb.isKinematic = true;
-                    _anim.SetBool("dead", true);
-                    _dead = true;
-                    */
-                }
-            }
-
-            return;
-
-        }
 
         var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
@@ -176,7 +115,6 @@ public class EnemyController : MonoBehaviour {
             _canHeFight = true;
             _sideFlag = false;
             WeaponCollider.enabled = false;
-            _isDefending = false;
         }
 
         if ( Input.GetKey(KeyCode.Space) )
@@ -213,9 +151,9 @@ public class EnemyController : MonoBehaviour {
         GetComponent<BoxCollider2D>().isTrigger = true;
     }
 
-    IEnumerator DestroyItself()
+    IEnumerator DestroyItself( float x )
     {
-        yield return new WaitForSecondsRealtime(0.2f);
+        yield return new WaitForSecondsRealtime(x);
         Destroy(gameObject);
     }
 
@@ -255,7 +193,6 @@ public class EnemyController : MonoBehaviour {
 
             _anim.SetBool("gotHit", true);
 
-            if (_vulnerable)
             SetHealth(-10);
 
             Debug.Log("enemy health: " + _enemyHealthPoints);
@@ -263,19 +200,8 @@ public class EnemyController : MonoBehaviour {
 
             if (_enemyHealthPoints <= 0)
             {
-                //gameObject.SetActive(false);
-                _enemyHealthPoints = EnemyHealthPointsMax;
-                Destroy(gameObject);
-            }
-
-            if ( _enemyHealthPoints <= 20 && !_isHurt && !_didQTE)
-            {
-                _didQTE = true;
-                _isHurt = true;
-                _playerObject.GetComponent<FightSystem>().ProceedToQTE();
-                _qteCircle = PutCircle(new Vector3(transform.position.x, transform.position.y + QTECirclePositionsArray[_qteCircleIterator], transform.position.z));
-                _qteCircleIterator++;
-                _timeStamp = Time.time;
+                _playerObject.GetComponent<FightSystem>().KillTheGuyFinisher();
+                StartCoroutine(DestroyItself(0.7f));
             }
         }
     }
@@ -421,24 +347,6 @@ public class EnemyController : MonoBehaviour {
         }
     }
 
-    GameObject PutCircle( Vector3 vector )
-    {
-        GameObject circle = Instantiate(QteButton, CanvasObject.transform);
-        //Instantiate(QteButton, new Vector3( CanvasObject.transform.position.x, CanvasObject.transform.position.y, 0f), Quaternion.identity, CanvasObject.transform ) as GameObject;
-        circle.GetComponent<QTECircleScript>().FatherObject = gameObject;
-        //Instantiate(QteButton, CanvasObject.transform);
-        circle.GetComponent<QTECircleScript>()._qteType = "Enemy";
-        circle.GetComponent<QTECircleScript>().LifeTime = QTECircleLifeTime;
-        return circle;
-    }
-
-    public void CancelQTE()
-    {
-        _isHurt = false;
-        StartCoroutine(_playerObject.GetComponent<FightSystem>().CancelQTE("now"));
-        _qteCircleIterator = 0;
-    }
-
     IEnumerator Attack()
     {
         float x = Random.Range(0.5f, 2.0f);
@@ -446,21 +354,17 @@ public class EnemyController : MonoBehaviour {
 
         yield return new WaitForSecondsRealtime(x);
 
-        if ( !_isHurt )
-        {
-            WeaponCollider.enabled = true;
-            _playerObject.GetComponent<FightSystem>().IsUnderAttack = true;
-            _anim.SetBool("attack", true);
-        }
+        WeaponCollider.enabled = true;
+        _playerObject.GetComponent<FightSystem>().IsUnderAttack = true;
+        _anim.SetBool("attack", true);
+
     }
 
-    public void Defend(bool shouldTakeDamage)
+    public void Defend()
     {
         if ( _playerState == PlayerState.Attacking )
         {
             _isUnderAttack = true;
-
-            _vulnerable = shouldTakeDamage;
         }
     }
 
@@ -468,6 +372,15 @@ public class EnemyController : MonoBehaviour {
     {
         _anim.SetBool("run", true);
         _playerState = PlayerState.Running;
+    }
+
+    public void GotShoot()
+    {
+        _anim.SetBool("shootDie", true);
+        _rb.velocity = new Vector2(0f, 0f);
+        StartCoroutine(DestroyItself(1.5f));
+        _dead = true;
+        // Destroy(gameObject);
     }
 
 }

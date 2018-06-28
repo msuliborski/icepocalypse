@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class ShootManager : MonoBehaviour {
 
+    public int HowManyBullets = 2;
+
+    private int _bulletsShot = 0;
+
     private LineRenderer _shootLine;
 
     public float LineLength = 5.0f;
@@ -21,8 +25,10 @@ public class ShootManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if (Input.GetKeyDown(KeyCode.Q) && !_shoot)
+        if (Input.GetKeyDown(KeyCode.Q) && !_shoot && _bulletsShot < HowManyBullets)
         {
+            _bulletsShot++;
+
             Vector3[] _vectors = new Vector3[2];
 
             Vector2 _start;
@@ -47,7 +53,11 @@ public class ShootManager : MonoBehaviour {
             if (hit.collider != null)
             {
                 if( hit.collider.gameObject.tag == "EnemyHead" )
-                Debug.Log("hit");
+                {
+                    Debug.Log("hit");
+                    hit.collider.GetComponentInParent<EnemyController>().GotShoot();
+                }
+
             }
             _shootLine.enabled = true;
             _shoot = true;

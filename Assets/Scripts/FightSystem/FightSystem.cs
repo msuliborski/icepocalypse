@@ -11,6 +11,8 @@ public class FightSystem : MonoBehaviour {
     private bool _sideFlag = false;
     private Animator _anim;
 
+    private float _timeSinceGettingHit = 0f;
+
     public bool IsUnderAttack = false;
 
     [HideInInspector]
@@ -59,19 +61,7 @@ public class FightSystem : MonoBehaviour {
 
     void Update()
     {
-        if ( IsQTE )
-        {
-            if ( ClickedTheCircle )
-            {
-                ClickedTheCircle = false;
-                _anim.SetBool("SuperAttack", true);
-
-                ShootRay(false);
-            }
-
-            return;
-        }
-        else if (IsDogQTE)
+            if (IsDogQTE)
             {
             if (ClickedTheCircle)
                 {
@@ -103,7 +93,7 @@ public class FightSystem : MonoBehaviour {
         {
             if ( ClickedAttack || Input.GetKeyDown(KeyCode.F) )
             {
-                ShootRay(true);
+                ShootRay();
 
                 ClickedAttack = false;
                 _canIFight = false;
@@ -129,7 +119,7 @@ public class FightSystem : MonoBehaviour {
         StartCoroutine(CancelQTE("guy"));
     }
 
-    void ShootRay( bool shouldGiveDamage )
+    void ShootRay()
     {
         RaycastHit2D hit;
 
@@ -151,7 +141,7 @@ public class FightSystem : MonoBehaviour {
         {
             if (hit.collider.tag == "Enemy")
             {
-                hit.collider.gameObject.SendMessage("Defend", shouldGiveDamage);
+                hit.collider.gameObject.SendMessage("Defend");
             }
         }
     }
@@ -166,8 +156,10 @@ public class FightSystem : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        if ( col.gameObject.tag == "EnemyFist" && IsUnderAttack )
+        if ( col.gameObject.tag == "EnemyFist" && IsUnderAttack && (Time.time - _timeSinceGettingHit >= 1.0f) ) 
         {
+            _timeSinceGettingHit = Time.time;
+
             IsUnderAttack = false;
 
             _anim.SetBool("GotHit", true);

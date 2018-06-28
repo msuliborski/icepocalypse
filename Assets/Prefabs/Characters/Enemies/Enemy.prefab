@@ -97,7 +97,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1604964375412896
 GameObject:
   m_ObjectHideFlags: 0
@@ -464,21 +464,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac485f1824bb0ea40b306ffbe119ce83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  QTECircleLifeTime: 1
-  CanvasObject: {fileID: 0}
-  QteButton: {fileID: 1581814255972552, guid: 5cb9cd2f0d5969c48841a87e4085ec70, type: 2}
-  EnemyHealthPointsMax: 100
+  EnemyHealthPointsMax: 50
   _isUnderAttack: 0
-  _isDefending: 0
   EnemyRunningSpeed: 5
   EnemyWalkingSpeed: 1.5
   FightingDeadZone: 1
   PatrolDistanceTransformLeft: {fileID: 4853587847950624}
   PatrolDistanceTransformRight: {fileID: 4254895276698654}
-  QTECirclePositionsArray:
-  - 1
-  - 1.5
-  QTECircleInterval: 0.5
   WeaponCollider: {fileID: 61765516519928676}
 --- !u!114 &114918225793469050
 MonoBehaviour:
