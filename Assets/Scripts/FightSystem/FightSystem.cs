@@ -5,19 +5,16 @@ using UnityEngine;
 
 public class FightSystem : MonoBehaviour {
 
-    [HideInInspector]
-    public bool IsUnderAttack = false;
-
     public GameObject AttackButtonToDisableWhenQTE;
-
-    public int HealthPointsMax = 100;
-    private int _healthPoints;
 
     private bool _canIFight = true;
     private bool _sideFlag = false;
     private Animator _anim;
 
-    private bool _isDefending = false;
+    private float _timeSinceGettingHit = 0f;
+
+    public bool IsUnderAttack = false;
+    private bool superFlaga = true;
 
     [HideInInspector]
     public bool IsQTE;
@@ -30,36 +27,31 @@ public class FightSystem : MonoBehaviour {
 
     public BoxCollider2D FistCollider;
 
-    private bool _gameStarted = false;
-
     void Start()
     {
         FistCollider.enabled = false;
 
         IsQTE = false;
         _anim = GetComponentInChildren<Animator>();
-        _healthPoints = HealthPointsMax;
     }
 
-    public void OnPlayerDeath()
+    public IEnumerator CancelQTE( string guy_dog_now )
     {
-        Debug.Log("Player death");
-        _gameStarted = false;
-    }
+        if (guy_dog_now == "guy" )
+        {
+            yield return new WaitForSecondsRealtime(1.5f);
+        }
+        else if (guy_dog_now == "dog")
+        {
+            yield return new WaitForSecondsRealtime(1.5f);
+        }
 
-    public void OnGameStarted()
-    {
-        _gameStarted = true;
-    }
-
-    public void CancelQTE()
-    {
         _canIFight = true;
         IsQTE = false;
         IsDogQTE = false;
-        StartCoroutine(GetComponent<PlayerControllerExperimental>().UnsetAttackingState());
+        GetComponent<PlayerControllerExperimental>().UnsetAttackingState();
         AttackButtonToDisableWhenQTE.SetActive(true);
-        //GetComponent<PlayerControllerExperimental>().UnsetAttackingState();
+        superFlaga = true;
     }
 
     public void ProceedToQTE()
@@ -71,28 +63,14 @@ public class FightSystem : MonoBehaviour {
 
     void Update()
     {
-        if (!_gameStarted) return;
-
-        if ( IsQTE )
-        {
-            if ( ClickedTheCircle )
-            {
-                Debug.Log("super atak");
-                ClickedTheCircle = false;
-                _anim.SetBool("SuperAttack", true);
-            }
-
-            return;
-        }
-        else if (IsDogQTE)
+            if (IsDogQTE)
             {
             if (ClickedTheCircle)
                 {
-                    Debug.Log("super atak");
                     ClickedTheCircle = false;
                     _anim.SetBool("SuperAttack", true);
                     _anim.SetBool("WatchOut", false);
-                CancelQTE();
+                    CancelQTE( "now" );
             }
 
             return;
@@ -100,23 +78,22 @@ public class FightSystem : MonoBehaviour {
 
         var stateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
-        if (stateInfo.IsName("Base Layer.PlayerPunchBare") || stateInfo.IsName("Base Layer.PlayerDefend") || stateInfo.IsName("Base Layer.PlayerSuperPunchBare"))
+        if (stateInfo.IsName("Base Layer.PlayerPunchBare") || stateInfo.IsName("Base Layer.PlayerGotHitAnimation") || stateInfo.IsName("Base Layer.PlayerSuperPunchBare") || stateInfo.IsName("Base Layer.PlayerGotHitAnimation"))
         {
             _sideFlag = true;
         }
 
-        if (_sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunchBare") && !stateInfo.IsName("Base Layer.PlayerDefend") && !stateInfo.IsName("Base Layer.PlayerSuperPunchBare"))
+        if (_sideFlag == true && !stateInfo.IsName("Base Layer.PlayerPunchBare") && !stateInfo.IsName("Base Layer.PlayerGotHitAnimation") && !stateInfo.IsName("Base Layer.PlayerSuperPunchBare") && !stateInfo.IsName("Base Layer.PlayerGotHitAnimation"))
         {
             _sideFlag = false;
-            _isDefending = false;
             _canIFight = true;
             FistCollider.enabled = false;
         }
 
         
-        if (true)//_canIFight)
+        if (_canIFight && superFlaga)
         {
-            if ( ClickedAttack || Input.GetKey(KeyCode.F) )
+            if ( ClickedAttack || Input.GetKeyDown(KeyCode.F) )
             {
                 ShootRay();
 
@@ -140,7 +117,10 @@ public class FightSystem : MonoBehaviour {
 
     public void KillTheGuyFinisher()
     {
+        superFlaga = false;
+        GetComponent<PlayerControllerExperimental>().SetAttackingState();
         _anim.SetBool("KillTheGuy", true);
+        StartCoroutine(CancelQTE("guy"));
     }
 
     void ShootRay()
@@ -149,16 +129,15 @@ public class FightSystem : MonoBehaviour {
 
         Vector2 RayDirection;
 
-        if (transform.localScale.x > 0f)
+        if ( transform.localScale.x > 0f )
         {
-             RayDirection = new Vector2(transform.position.x + 0.7f, transform.position.y + 0.5f);
+            RayDirection = new Vector2(transform.position.x + 0.7f, transform.position.y - 0.3f);
         }
         else
         {
-             RayDirection = new Vector2(transform.position.x - 0.7f, transform.position.y + 0.5f);
+            RayDirection = new Vector2(transform.position.x - 0.7f, transform.position.y -0.3f);
         }
 
-        //Vector2 RayDirection = new Vector2(transform.position.x + 0.7f, transform.position.y + 0.5f);
         Debug.DrawRay(RayDirection, transform.localScale.x * Vector3.right * 5.0f, Color.yellow, 2.0f);
         int layerMask = LayerMask.GetMask("Enemy");
         hit = Physics2D.Raycast(RayDirection, transform.localScale.x * Vector3.right, 5.0f,layerMask );
@@ -171,47 +150,51 @@ public class FightSystem : MonoBehaviour {
         }
     }
 
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        if ( col.gameObject.tag == "Enemy" )
+        {
+            GetComponent<PlayerControllerExperimental>().SetMoveDirection();
+        }
+    }
+
     void OnTriggerEnter2D(Collider2D col)
     {
-        if (!_gameStarted) return;
-        if ( col.gameObject.tag == "EnemyFist" && IsUnderAttack )
+        if ( col.gameObject.tag == "EnemyFist" && IsUnderAttack && (Time.time - _timeSinceGettingHit >= 1.0f) ) 
         {
+            _timeSinceGettingHit = Time.time;
 
             IsUnderAttack = false;
-            //SetHealth(-10);
-            GetComponent<PlayerControllerExperimental>().TakeHP(10);
 
-            //Debug.Log("dostales bulawa");
             _anim.SetBool("GotHit", true);
 
-            if ( _healthPoints <= 0 )
-            {
-                //Debug.Log("umrales");
-            }
-        }
-        else if (col.gameObject.tag == "EnemyFist" && _isDefending)
-        {
-            //Debug.Log("obrona");
+            GetComponent<PlayerControllerExperimental>().TakeHP(10);
+
+            _canIFight = false;
         }
 
-    }
-    
-    void SetHealth( int value )
-    {
-        _healthPoints += value;
-
-        if ( _healthPoints > HealthPointsMax)
-        {
-            _healthPoints = HealthPointsMax;
-        }
-        else if ( _healthPoints < 0 )
-        {
-            _healthPoints = 0;
-        }
     }
 
     public void GetReady( int side )
     {
+        _anim.SetBool("Movement", false);
+        _anim.SetBool("Ladder", false);
+        _anim.SetBool("LadderMovement", false);
+        _anim.SetBool("Tube", false);
+        _anim.SetBool("Inert Down", false);
+        _anim.SetBool("Slope", false);
+        _anim.SetBool("Tube Idle", false);
+        _anim.SetBool("Czekaning", false);
+        _anim.SetBool("WallReflection", false);
+        _anim.SetBool("JumpToWall", false);
+        _anim.SetBool("Up", false);
+        _anim.SetBool("Up1", false);
+        _anim.SetBool("Up2", false);
+        _anim.SetBool("UpLadder", false);
+        _anim.SetBool("UpWall", false);
+        _anim.SetBool("JumpIdle", false);
+        _anim.SetBool("InertDown2", false);
+
         GetComponent<PlayerControllerExperimental>().SetAttackingState();
 
         if ( side == 1  && transform.localScale.x < 0f )
@@ -223,7 +206,6 @@ public class FightSystem : MonoBehaviour {
             transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
         }
 
-        Debug.Log("wywoluje");
         _anim.SetBool("WatchOut", true);
         _anim.SetBool("Movement", false);
         GetComponent<PlayerControllerExperimental>().StopMovement();
@@ -231,9 +213,6 @@ public class FightSystem : MonoBehaviour {
 
     public void FallDown()
     {
-        //GetComponent<BoxCollider2D>().isTrigger = true;
-        //GetComponent<Rigidbody2D>().isKinematic = true;
-        Debug.Log("upadam");
         //GetComponent<PlayerControllerExperimental>().SetAttackingState();
         _anim.SetBool("FallDown", true);
         _anim.SetBool("WatchOut", false);
@@ -241,10 +220,41 @@ public class FightSystem : MonoBehaviour {
 
     public void DogIsDead()
     {
-        Debug.Log("dajemy animacje zabijania psa");
+        IsDogQTE = false;
         _anim.SetBool("KillTheDog", true);
         _anim.SetBool("FallDown", false);
-        CancelQTE();
+        StartCoroutine(CancelQTE("dog"));
+        superFlaga = true; 
+    }
+
+    public void FinisherFromAir()
+    {
+        Debug.Log("huj");
+        _anim.SetBool("FinisherFromAir", true);
+        _anim.SetBool("KeepFalling", false);
+        _anim.SetBool("Movement", false);
+        _anim.SetBool("Ladder", false);
+        _anim.SetBool("LadderMovement", false);
+        _anim.SetBool("Tube", false);
+        _anim.SetBool("Inert Down", false);
+        _anim.SetBool("Slope", false);
+        _anim.SetBool("Tube Idle", false);
+        _anim.SetBool("Czekaning", false);
+        _anim.SetBool("WallReflection", false);
+        _anim.SetBool("JumpToWall", false);
+        _anim.SetBool("Up", false);
+        _anim.SetBool("Up1", false);
+        _anim.SetBool("Up2", false);
+        _anim.SetBool("UpLadder", false);
+        _anim.SetBool("UpWall", false);
+        _anim.SetBool("JumpIdle", false);
+        _anim.SetBool("InertDown2", false);
+        //Time.timeScale = 0.2f;
+    }
+
+    public void KeepFalling()
+    {
+        _anim.SetBool("KeepFalling", true);
     }
 
 }

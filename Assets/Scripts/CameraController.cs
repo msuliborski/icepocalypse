@@ -4,14 +4,15 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    
     private GameObject _player;
-
+    PlayerControllerExperimental _playerControllerScript;
     ParticleSystem[] _childrenParticles;
     void Start() 
     {
         _player = GameObject.FindGameObjectWithTag("Player");
         _childrenParticles = gameObject.GetComponentsInChildren<ParticleSystem>();
+        _playerControllerScript = _player.GetComponent<PlayerControllerExperimental>();
+        transform.position = new Vector3(_player.transform.position.x, _player.transform.position.y, transform.position.z);
     }
 
     // Update is called once per frame
@@ -19,7 +20,16 @@ public class CameraController : MonoBehaviour
     {
         if (_player != null)
         {
-            gameObject.transform.position = new Vector3(_player.transform.position.x, _player.transform.position.y, gameObject.transform.position.z);
+            if (_playerControllerScript.InEndOfTube)
+            {
+                Vector3 dest = new Vector3(_player.transform.position.x, _player.transform.position.y - 2, transform.position.z);
+                if (transform.position != dest)
+                {
+                    float step = 2f * Time.deltaTime;
+                    transform.position = Vector3.MoveTowards(transform.position, dest, step);
+                }
+            }
+            else transform.position = new Vector3(_player.transform.position.x, _player.transform.position.y, transform.position.z);
         }
     }
 
@@ -37,5 +47,10 @@ public class CameraController : MonoBehaviour
         {
             particleSystem.enableEmission = true;
         }
+    }
+
+    private void moveDownInTube()
+    {
+
     }
 };

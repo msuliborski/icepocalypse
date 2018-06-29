@@ -53,6 +53,35 @@ public class HPBarController : MonoBehaviour {
         }
     }
 
+    public void OnPlayerHealed()
+    {
+        Debug.Log("healing" + _lastBar + 1);
+        _lastBar += 1;
+        if (_lastBar >= _bars.Count)
+            return;
+        Debug.Log("healingggg" + _lastBar);
+
+        StartCoroutine(ShowBar(_bars[_lastBar]));
+    }
+
+    IEnumerator ShowBar(Image bar)
+    {
+        if (bar.enabled == true)
+        {
+            yield return null;
+        }
+        bar.enabled = true;
+        bar.color = new Color(0, 255, 0, 0);
+        for (float t = 1.2f; t >= 0f; t -= Time.unscaledDeltaTime)
+        {            
+            bar.color = new Color(bar.color.r, bar.color.g, bar.color.b, (1.0f - (t / 1.2f)));
+            yield return null;
+        }
+        bar.color = new Color(255, 255, 255, 255);
+
+        yield return null;
+    }
+
     public void OnGameStarted()
     {
         StopAllCoroutines();

@@ -10,41 +10,77 @@ using Scripts.Variables;
 
 public class UIController : MonoBehaviour
 {
-	public GameObject Player;
+    public GameObject Player;
 
     public GameObject DeathPanel;
     public GameObject GameTopPanel;
     public GameObject GameControlsPanel;
     public GameObject StartPanel;
+    public GameObject WinPanel;
+    public GameObject DialogPanel;
 
     public Transform PlayerStartPosition;
 
     public GameEvent GameStartedEvent;
+    public IntVariable PlayTime;
+
+    public SpriteRenderer FirstBg;
+    public SpriteRenderer SecondBg;
 
 
 
-	private Vector2 _startPosition;
-	private bool _touching = false;
+    private Vector2 _startPosition;
+    private bool _touching = false;
     private PlayerControllerExperimental _playerControllerExperimental;
     private FightSystem _fightSystem;
-	
-    public void Start() 
+
+    bool _rightArrow = false;
+    bool _leftArrow = false;
+
+    public void Start()
     {
+        //DialogPanel.SetActive(false);
         _playerControllerExperimental = Player.GetComponent<PlayerControllerExperimental>();
         _fightSystem = Player.GetComponent<FightSystem>();
     }
+
+    public void OnLeftExit()
+    {
+        _leftArrow = false;
+        _playerControllerExperimental.OnLeftDirectionEnd();
+        if (!_rightArrow) 
+        {
+            _playerControllerExperimental.StopMovement();
+        }
+    }
+
+    public void OnRightExit()
+    {
+        _rightArrow = false;
+        _playerControllerExperimental.OnRightDirectionEnd();
+        if (!_leftArrow) 
+        {
+            _playerControllerExperimental.StopMovement();
+        }
+    }
+
 	public void OnLeft()
 	{
+        _leftArrow = true;
+        _rightArrow = false;
 		_playerControllerExperimental.OnLeftDirection();
 	}
 
 	public void OnRight()
 	{
+        _rightArrow = true;
+        _leftArrow = false;
 		_playerControllerExperimental.OnRightDirection();
 	}
 
     public void OnTop() {
         _playerControllerExperimental.OnTopDirection();
+
     }
 
     public void OnDown() 
@@ -58,60 +94,6 @@ public class UIController : MonoBehaviour
         _fightSystem.ClickedAttack = true;
     }
 
-	private void CheckGesture(Vector2 distance, Vector2 position, int fingerId = -1)
-	{
-        if (EventSystem.current.IsPointerOverGameObject(fingerId))
-            return;
-
-        if (position.x > Screen.width / 2)
-        {
-            OnRight();
-        }
-        else
-        {
-            OnLeft();
-        }
-	}
-
-
-	private void Update()
-	{
-	#if UNITY_EDITOR 
-		if (Input.GetButtonDown("Fire1"))
-		{
-			_touching = true;
-			_startPosition = Input.mousePosition;
-		}
-
-		if (Input.GetButtonUp("Fire1"))
-		{
-			if (_touching)
-			{
-				Vector2 distance;
-				distance.x = Input.mousePosition.x - _startPosition.x;
-				distance.y = Input.mousePosition.y - _startPosition.y;
-				CheckGesture(distance, Input.mousePosition);
-			}
-			_touching = false;
-		}
-	#else
-		if(Input.touchCount != 1) return;
-		var touch = Input.touches.First();
-		switch (touch.phase)
-		{
-			case TouchPhase.Began:
-				_startPosition = touch.position;
-                CheckGesture(_startPosition, _startPosition, touch.fingerId);
-				break;
-			
-			case TouchPhase.Ended:
-				//Vector2 distance = touch.position - _startPosition;
-				//CheckGesture(distance, touch.position);
-				break;
-        }
-	#endif
-	}
-
 
     public void OnGameRestart()
     {
@@ -121,13 +103,46 @@ public class UIController : MonoBehaviour
 
     public void OnGameStart()
     {
+        DialogPanel.SetActive(true);
         StartCoroutine(GameStart());
     }
 
     public void OnPlayerDeath()
     {
+        DialogPanel.SetActive(false);
         StartCoroutine(PlayerDeath());
 
+    }
+
+    public void OnPlayerWin()
+    {
+        // order matters
+        int currTime = PlayTime.Value;
+        WinPanel.GetComponent<WinPanelController>().UpdatePanel();
+        if (currTime < PlayerPrefs.GetInt("bestTime", 500))
+        {
+            PlayerPrefs.SetInt("bestTime", currTime);
+        }
+        StartCoroutine(PlayerWin());
+
+    }
+
+    IEnumerator PlayerWin()
+    {
+        CanvasGroup winCanvasGroup = WinPanel.GetComponent<CanvasGroup>();
+        CanvasGroup gameTopCanvasGroup = GameTopPanel.GetComponent<CanvasGroup>();
+        CanvasGroup gameControlsCanvasGroup = GameControlsPanel.GetComponent<CanvasGroup>();
+
+        WinPanel.SetActive(true);
+        winCanvasGroup.alpha = 0;
+        StartCoroutine(FadeInCanvas(winCanvasGroup, 0.5f));
+        StartCoroutine(FadeOutCanvas(gameTopCanvasGroup, 0.3f));
+        StartCoroutine(FadeOutCanvas(gameControlsCanvasGroup, 0.3f));
+
+        yield return new WaitForSeconds(0.5f);
+        gameTopCanvasGroup.alpha = 0;
+        gameControlsCanvasGroup.alpha = 0;
+        yield return null;
     }
 
     IEnumerator PlayerDeath()
@@ -143,6 +158,8 @@ public class UIController : MonoBehaviour
         StartCoroutine(FadeOutCanvas(gameControlsCanvasGroup, 0.3f));
 
         yield return new WaitForSeconds(0.5f);
+        gameTopCanvasGroup.alpha = 0;
+        gameControlsCanvasGroup.alpha = 0;
         yield return null;
     }
 
@@ -166,8 +183,11 @@ public class UIController : MonoBehaviour
 
         StartCoroutine(FadeInCanvas(gameTopCanvasGroup, 0.3f));
         StartCoroutine(FadeInCanvas(gameControlsCanvasGroup, 0.3f));
+        StartCoroutine(FadeOutBg(FirstBg, 0.3f));
+        StartCoroutine(FadeOutBg(SecondBg, 0.3f));
         yield return new WaitForSeconds(0.3f);
-
+        FirstBg.color = new Color(255, 255, 255, 0);
+        SecondBg.color = new Color(255, 255, 255, 0);
         StartPanel.SetActive(false);
 
         GameStartedEvent.Raise();
@@ -202,6 +222,17 @@ public class UIController : MonoBehaviour
 
         GameStartedEvent.Raise(); 
 
+        yield return null;
+    }
+
+
+    IEnumerator FadeOutBg(SpriteRenderer img, float fadeTime)
+    {
+        for (float time = fadeTime; time > 0; time -= Time.unscaledDeltaTime)
+        {
+            img.color = new Color(255, 255, 255, time / fadeTime);
+            yield return null;
+        }
         yield return null;
     }
 

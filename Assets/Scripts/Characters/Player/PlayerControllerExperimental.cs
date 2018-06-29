@@ -9,6 +9,12 @@ using Scripts.Variables;
 public class PlayerControllerExperimental : MonoBehaviour
 {
     #region Variables
+    private bool _shouldPlayRun = false;
+    public AudioClip RunSound;
+    public AudioClip JumpSound;
+    private AudioSource _sourceRun;
+    private AudioSource _sourceJump;
+    public GameEvent PlayerHealEvent;
     public GameEvent PlayerDamageEvent;
     public GameEvent PlayerDeathEvent;
     public float JumpForce = 18;
@@ -17,24 +23,20 @@ public class PlayerControllerExperimental : MonoBehaviour
     public float MoveSpeed = 10;
     public int Hp = 100;
     private float _wallTimer = 0;
+    private float _inertTimer = 0;
     public bool FacingRight = true;
     private float _moveDirection = 0;
+    public bool InEndOfTube = false;
+    private bool _inCorner = false;
     private bool _ignoreLedderEdge = false;
+    private bool _inertDown = false;
     private List<Vector3> _scriptDestinations;
     private float _scriptSpeed;
     public bool _isScripting = false;
-    private bool _scriptSpeedAccelarated = false;
-    private float _scriptAcceleration = 0;
+    private bool _animListExecuted = false;
     private int _index;
-    private int _indexToRotate = -1;
-    private Quaternion _scriptRotation;
     private int _indexToReact = -1;
-    private KeyCode _keyToReact;
-    private List<KeyCode> _keysToReact;
     private List<Vector3> _rendererPosDif;
-
-
-
     private bool _gameStarted = false;
 
     private enum animScriptCommands
@@ -61,7 +63,8 @@ public class PlayerControllerExperimental : MonoBehaviour
         UpLadderTrue,
         UpLadderFalse,
         UpWallTrue,
-        UpWallFalse
+        UpWallFalse,
+        InEndOfTubeTrue
 
     }
 
@@ -107,11 +110,17 @@ public class PlayerControllerExperimental : MonoBehaviour
     private float tubeHeight;
     private float playerWidth;
     private float playerHeight;
+    bool _onLeftDirection;
+    bool _onRightDirection;
+    bool _onTopDirection;
+    bool _onDownDirection;
+    private bool _scriptInputBlocade = true;
     #endregion
 
     #region Start&Update
     void Start()
      {
+
         _rigidbody = gameObject.GetComponent<Rigidbody2D>();
         _renderer = gameObject.transform.Find("SpriteAnimation").gameObject;
         _animator = _renderer.GetComponent<Animator>();
@@ -131,60 +140,93 @@ public class PlayerControllerExperimental : MonoBehaviour
         playerWidth = 1f;
         playerHeight = 2f;
         _scriptDestinations = new List<Vector3>();
-        _keysToReact = new List<KeyCode>();
         _animScriptCommands = new List<List<animScriptCommands>>();
         _rendererPosDif = new List<Vector3>();
-
         _onLeftDirection = false;
         _onRightDirection = false;
         _onTopDirection = false;
         _onDownDirection = false;
-    }
 
-    bool _onLeftDirection;
-    bool _onRightDirection;
-    bool _onTopDirection;
-    bool _onDownDirection;
+        AudioSource[] audios = GetComponents<AudioSource>();
+        _sourceRun = audios[0];
+        _sourceJump = audios[1];
+        _sourceRun.clip = RunSound;
+    }
 
     public void OnLeftDirection() 
     {
-        if (!_isScripting && _gameStarted && CurrentState != PlayerState.Attacking) _onLeftDirection = true;
+        if (_isScripting)
+        {
+            _onLeftDirection = true;
+        }
+        else
+        {
+            if (_gameStarted && (CurrentState == PlayerState.Inert || CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Laddering || CurrentState == PlayerState.WallHugging))
+            {
+                _onLeftDirection = true;
+            }
+        }
     }
 
     public void OnRightDirection() 
     {
-        if (!_isScripting && _gameStarted && CurrentState != PlayerState.Attacking) _onRightDirection = true;
+        if (_isScripting)
+        {
+            _onRightDirection = true;
+        }
+        else
+        {
+            if (_gameStarted && (CurrentState == PlayerState.Inert || CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Laddering || CurrentState == PlayerState.WallHugging))
+            {
+                _onRightDirection = true;
+            }
+        }
+    }
+
+    public void OnRightDirectionEnd()
+    {
+        _onRightDirection = false;
+    }
+
+    public void OnLeftDirectionEnd()
+    {
+        _onLeftDirection = false;
     }
 
     public void OnTopDirection()
     {
-        if (CurrentState != PlayerState.TubeSliding && _gameStarted)
-            _onTopDirection = true;
+        if (_isScripting)
+        {
+            if (!_scriptInputBlocade) _onTopDirection = true;
+        }
+        else
+        {
+            if (_gameStarted && (CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Laddering || CurrentState == PlayerState.WallHugging))
+            {
+                _onTopDirection = true;
+            }
+        }
+    }
+
+    public void OnDownDirection()
+    {
+        if (_isScripting)
+        {
+            if (!_scriptInputBlocade) _onDownDirection = true;
+        }
+        else
+        {
+            if (_gameStarted && (CurrentState == PlayerState.Grounded || CurrentState == PlayerState.Laddering))
+            {
+                _onDownDirection = true;
+            }
+        }
     }
 
     public void OnGameStarted()
     {
         Debug.Log("Player received signal, let's go");
         _gameStarted = true;
-    }
-
-    public void OnDownDirection()
-    {
-        if (!_gameStarted)
-            return;
-        
-        if(
-            !_isScripting || 
-            (_isScripting && CurrentState == PlayerState.EdgeLaddering) ||
-            (_isScripting && CurrentState == PlayerState.EgdeClimbingBody) ||
-            (CurrentState == PlayerState.TubeSliding && 
-            _isScripting && 
-            _rigidbody.transform.position == _scriptDestinations[_index])
-        )
-        {
-            _onDownDirection = true;
-        }
-             
     }
 
     public void OnBarrelExploded()
@@ -207,6 +249,30 @@ public class PlayerControllerExperimental : MonoBehaviour
             PlayerDeathEvent.Raise();
             _gameStarted = false;
         }
+    }
+
+    public void OnEatFood()
+    {
+        Heal(20);
+    }
+
+    public void Heal(int amount)
+    {
+        if (Hp >= 100)
+            return;
+        
+        if (Hp + amount > 100)
+        {
+            amount = 100 - Hp;
+        }
+        Debug.Log("healing amount " + amount);
+        Hp += amount;
+        for (int i = amount / 10; i >= 1; i--)
+        {
+            Debug.Log("raising");
+            PlayerHealEvent.Raise();
+        }
+
     }
 
     void Update()
@@ -325,26 +391,54 @@ public class PlayerControllerExperimental : MonoBehaviour
                     movement();
                     if (Input.GetKeyDown(KeyCode.RightArrow) || _onRightDirection)  
                     {
-                        OnKeyRight();
-                        _onRightDirection = false;
+                       OnKeyRight();
                     }
                     if (Input.GetKeyDown(KeyCode.LeftArrow) || _onLeftDirection) 
                     {
                         OnKeyLeft();
-                        _onLeftDirection = false;
                     }
-                    if (Input.GetKeyDown(KeyCode.DownArrow) || _onDownDirection)
+                    if (Input.GetKeyDown(KeyCode.DownArrow))
                     {
-                        _onDownDirection = false;
-                        OnKeyDown();
+                       OnKeyDown();
                     } 
                     if (Input.GetKeyDown(KeyCode.Space) || _onTopDirection)
                     {
+                        _animator.SetBool("Attack", false);
+                        _animator.SetBool("SuperAttack", false);
+                        _animator.SetBool("GotHit", false);
+                        //_sourceRun.Stop();
+                        //_sourceJump.PlayOneShot(JumpSound, 0.1f);
+                        if (_moveDirection == 0 && !Physics2D.IsTouchingLayers(_colliderBody, Wall)) _animator.SetBool("JumpIdle", true);
                         _onTopDirection = false;
                         OnKeySpace();
-                    } 
-                    if (Physics2D.IsTouchingLayers(_colliderCorner, Wall)) _animator.SetBool("Movement", false);
-                    else _animator.SetBool("Movement", (_moveDirection != 0) ? true : false);
+                    }
+                    if (Physics2D.IsTouchingLayers(_colliderBody, Wall))
+                    {
+                       // if (_sourceRun.isPlaying) _sourceRun.Stop();
+                        _animator.SetBool("Movement", false);
+                    }
+                    else
+                    {
+                        if (_moveDirection == 0)
+                        {
+                           // _sourceRun.Stop();
+                            _animator.SetBool("Movement", false);
+                        }
+                        else
+                        {
+                            _animator.SetBool("Movement", true);
+                           // if (!_sourceRun.isPlaying) _sourceRun.Play();
+                        }
+                    }
+
+                   
+                   break;
+                    
+
+
+                case PlayerState.Inert:
+
+                    _inertTimer += Time.deltaTime;
                     break;
 
                 case PlayerState.WallHugging:
@@ -352,6 +446,8 @@ public class PlayerControllerExperimental : MonoBehaviour
                     manageWallTimer();
                     if (Input.GetKeyDown(KeyCode.Space) || _onTopDirection)
                     {
+                        _moveDirection = 0;
+                        // _sourceJump.PlayOneShot(JumpSound, 0.1f);
                         _onTopDirection = false;
                         OnKeySpace();
                     } 
@@ -359,26 +455,25 @@ public class PlayerControllerExperimental : MonoBehaviour
 
                 case PlayerState.Laddering:
 
-                    if (_rigidbody.velocity.y <= 0 && Physics2D.IsTouchingLayers(_colliderLegs, Ground)) _animator.SetBool("LadderMovement", false);
+                    if (_rigidbody.velocity.y <= 0 && Physics2D.IsTouchingLayers(_colliderLegs, Ground))
+                    {
+                        _animator.SetBool("LadderMovement", false);
+                        _inCorner = true;
+                    }
                     if (Input.GetKeyDown(KeyCode.Space) || _onTopDirection)
                     {
                         _onTopDirection = false;
                         OnKeySpace();
                     } 
-                    if (Input.GetKeyDown(KeyCode.DownArrow) || _onDownDirection)
+                    if ((Input.GetKeyDown(KeyCode.RightArrow) || _onRightDirection))
                     {
                         _onDownDirection = false;
-                        OnKeyDown();
-                    } 
-                    if ((Input.GetKeyDown(KeyCode.RightArrow) || _onRightDirection) && !FacingRight)
-                    {
                         OnKeyRight();
-                        _onRightDirection = false;
                     }
-                    if ((Input.GetKeyDown(KeyCode.LeftArrow) || _onLeftDirection) && FacingRight) 
+                    if ((Input.GetKeyDown(KeyCode.LeftArrow) || _onLeftDirection)) 
                     {
+                        _onDownDirection = false;
                         OnKeyLeft();
-                        _onLeftDirection = false;
                     }
                     break;
                 
@@ -405,29 +500,17 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
         if (_isScripting)
         {
+            _animListExecuted = false;
             switch (CurrentState)
             {
-                case PlayerState.EdgeLaddering:
-                    _isScripting = false;
-                    _rigidbody.isKinematic = false;
-                    if (FacingRight) _rigidbody.velocity = new Vector2(0.5f, -3f);
-                    else _rigidbody.velocity = new Vector2(-0.5f, -3f);
-                    _ignoreLedderEdge = true;
-                    _animator.SetBool("LadderMovement", true);
-                    break;
-
                 case PlayerState.TubeSliding:
-                    
+                    _scriptInputBlocade = true;
                     _animator.SetBool("Tube Idle", false);
                     _animator.SetBool("Tube", false);
                     _animator.SetBool("Inert Down", true);
-
-                   
+                    _moveDirection = 0;
                     _index++;
-                    break;
-
-                default:
-                    _index++;
+                    //transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
                     break;
             }
         }
@@ -435,10 +518,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         {
             switch (CurrentState)
             {
-                case PlayerState.Laddering:
-                    MoveDownOnLadder();
-                    break;
-                default:
+               default:
                     StopMovement();
                     break;
             }
@@ -449,19 +529,34 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
         if (_isScripting)
         {
+            _animListExecuted = false;
             switch (CurrentState)
             {
                 case PlayerState.EdgeLaddering:
-                    _isScripting = false;
-                    _rigidbody.isKinematic = false;
-                    _rigidbody.velocity = new Vector2(3f, 0);
-                    SetFacingRight(true);
-                    _ignoreLedderEdge = true;
-                    _animator.SetBool("Ladder", false);
+                    if (FacingRight)
+                    {
+                        _scriptInputBlocade = true;
+                        _index++;
+                        _animator.SetBool("UpLadder", true);
+                    }
+                    else
+                    {
+                        _scriptInputBlocade = true;
+                        _isScripting = false;
+                        _rigidbody.isKinematic = false;
+                        _rigidbody.velocity = new Vector2(-0.5f, -3f);
+                        _ignoreLedderEdge = true;
+                    }
                     break;
 
-                default:
-                    _index++;
+                case PlayerState.EgdeClimbingCorner:
+                    if (FacingRight)
+                    {
+                        //_sourceJump.PlayOneShot(JumpSound, 0.1f);
+                        _scriptInputBlocade = true;
+                        _index++;
+                        _animator.SetBool("UpWall", true);
+                    }
                     break;
             }
         }
@@ -470,9 +565,17 @@ public class PlayerControllerExperimental : MonoBehaviour
             switch (CurrentState)
             {
                 case PlayerState.Laddering:
-                    MoveRightOnLadder();
-                    _animator.SetBool("LadderMovement", false);
-                    _animator.SetBool("Ladder", false);
+                    
+                    if (FacingRight) MoveUpOnLadder();
+                    else
+                    {
+                        if (!_inCorner) MoveDownOnLadder();
+                        else
+                        {
+                            MoveRightOnLadder();
+                            _inCorner = false;
+                        }
+                    }
                     break;
                 default:
                     SetFacingRight(true);
@@ -485,19 +588,33 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
         if (_isScripting)
         {
+            _animListExecuted = false;
             switch (CurrentState)
             {
                 case PlayerState.EdgeLaddering:
-                    _isScripting = false;
-                    _rigidbody.isKinematic = false;
-                    _rigidbody.velocity = new Vector2(-3f, 0);
-                    SetFacingRight(false);
-                    _ignoreLedderEdge = true;
-                    _animator.SetBool("Ladder", false);
-                   break;
-
-                default:
-                    _index++;
+                    if (!FacingRight)
+                    {
+                        _scriptInputBlocade = true;
+                        _index++;
+                        _animator.SetBool("UpLadder", true);
+                    }
+                    else
+                    {
+                        _scriptInputBlocade = true;
+                        _isScripting = false;
+                        _rigidbody.isKinematic = false;
+                        _rigidbody.velocity = new Vector2(0.5f, -3f);
+                        _ignoreLedderEdge = true;
+                    }
+                    break;
+                case PlayerState.EgdeClimbingCorner:
+                    if (!FacingRight)
+                    {
+                        //__sourceJump.PlayOneShot(JumpSound, 0.1f);
+                        _scriptInputBlocade = true;
+                        _index++;
+                        _animator.SetBool("UpWall", true);
+                    }
                     break;
             }
         }
@@ -506,9 +623,16 @@ public class PlayerControllerExperimental : MonoBehaviour
             switch (CurrentState)
             {
                 case PlayerState.Laddering:
-                    MoveLeftOnLadder();
-                    _animator.SetBool("LadderMovement", false);
-                    _animator.SetBool("Ladder", false);
+                    if (!FacingRight) MoveUpOnLadder();
+                    else
+                    {
+                        if (!_inCorner) MoveDownOnLadder();
+                        else
+                        {
+                            MoveLeftOnLadder();
+                            _inCorner = false;
+                        }
+                    }
                     break;
                 default:
                     SetFacingRight(false);
@@ -520,32 +644,31 @@ public class PlayerControllerExperimental : MonoBehaviour
     public void OnKeySpace()
     {
         if (_isScripting)
-        {   
+        {
+            _animListExecuted = false;
             switch (CurrentState)
             {
                 case PlayerState.EdgeLaddering:
-                    _index++;
-                    _animator.SetBool("UpLadder", true);
-                    break;
-
-                case PlayerState.EgdeClimbingCorner:
-                    _index++;
-                    _animator.SetBool("UpWall", true);
-                    break;
-
-                default:
-                    _index++;
+                    _scriptInputBlocade = true;
+                    _isScripting = false;
+                    _rigidbody.isKinematic = false;
+                    _rigidbody.velocity = new Vector2(3f, 0);
+                    if (FacingRight) SetFacingRight(false);
+                    else SetFacingRight(true);
+                    _ignoreLedderEdge = true;
+                    _animator.SetBool("Ladder", false);
+                    _animator.SetBool("LadderMovement", false);
                     break;
             }
         }
         else
         {
-            if (CurrentState == PlayerState.Grounded) _rigidbody.AddForce(new Vector2(0, 450*JumpForce));//_rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
+            if (CurrentState == PlayerState.Grounded) _rigidbody.AddForce(new Vector2(0, 450 * JumpForce));//_rigidbody.velocity = new Vector2(_rigidbody.velocity.x, JumpForce);
             else if (CurrentState == PlayerState.WallHugging)
             {
                 if (FacingRight)
                 {
-                    _rigidbody.AddForce(new Vector2(-300*WallReflectionForce, 400*WallJumpForce));
+                    _rigidbody.AddForce(new Vector2(-300 * WallReflectionForce, 400 * WallJumpForce));
                     SetFacingRight(false);
                 }
                 else
@@ -558,7 +681,11 @@ public class PlayerControllerExperimental : MonoBehaviour
                 _animator.SetBool("Movement", true);
                 _animator.SetBool("WallReflection", true);
             }
-            else if (CurrentState == PlayerState.Laddering) MoveUpOnLadder();
+            else if (CurrentState == PlayerState.Laddering)
+            {
+                if (FacingRight) MoveLeftOnLadder();
+                else MoveRightOnLadder();
+            }
         }
     }
 
@@ -610,6 +737,7 @@ public class PlayerControllerExperimental : MonoBehaviour
     {
         _rigidbody.velocity = new Vector2(0f, 3f);
         _animator.SetBool("LadderMovement", true);
+        _inCorner = false;
     }
     #endregion
 
@@ -617,6 +745,13 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onBeingInert()
     {
+        //_sourceRun.Stop();
+        if (PreviousState == PlayerState.WallHugging) StartCoroutine(InertTimerZero());
+        if (!_ignoreLedderEdge)
+        {
+            _animator.SetBool("Ladder", false);
+            _animator.SetBool("LadderMovement", false);
+        }
         _renderer.transform.position = new Vector2(transform.position.x, transform.position.y);
         _wallTimer = 0;
         _rigidbody.gravityScale = 10;
@@ -624,7 +759,13 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     private void onGroundImpact()
     {
+        InEndOfTube = false;
+        _inertDown = false;
         _ignoreLedderEdge = false;
+        _animator.SetBool("KeepFalling", false); 
+        _animator.SetBool("JumpIdle", false);
+        _animator.SetBool("Ladder", false);
+        _animator.SetBool("LadderMovement", false);
         _animator.SetBool("Inert Down", false);
         _animator.SetBool("WallReflection", false);
         _animator.SetBool("JumpToWall", false);
@@ -633,24 +774,29 @@ public class PlayerControllerExperimental : MonoBehaviour
         _renderer.transform.position = new Vector2(transform.position.x, transform.position.y);
         _wallTimer = 0;
         _rigidbody.gravityScale = 10;
+        for (float i = 0.55f; i < _inertTimer; i += 0.55f) TakeHP(10);
+        _inertTimer = 0;
     }
 
     private void onLadderImpact()
     {
-
-        _animator.SetBool("Ladder", true);
+        //_sourceRun.Stop();
         _animator.SetBool("WallReflection", false);
+        _animator.SetBool("Ladder", true);
         _rigidbody.gravityScale = 0;
         if (!_ignoreLedderEdge) _rigidbody.velocity = new Vector2(0f, 0f);
         else
         {
             _ignoreLedderEdge = false;
             _rigidbody.velocity = new Vector2(0f, -3f);
+            _animator.SetBool("LadderMovement", true);
         }
+        _inertTimer = 0;
     }
 
     private void onSlopeImpact()
     {
+        //_sourceRun.Stop();
         _animator.SetBool("Tube Idle", false);
         _animator.SetBool("Ladder", false);
         _animator.SetBool("LadderMovement", false);
@@ -665,12 +811,14 @@ public class PlayerControllerExperimental : MonoBehaviour
         else SetFacingRight(false);
         _renderer.transform.position = new Vector2(-0.25f + transform.position.x, -0.25f + transform.position.y);
         _rigidbody.gravityScale = 18;
+        for (float i = 0.55f; i < _inertTimer; i += 0.55f) TakeHP(10);
+        _inertTimer = 0;
     }
-
 
     private void onTubeImpact()
     {
-        _scriptDestinations.Clear();
+        //_sourceRun.Stop();
+        resetScripting();
         _animator.SetBool("Ladder", false);
         _animator.SetBool("LadderMovement", false);
         _animator.SetBool("Tube", false);
@@ -686,24 +834,15 @@ public class PlayerControllerExperimental : MonoBehaviour
         _scriptDestinations.Add(new Vector3(Start.transform.position.x, transform.position.y, 0f));
         _scriptDestinations.Add(new Vector3(End.transform.position.x + playerWidth, End.transform.position.y + playerHeight / 4, 0f));
         _scriptSpeed = 3.0f;
-        _isScripting = true;
-        _scriptSpeedAccelarated = false;
-        _rigidbody.isKinematic = true;
-        _rigidbody.velocity = new Vector3(0, 0, 0);
-        _index = 0;
         _indexToReact = 1;
-        _indexToRotate = -1;
-        _keysToReact.Clear();
-        _keysToReact.Add(KeyCode.DownArrow);
-        _animScriptCommands.Clear();
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.MovementFalse, animScriptCommands.TubeTrue });
-        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.TubeIdleTrue });
-        _rendererPosDif.Clear();
+        _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.TubeIdleTrue, animScriptCommands.InEndOfTubeTrue });
     }
 
     void onEdgeCornerImpact()
     {
-        _scriptDestinations.Clear();
+        //_sourceRun.Stop();
+        resetScripting();
         _animator.SetBool("WallReflection", false);
         GameObject go = findClosestObjectWithTag("WallEdge", 1);
         if (FacingRight)
@@ -719,22 +858,10 @@ public class PlayerControllerExperimental : MonoBehaviour
             _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(-1f, 0, 0));
         }
         _scriptSpeed = 4.0f;
-        _isScripting = true;
-        _scriptSpeedAccelarated = false;
-        _rigidbody.isKinematic = true;
-        _rigidbody.velocity = new Vector3(0, 0, 0);
-        _index = 0;
         _indexToReact = 0;
-        _indexToRotate = -1;
-        _keysToReact.Clear();
-        _keysToReact.Add(KeyCode.Space);
-        if (FacingRight) _keysToReact.Add(KeyCode.LeftArrow);
-        else _keysToReact.Add(KeyCode.RightArrow);
-        _animScriptCommands.Clear();
         _animScriptCommands.Add(new List<animScriptCommands> {animScriptCommands.JumpToWallFalse, animScriptCommands.CzekaningTrue});
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.UpWallFalse,  animScriptCommands.CzekaningFalse, animScriptCommands.MovementTrue});
         _animScriptCommands.Add(new List<animScriptCommands> {  });
-        _rendererPosDif.Clear();
         _rendererPosDif.Add(new Vector3(0f, 0f, 0f));
         if (FacingRight) _rendererPosDif.Add(new Vector3(0.15f, -0.15f, 0f));
         else _rendererPosDif.Add(new Vector3(-0.15f, -0.15f, 0f));
@@ -743,8 +870,11 @@ public class PlayerControllerExperimental : MonoBehaviour
 
     void onLadderEdgeImpact()
     {
+        //_sourceRun.Stop();
+        resetScripting();
         _animator.SetBool("LadderMovement", false);
-        _scriptDestinations.Clear();
+        _animator.SetBool("WallReflection", false);
+        _animator.SetBool("Ladder", true);
         GameObject go = findClosestObjectWithTag("ladderEdge", 5);
         if (FacingRight)
         {
@@ -759,33 +889,20 @@ public class PlayerControllerExperimental : MonoBehaviour
             _scriptDestinations.Add(_scriptDestinations[1] + new Vector3(-2f, 0, 0));
         }
         _scriptSpeed = 4.0f;
-        _isScripting = true;
-        _rigidbody.isKinematic = true;
-        _scriptSpeedAccelarated = false;
-        _rigidbody.velocity = new Vector3(0, 0, 0);
-        _index = 0;
         _indexToReact = 0;
-        _indexToRotate = -1;
-        _keysToReact.Clear();
-        _keysToReact.Add(KeyCode.Space);
-        _keysToReact.Add(KeyCode.DownArrow);
-        if (FacingRight)_keysToReact.Add(KeyCode.LeftArrow);
-        else _keysToReact.Add(KeyCode.RightArrow);
-        _animScriptCommands.Clear();
         _animScriptCommands.Add(new List<animScriptCommands> { });
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.LadderFalse, animScriptCommands.UpLadderFalse });//animScriptCommands.MovementTrue });
         _animScriptCommands.Add(new List<animScriptCommands> {  });
-        _rendererPosDif.Clear();
         _rendererPosDif.Add(new Vector3(0f, 0f, 0f));
         if (FacingRight) _rendererPosDif.Add(new Vector3(0.15f, -0.15f, 0f));
         else _rendererPosDif.Add(new Vector3(-0.15f, -0.15f, 0f));
         _rendererPosDif.Add(new Vector3(0f, 0f, 0f));
     }
 
-
     void onLadderEdge1Impact()
     {
-        _scriptDestinations.Clear();
+        //_sourceRun.Stop();
+        resetScripting();
         GameObject go = findClosestObjectWithTag("ladderEdge", 5);
         if (FacingRight)
         {
@@ -800,24 +917,16 @@ public class PlayerControllerExperimental : MonoBehaviour
             _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(0f, -playerWidth));
         }
         _scriptSpeed = 4.0f;
-        _isScripting = true;
-        _rigidbody.isKinematic = true;
-        _scriptSpeedAccelarated = false;
-        _rigidbody.velocity = new Vector3(0, 0, 0);
-        _index = 0;
         _indexToReact = -1;
-        _indexToRotate = -1;
-        _keysToReact.Clear();
-        _animScriptCommands.Clear();
         _animScriptCommands.Add(new List<animScriptCommands> { });
         _animScriptCommands.Add(new List<animScriptCommands> { animScriptCommands.LadderTrue });
-        _rendererPosDif.Clear();
     }
 
     void onEdgeBodyImpact()
     {
+        //_sourceRun.Stop();
+        resetScripting();
         _animator.SetBool("WallReflection", false);
-        _scriptDestinations.Clear();
         GameObject go = findClosestObjectWithTag("WallEdge", 1);
         if (FacingRight)
         {
@@ -830,21 +939,14 @@ public class PlayerControllerExperimental : MonoBehaviour
             _scriptDestinations.Add(_scriptDestinations[0] + new Vector3(-1f, 0, 0));
         }
         _scriptSpeed = 4.0f;
-        _isScripting = true;
-        _scriptSpeedAccelarated = false;
-        _rigidbody.isKinematic = true; 
-        _rigidbody.velocity = new Vector3(0, 0, 0);
-        _index = 0;
         _indexToReact = -1;
-        _indexToRotate = -1;
-        _animScriptCommands.Clear();
-       _rendererPosDif.Clear();
     }
 
     private void onWallImpact()
     {
         if (PreviousState == PlayerState.Grounded)
         {
+            //_sourceRun.Stop();
             _rigidbody.velocity = new Vector2(0, 6);
             _animator.SetBool("JumpToWall", true);
         }
@@ -856,6 +958,7 @@ public class PlayerControllerExperimental : MonoBehaviour
             _animator.SetBool("Czekaning", true);
         }
         _rigidbody.gravityScale = 0;
+        _inertTimer = 0;
     }
     #endregion
 
@@ -879,7 +982,6 @@ public class PlayerControllerExperimental : MonoBehaviour
             _renderer.transform.position = transform.position;
             return;
         }
-        if (_scriptSpeedAccelarated) _scriptSpeed += _scriptAcceleration;
         transform.position = Vector2.MoveTowards(_rigidbody.transform.position, _scriptDestinations[_index], _scriptSpeed * Time.deltaTime);
         if (_index < _rendererPosDif.Count)
         {
@@ -888,8 +990,9 @@ public class PlayerControllerExperimental : MonoBehaviour
         if (_rigidbody.transform.position == _scriptDestinations[_index])
         {
 
-            if (_index < _animScriptCommands.Count)
+            if (_index < _animScriptCommands.Count && !_animListExecuted)
             {
+                _animListExecuted = true;
                 foreach (var animScriptCommand in _animScriptCommands[_index])
                 {
                     switch (animScriptCommand)
@@ -981,59 +1084,40 @@ public class PlayerControllerExperimental : MonoBehaviour
                         case animScriptCommands.UpWallFalse:
                             _animator.SetBool("UpWall", false);
                             break;
+
+                        case animScriptCommands.InEndOfTubeTrue:
+                            InEndOfTube = true;
+                            break;
                     }
                 }
             }
 
             if (_indexToReact == _index)
             {
-                if (_onTopDirection) {
+                _scriptInputBlocade = false;
+
+                if (_onTopDirection || Input.GetKeyDown(KeyCode.Space))
+                {
                     OnKeySpace();
                     _onTopDirection = false;
                 }
-
-                if (_onDownDirection)
+                else if (_onDownDirection || Input.GetKeyDown(KeyCode.DownArrow))
                 {
                     OnKeyDown();
                     _onDownDirection = false;
                 } 
-
-                if (_onRightDirection) {
-                    OnKeyRight();
-                    _onRightDirection = false;
-                }
-
-                if (_onLeftDirection) {
-                    OnKeyLeft();
-                    _onLeftDirection = false;
-                }
-
-                for (int i = 0; i < _keysToReact.Count; i++)
+                else if (_onRightDirection || Input.GetKeyDown(KeyCode.RightArrow))
                 {
-                    if (Input.GetKeyDown(_keysToReact[i]))
-                    {
-                        switch (_keysToReact[i])
-                        {
-                            case KeyCode.Space:
-                                OnKeySpace();
-                                break;
-                            case KeyCode.DownArrow:
-                                OnKeyDown();
-                                break;
-                            case KeyCode.LeftArrow:
-                                OnKeyLeft();
-                                break;
-                            case KeyCode.RightArrow:
-                                OnKeyRight();
-                                break;
-                        }
-                    }
+                    OnKeyRight();
+                }
+                else if (_onLeftDirection || Input.GetKeyDown(KeyCode.LeftArrow))
+                {
+                    OnKeyLeft();
                 }
             }
             else
             {
-                if (_index == _indexToRotate) transform.rotation = _scriptRotation;
-                
+                _animListExecuted = false;
                 _index++;
             }
             
@@ -1071,17 +1155,40 @@ public class PlayerControllerExperimental : MonoBehaviour
         return closest;
     }
 
+
+    private void resetScripting()
+    {
+        _scriptDestinations.Clear();
+        _isScripting = true;
+        _rigidbody.velocity = new Vector3(0, 0, 0);
+        _rigidbody.isKinematic = true;
+        _index = 0;
+        _animListExecuted = false;
+        _animScriptCommands.Clear();
+        _rendererPosDif.Clear();
+        _inertTimer = 0;
+    }
+       
     public void SetAttackingState()
     {
+        //if (_sourceRun.isPlaying) _sourceRun.Stop();
         CurrentState = PlayerState.Attacking;
     }
 
-    public IEnumerator UnsetAttackingState()
+    public void UnsetAttackingState()
     {
-        Debug.Log("unset");
-        yield return new WaitForSecondsRealtime(0.5f);
         CurrentState = PlayerState.Grounded;
-        Debug.Log("grounded");
+    }
+
+    public void SetMoveDirection()
+    {
+        _moveDirection = 0f;
+    }
+
+    public IEnumerator InertTimerZero()
+    {
+        yield return new WaitForSeconds(0.2f);
+        _inertTimer = 0;
     }
     #endregion
 }

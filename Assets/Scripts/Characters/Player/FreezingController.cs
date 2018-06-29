@@ -44,6 +44,13 @@ public class FreezingController : MonoBehaviour {
         StartCoroutine(StartFrostEffect());
     }
 
+    public void OnPlayerWin()
+    {
+        _gameStarted = false;
+        StopAllCoroutines();
+        StartCoroutine(StartFrostEffect());
+    }
+
     IEnumerator TakeHPWhenFreezed()
     {
         while(true)

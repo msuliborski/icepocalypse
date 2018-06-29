@@ -22,6 +22,10 @@ TagManager:
   - hole
   - tubeMarker
   - ViewTrigger
+  - Food
+  - EnemyHead
+  - dialogPanel
+  - dialogPanelBottom
   layers:
   - Default
   - TransparentFX
@@ -44,9 +48,9 @@ TagManager:
   - LadderEdge
   - LadderEdge1
   - Enemy
-  - 
-  - 
-  - 
+  - Player
+  - Head
+  - Sign
   - 
   - 
   - 
