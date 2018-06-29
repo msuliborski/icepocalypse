@@ -510,7 +510,7 @@ public class PlayerControllerExperimental : MonoBehaviour
                     _animator.SetBool("Inert Down", true);
                     _moveDirection = 0;
                     _index++;
-                    transform.position = new Vector3(transform.position.x + 0.05f, transform.position.y, transform.position.z);
+                    //transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
                     break;
             }
         }
@@ -762,7 +762,7 @@ public class PlayerControllerExperimental : MonoBehaviour
         InEndOfTube = false;
         _inertDown = false;
         _ignoreLedderEdge = false;
-        _animator.SetBool("KeepFalling", false);
+        _animator.SetBool("KeepFalling", false); 
         _animator.SetBool("JumpIdle", false);
         _animator.SetBool("Ladder", false);
         _animator.SetBool("LadderMovement", false);
