@@ -3,10 +3,10 @@
 Mobile adventure game created in Unity. ZTGK (2018) </br>
 
 <p align="center">
-  <img width="940" src="Assets/screens/1.jpg">
-  <img width="940" src="Assets/screens/2.jpg">
-  <img width="940" src="Assets/screens/3.jpg">
-  <img width="940" src="Assets/screens/4.jpg">
+  <img width="940" src="Screens/1.jpg">
+  <img width="940" src="Screens/2.jpg">
+  <img width="940" src="Screens/3.jpg">
+  <img width="940" src="Screens/4.jpg">
 </p>
 
 
@@ -36,6 +36,8 @@ real-time creation platform
 * **Michał Kuśmidrowicz** - [ninjarlz](https://github.com/ninjarlz)
 * **Łukasz Gołygowski** - [GroveW](https://github.com/GroveW)
 * **Olga Kardas** - [OlgaKar](https://github.com/OlgaKar)
+* **Wiktoria Romanowska**
+
 
 ## License
 
