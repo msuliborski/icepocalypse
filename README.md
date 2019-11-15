@@ -2,11 +2,14 @@
 Mobile adventure game created in Unity. ZTGK (2018) 
 </br>
 <p align="center">
-  <img width="840" src="Screens/1.jpg">
-  <img width="840" src="Screens/2.jpg">
-  <img width="840" src="Screens/3.jpg">
-  <img width="840" src="Screens/4.jpg">
+  <img width="840" src="Screens/1.jpg"/>
+  <img width="840" src="Screens/2.jpg"/>
+  <img width="840" src="Screens/3.jpg"/>
+  <img width="840" src="Screens/4.jpg"/>
 </p>
+
+### Download
+All releases of the game are avaliable on the github page in the [releases](https://github.com/msuliborski/icepocalypse/releases) tab. 
 
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
