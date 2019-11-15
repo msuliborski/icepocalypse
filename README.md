@@ -1,5 +1,5 @@
 # Icepocalypse
-#### Mobile adventure game created in Unity. ZTGK (2018) 
+Mobile adventure game created in Unity. ZTGK (2018) 
 </br>
 <p align="center">
   <img width="840" src="Screens/1.jpg">
