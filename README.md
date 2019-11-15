@@ -14,6 +14,9 @@ All releases of the game are avaliable on the github page in the [releases](http
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
 
+### Prerequisites
+In order to properly build application one might need to install [Unity](https://unity3d.com/get-unity/download).
+
 ### Cloning
 ```
 $ git clone https://github.com/msuliborski/icepocalypse
