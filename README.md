@@ -20,8 +20,7 @@ $ git clone https://github.com/msuliborski/icepocalypse
 Using Unity Game Engine import project and hit play button. It should do everything automatically and let you run the game.
 
 ## Built with
-* [Unity](https://unity.com/) - The world’s leading
-real-time creation platform
+* [Unity](https://unity.com/) - The world’s leading real-time creation platform
 
 ## Authors
 * **Michał Suliborski** - [msuliborski](https://github.com/msuliborski)
